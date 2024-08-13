@@ -1641,8 +1641,8 @@ figcaption {
   }
 
   .main-h1 {
-    font-size: 50px;
-    line-height: 50px;
+    font-size: 25px;
+    line-height: 25px;
   }
 
   .main-h1.bold {
@@ -1655,8 +1655,8 @@ figcaption {
   }
 
   .main-h1.home {
-    font-size: 8vh;
-    line-height: 8vh;
+    font-size: 4vh;
+    line-height: 4vh;
   }
 
   .paragraph.bolder {
