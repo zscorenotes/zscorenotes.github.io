@@ -380,7 +380,7 @@ figcaption {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  width: 30vw;
+  width: 60vw;
   margin-top: 30px;
   -webkit-box-pack: start;
   -webkit-justify-content: flex-start;
