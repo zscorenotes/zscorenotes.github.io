@@ -1615,7 +1615,7 @@ figcaption {
   }
 }
 
-@media screen and (max-width: 479px) {
+@media screen and (max-width: 600px) {
   h2 {
     font-size: 30px;
     line-height: 40px;
@@ -1641,8 +1641,8 @@ figcaption {
   }
 
   .main-h1 {
-    font-size: 25px;
-    line-height: 25px;
+    font-size: 80px;
+    line-height: 50px;
   }
 
   .main-h1.bold {
@@ -1655,8 +1655,8 @@ figcaption {
   }
 
   .main-h1.home {
-    font-size: 4vh;
-    line-height: 4vh;
+    font-size: 9vh;
+    line-height: 9vh;
   }
 
   .paragraph.bolder {
