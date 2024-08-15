@@ -84,6 +84,11 @@ a:hover {
   color: #000;
 }
 
+.hidden-text {
+  position: absolute;
+  left: -9999px;
+}
+
 img {
   display: inline-block;
   max-width: 100%;
