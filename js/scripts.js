@@ -1,5 +1,8 @@
 // Function to show the selected section and hide the others
-function showSection(sectionId) {
+function showSection(event, sectionId) {
+    // Prevent the default anchor link action
+    event.preventDefault();
+
     // Get all sections
     const sections = document.querySelectorAll('.section');
     
@@ -14,9 +17,3 @@ function showSection(sectionId) {
         }
     });
 }
-
-// Show Home section on page load by default
-window.onload = function() {
-    showSection('home');
-};
-
