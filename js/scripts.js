@@ -17,3 +17,7 @@ function showSection(event, sectionId) {
         }
     });
 }
+// Show Home section on page load by default
+window.onload = function() {
+    showSection('home');
+};
