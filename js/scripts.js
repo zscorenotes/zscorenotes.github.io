@@ -17,7 +17,9 @@ function showSection(event, sectionId) {
         }
     });
 }
-// Show Home section on page load by default
+
 window.onload = function() {
-    showSection('home');
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.toggle('visible', section.id === 'home');
+    });
 };
