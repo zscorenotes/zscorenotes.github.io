@@ -18,8 +18,8 @@ body {
 
 .container {
   width: 80%; /* Control page width with this */
-  max-width: 820px; /* Maximum width */
-  min-width: 320px; /* Prevent it from being too small */
+  max-width: 820px; 
+  min-width: 320px; 
   margin: 0 auto; /* Center container */
 }
 
@@ -64,7 +64,7 @@ nav ul li a:hover {
 }
 
 footer {
-  padding-top: 1000px;
+  padding-top: 100x;
 }
 /* Hide all sections initially */
 .section {
@@ -86,20 +86,27 @@ footer {
 }
 
 .background-div {
-  /* Set the background image */
-  background-size: cover;         /* Ensures the image covers the entire div */
-  background-position: center;    /* Centers the image */
-  background-repeat: no-repeat;   /* Prevents repeating */
-  background-attachment: fixed;   /* Keeps background in place while scrolling */
-  
-  /* Set a minimum size so the background always shows */
-  min-height: 1800px;              /* Adjust height as needed */
-  width: 100vw;                  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100vw;
+  height: 1500px;
+  margin-left: calc(50% - 50vw);
 
-  /* Prevent user selection */
   user-select: none;
   pointer-events: none;
-  z-index: -1;  
+  position: relative; /* Necessary for positioning .fixed-text */
+  z-index: -1;
+}
+
+.fixed-text {
+  position: absolute; /* Fixes position relative to .background-div */
+  top: 50%;           /* Centers vertically within .background-div */
+  left: 50%;          /* Centers horizontally within .background-div */
+  transform: translate(-90%, -50%); /* Adjusts to center the text */
+  text-align: left;
+  pointer-events: auto; /* Allows interaction with the text if needed */
 }
 
 /* Optional: further disable selection if necessary */
@@ -111,49 +118,6 @@ footer {
   bottom: 0;
   left: 0;
   pointer-events: none;  /* Makes sure no interaction is possible */
-}
-
-
-/* Wrapper that takes up the whole screen */
-.scroll-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;            /* Prevents scrollbars from showing */
-}
-
-/* Content inside the wrapper */
-.scroll-content {
-  position: absolute;
-  width: 200vw;                /* Makes the content twice as wide as the viewport */
-  height: 200vh;               /* Makes the content twice as tall as the viewport */
-  animation: scroll 20s linear infinite; /* Smooth, infinite scrolling */
-}
-
-/* Stops the animation until hovered */
-.scroll-wrapper:hover .scroll-content {
-  animation-play-state: running;
-}
-
-/* Keyframes for multidirectional scrolling */
-@keyframes scroll {
-  0% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(-50vw, 0);   /* Scrolls horizontally */
-  }
-  50% {
-    transform: translate(-50vw, -50vh); /* Scrolls diagonally */
-  }
-  75% {
-    transform: translate(0, -50vh);   /* Scrolls vertically */
-  }
-  100% {
-    transform: translate(0, 0);       /* Returns to the start */
-  }
 }
 
 /* Flicker animation for header and other elements */
