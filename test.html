@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vertical Overlay Carousel</title>
+  <style>
+    /* Container for the slider */
+    .slider {
+      position: relative;
+      width: 100%;
+      height: 1000px; /* Adjust height as needed */
+      overflow: hidden;
+      margin: auto;
+    }
+
+    /* Individual slides */
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: transform 1s ease-in-out;
+    }
+
+    /* Ensure images fit the container */
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Active slide */
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 1;
+    }
+
+    /* Vertical dots container */
+    .dots {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Dot style */
+    .dot {
+      width: 12px;
+      height: 12px;
+      margin: 6px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Active dot */
+    .dot.active {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <div class="slide active"><img src="image1.jpg" alt="Image 1"></div>
+    <div class="slide"><img src="image2.jpg" alt="Image 2"></div>
+    <div class="slide"><img src="image3.jpg" alt="Image 3"></div>
+  </div>
+
+  <!-- Vertical dot indicators -->
+  <div class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <script>
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        if (i === index) {
+          slide.classList.add('active');
+        } 
+      });
+
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    function nextSlide() {
+      slideIndex = (slideIndex + 1) % totalSlides;
+      showSlide(slideIndex);
+    }
+
+    // Initialize slider display
+    showSlide(slideIndex);
+
+    // Change slide every 5 seconds
+    setInterval(nextSlide, 5000);
+
+    // Click event for manual navigation
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        slideIndex = i;
+        showSlide(slideIndex);
+      });
+    });
+  </script>
+</body>
+</html>
