@@ -3,114 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZSCORE - Ultimate Engraving Service</title>
+    <title>ZSCORE - Precision Music Services</title>
     <link rel="stylesheet" href="CSS/styles.css">
     <link rel="icon" href="images/logo2.ico" type="image/x-icon">
 </head>
 <body>
     <header>
-        <h1 style="font-family: 'Courier New', Courier, monospace;">ZSCORE</h1>
-        <h3 style="margin-top: -40px; margin-bottom: -40px;">THE ART OF MUSIC NOTATION</h3>
-        <h1>●○</h1>
+        <h1>ZSCORE</h1>
+        <h3>THE ART OF MUSIC NOTATION</h3>
+        <div class="logo-separator">●○</div>
         <nav>
             <ul>
-                <li><a href="#home" onclick="showSection(event, 'home')">Home</a></li>
+                <li><a href="#home" onclick="showSection(event, 'home')" class="active-nav">Home</a></li>
                 <li><a href="#services" onclick="showSection(event, 'services')">Services</a></li>
+                <li><a href="#portfolio" onclick="showSection(event, 'portfolio')">Portfolio</a></li>
                 <li><a href="#about" onclick="showSection(event, 'about')">About</a></li>
                 <li><a href="#contact" onclick="showSection(event, 'contact')">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Main container for content -->
     <div class="container">
-        <!-- Home Section -->
-        <div id="home" class="section">
-            <p>
-                ZSCORE is a specialized studio for score engraving/editing, orchestration, audio programming, and custom tool development. We support composers, ensembles, and institutions working at the edge of contemporary music.
+        <div id="home" class="section visible">
+             <p>
+                ZSCORE delivers specialized services in score development, audio programming, and software engineering for the contemporary music landscape.
             </p>
             <p>
-                Our workflow integrates precision engraving with advanced automation, enabling fast turnaround and structural clarity even in the most complex projects. From large-scale operas to real-time audio systems, we provide exact technical execution aligned with your artistic intent.
+                Our approach combines meticulous engraving with advanced automation, ensuring rapid turnaround and structural integrity for even the most demanding projects. From large-scale operas to interactive audio systems, ZSCORE provides precise technical execution that aligns with artistic vision.
             </p>
             <p>
-                Built by composers, for composers. Efficient. Scalable. Reliable.
+                Engineered by composers, for musical innovation. Efficient. Scalable. Precise.
             </p>
-                        
         </div>
         
-        <!-- Texts Section -->
         <section id="services" class="section">
-            <h2>Services</h2>
-            
+            <h2>Core Services</h2>
             <div class="service">
-                <h3>Score Engraving</h3>
-                <p>High-precision digital engraving for contemporary works. Focus on clarity, structure, and performance readability. Supports advanced notation systems and large-scale formats. Output optimized for print and digital publication.</p>
+                <h3>Automated Score Engraving & Editorial</h3>
+                <p>High-precision digital engraving optimized for clarity and performance in complex contemporary notation. Services include part preparation, cue management, error correction, and layout optimization. Streamlined workflows support Sibelius, Lilypond, OpusModus, and MusicXML.</p>
             </div>
             <div class="service">
-                <h3>Score Editorial</h3>
-                <p>Critical editing and refinement of scores and performance materials. 
-                    Services include part preparation, cue managments, error correction, layout optimization, notation consistency, 
-                    and integration of editorial guidelines. Suitable for new works, revised editions, and archival reconstruction. 
-                    Precision-focused and performance-ready output for ensembles, publishers, and institutions.</p>
+                <h3>Engraving Automation Development</h3>
+                <p>Custom software tools designed to automate score editing, layout, and formatting. These solutions minimize repetitive tasks, reduce error rates, and integrate seamlessly into existing production environments for composers and publishers.</p>
             </div>
             <div class="service">
-                <h3>Engraving and Editorial Automation</h3>
-                <p>Custom-built tools to accelerate input, editing, layout, and formatting. Automation minimizes manual tasks and error rates. Designed for composers, editors, and publishers working with large volumes or tight deadlines.</p>
-            </div>
-            
-            <div class="service">
-                <h3>Computer-Assisted Orchestration</h3>
-                <p>Rule-based orchestration systems for translating sketches and concepts into structured scores. Ideal for complex instrumentation, dense textures, or rapid development cycles.</p>
-            </div>
-            
-            <div class="service">
-                <h3>Audio Programming</h3>
-                <p>Modular real-time systems for live electronics, spatialization, and generative sound. Designed for integration with composition and performance environments. Built using Max/MSP, Pure Data, and custom frameworks.</p>
-            </div>
-            
-            <div class="service">
-                <h3>Custom Software Tools</h3>
-                <p>Browser-based and standalone applications for notation, harmony, tuning, and interaction. Built with composers in mind. Focused on usability, precision, and workflow enhancement.</p>
-            </div>
-            
-            <div class="service">
-                <h3>Technical Consulting</h3>
-                <p>Problem-solving for notation systems, plugin development, score formatting, and performance logistics. Adaptable to project-specific needs. Efficient, code-level solutions.</p>
+                <h3>Computer-Assisted Orchestration & Notation</h3>
+                <p>Development of rule-based systems for rapid orchestration and structured scoring. These tools align with compositional logic, reducing manual orchestration time while preserving artistic control, ideal for large-scale works and tight deadlines.</p>
             </div>
             <div class="service">
-                <h3>Content Creating for Social Media</h3>
-                <p>Design and production of specialized content for composers, performers, and institutions aiming to present complex musical work effectively online. Includes score-based animations, patch demonstrations, behind-the-scenes workflows, and process breakdowns. Focus on clarity, technical depth, and aesthetic precision. Optimized for platforms such as Instagram, YouTube, and Vimeo.</p>
-              </div>
-              
-
+                <h3>Audio Programming & System Design</h3>
+                <p>Modular real-time systems for live electronics, spatialization, and generative sound. Built in Max/MSP, Pure Data, and custom frameworks, adaptable for solo, chamber, and multichannel setups.</p>
+            </div>
+            <div class="service">
+                <h3>Custom Music Software Tools</h3>
+                <p>Bespoke web-based and standalone applications for harmony, tuning, notation, and interactive musical experiences. Interfaces are intuitively designed for composers and performers, supporting experimentation and enhancing workflows using JavaScript and Python.</p>
+            </div>
+             <div class="service">
+                <h3>Technical Consulting & Content Creation</h3>
+                <p>Expert problem-solving for notation systems, plugin development, and performance logistics. Specialized content creation for social media, including score animations and technical demonstrations, designed to present complex musical work effectively online.</p>
+            </div>
         </section>
 
-        <!-- Tools Section -->
-        <section id="tools" class="section">
-            <h2>Tools</h2>
-            <p>Details about tools and utilities...</p>
+        <section id="portfolio" class="section">
+            <h2>Selected Projects</h2>
+            <p>A showcase of ZSCORE's capabilities in engraving, software development, and audio programming.</p>
+            <div class="portfolio-grid" id="portfolioGrid">
+                <p>Loading portfolio...</p> 
+            </div>
         </section>
 
-        <!-- About Section -->
         <section id="about" class="section">
-            <h2>About</h2>
-            <p>
-                We are a collective engraving and editorial studio specialized in serving composers, orchestras, and ensembles working at the forefront of contemporary music. Our focus is on delivering high-efficiency workflows, structural clarity, and technical precision across all aspects of score preparation and production.  
+            <h2>About ZSCORE</h2>
+             <p>
+                ZSCORE was founded by Parham Behzad, a multidisciplinary composer, audio programmer, and software developer. With a foundation in both advanced composition and computer science, ZSCORE operates at the intersection of musical artistry and technological precision.
             </p>
             <p>
-                With a background in both advanced composition and software development, our team integrates automation and custom tooling into every stage of the editorial process—engraving, orchestration, layout, and audio integration—minimizing manual repetition while maximizing accuracy and interpretability.
+                Our studio specializes in high-efficiency workflows for score preparation, custom software development for musical applications, and audio system design. We leverage automation and bespoke tooling to enhance accuracy, speed, and structural clarity in every project. ZSCORE has contributed to projects for internationally recognized composers and institutions, including Notengrafik Berlin and the Staatsoper Berlin.
             </p>
-            <p>
-                Whether for complex chamber works, large-scale opera, electroacoustic setups, or institutional publishing, we provide reliable, fast, and exact solutions tailored to each project’s demands.
+             <p>
+                The ethos of ZSCORE is to provide reliable, exact, and innovative solutions, enabling composers and musical organizations to realize complex artistic visions with technical excellence.
             </p>
         </section>
 
-        <!-- Contact Section -->
         <section id="contact" class="section">
             <h2>Contact</h2>
-            <p><a href="mailto:info@zscore.art">info@zscore.art</a>
+            <p>For collaborations, inquiries, or project discussions:</p>
+            <p><a href="mailto:info@zscore.art">info@zscore.art</a><br>
+               <a href="mailto:parham.behzad@outlook.com">parham.behzad@outlook.com</a></p>
             <p><a href="tel:+4915734531208">+49 1573 4531208</a></p>
+            <p>
+                <a href="https://www.parhambehzad.com" target="_blank" style="margin-right: 15px;">Personal Website</a>
+                <a href="YOUR_SOUNDCLOUD_LINK_HERE" target="_blank">SoundCloud</a> {/* Update SoundCloud Link */}
+            </p>
         </section>
+    </div>
+
+    <footer>
+        <p>© <span id="currentYear"></span> ZSCORE. All rights reserved.</p>
+    </footer>
+    
+    <div id="imageLightbox" class="lightbox">
+        <span class="prev" id="lightboxPrev" title="Previous image">&#10094;</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <span class="next" id="lightboxNext" title="Next image">&#10095;</span>
+        <div class="lightbox-caption" id="caption"></div>
     </div>
 
     <script src="js/scripts.js"></script>
