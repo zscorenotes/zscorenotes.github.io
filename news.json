@@ -1,36 +1,5 @@
 [
   {
-    "id": "zscore-art-launch-promo-composers-2025",
-    "title": "Exciting News! zscore.art is Live + Exclusive Offer for Composers!",
-    "date": "2025-05-24",
-    "coverImage": "images/feeds/cover02.png",
-    "summary": "zscore.art has launched! To celebrate, we're offering an exclusive 50% discount on our services for two composers. Visit our contact page to claim this limited offer.",
-    "author": "ZSCORE Team",
-    "tags": ["Launch", "Promotion", "Composers", "Discount", "Contemporary Music", "Special Offer"],
-    "contentBlocks": [
-      {
-        "type": "text",
-        "value": "We're thrilled to announce that [zscore.art](http://www.zscore.art) is officially live!"
-      },
-      {
-        "type": "text",
-        "value": "At zscore.art, we are a specialized studio dedicated to serving composers, orchestras, and ensembles working at the forefront of contemporary music. Explore our range of services designed to bring your artistic intent to life with technical precision:\n\n* **Score Engraving & Editing:** Meticulous digital engraving and critical refinement for contemporary compositions.\n* **Computer-Assisted Engraving:** Innovative rule-based systems to help translate your sketches and musical concepts into fully realized scores.\n* **Custom Software Tools:** Bespoke browser-based and standalone applications for notation, harmony, tuning, and interactive musical experiences.\n* **Technical Consulting:** Expert guidance for notation systems, plugin development, score formatting, and performance logistics.\n* **Social Media Content Creation:** Engaging content design and production to effectively present complex musical works online."
-      },
-      {
-        "type": "text",
-        "value": "### Special Launch Celebration: 50% Off for Two Composers!\n\nTo celebrate our launch, we're excited to offer an exclusive **50% discount** on our services for **two composers**! This is a unique opportunity to benefit from our specialized expertise for your upcoming projects."
-      },
-      {
-        "type": "text",
-        "value": "**Are you a composer ready to elevate your work?**\n\nThis limited offer is just for you! To be one of the two composers to secure this 50% discount:\n\n1.  Visit our **Contact Page** on [zscore.art](http://www.zscore.art).\n2.  Mention this launch promotion when you get in touch to inquire about your project."
-      },
-      {
-        "type": "text",
-        "value": "Don't miss out on this chance to collaborate with a team dedicated to the precise technical execution of your artistic vision.\n\nWe're eager to hear about your projects!"
-      }
-    ]
-  },
-  {
     "id": "zscore-art-official-launch-welcome",
     "title": "Welcome to zscore.art - We Are Officially Live!",
     "date": "2025-05-23",
