@@ -1,0 +1,66 @@
+[
+    {
+      "id": "new-service-launch-2024",
+      "title": "ZSCORE Launches New Automated Score Proofreading Service",
+      "date": "2024-05-23",
+      "coverImage": "images/news/score-proofreading-promo.png",
+      "summary": "Leveraging advanced AI and meticulous human oversight, ZSCORE now offers an unparalleled score proofreading service designed to catch even the most subtle errors in complex musical notations.",
+      "author": "ZSCORE Team",
+      "tags": ["New Service", "Engraving", "AI", "Proofreading"],
+      "contentBlocks": [
+        {
+          "type": "text",
+          "value": "We are thrilled to announce the official launch of our new Automated Score Proofreading Service! After months of development and rigorous testing, this service combines the power of cutting-edge AI with the irreplaceable expertise of our seasoned musicologists and engravers."
+        },
+        {
+          "type": "image",
+          "src": "images/news/ai-music-analysis.png",
+          "alt": "Abstract representation of AI analyzing musical score",
+          "align": "right",
+          "width": "40%",
+          "caption": "Our AI diligently scans scores for inconsistencies."
+        },
+        {
+          "type": "text",
+          "value": "The modern composer and publisher face immense pressure to deliver flawless scores under tight deadlines. Our new service addresses this by providing a multi-layered approach to error detection. The AI component can rapidly scan entire orchestral scores, identifying potential issues in notation, harmony, rhythm, and formatting. This initial pass is then meticulously reviewed and verified by our human experts, ensuring accuracy and musical context are always maintained.\n\nKey features include:\n- Detection of common engraving errors.\n- Rhythmic and harmonic analysis.\n- Cross-checking of parts against the full score.\n- Customizable rule sets for specific compositional styles."
+        },
+        {
+          "type": "text",
+          "value": "We believe this service will be a game-changer for composers, arrangers, and publishing houses, significantly reducing the time and cost associated with traditional proofreading methods while enhancing the quality of the final product. Visit our services page to learn more or request a demo!"
+        }
+      ]
+    },
+    {
+      "id": "workshop-contemporary-notation-berlin",
+      "title": "Upcoming Workshop: Navigating Contemporary Notation",
+      "date": "2024-06-15",
+      "coverImage": "images/news/workshop-banner.png",
+      "summary": "Join Parham Behzad for an intensive workshop in Berlin, exploring the challenges and solutions in notating and performing contemporary music. Limited spots available!",
+      "author": "Parham Behzad",
+      "tags": ["Workshop", "Contemporary Music", "Notation", "Berlin", "Education"],
+      "contentBlocks": [
+        {
+          "type": "text",
+          "value": "Mark your calendars! Parham Behzad will be leading a special workshop titled \"Navigating Contemporary Notation\" on July 5th, 2024, in Berlin. This full-day session is designed for composers, performers, and music students eager to deepen their understanding of modern notational practices."
+        },
+        {
+          "type": "image",
+          "src": "images/news/contemporary-score-example.png",
+          "alt": "Example of complex contemporary music notation",
+          "align": "center",
+          "width": "70%",
+          "caption": "Exploring complex scores and their interpretation."
+        },
+        {
+          "type": "text",
+          "value": "The workshop will cover:\n- Advanced rhythmic and tuplets.\n- Microtonal notation systems (including HEJI).\n- Extended techniques for various instruments.\n- Best practices for clarity and performer-friendliness.\n- Software tools and engraving tips for complex scores.\n\nParticipants will have the opportunity to analyze scores, discuss challenges, and work on practical examples. Registration is now open, but spots are limited. Please see the link below for more details and to sign up."
+        },
+        {
+          "type": "link_button",
+          "url": "#",
+          "text": "Register for the Workshop Here"
+        }
+      ]
+    }
+  ]
+  

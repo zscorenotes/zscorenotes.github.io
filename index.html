@@ -14,11 +14,12 @@
         <div class="logo-separator">●○</div>
         <nav>
             <ul>
-                <li><a href="#home" onclick="showSection(event, 'home')" class="active-nav">Home</a></li>
-                <li><a href="#services" onclick="showSection(event, 'services')">Services</a></li>
-                <li><a href="#portfolio" onclick="showSection(event, 'portfolio')">Portfolio</a></li>
-                <li><a href="#about" onclick="showSection(event, 'about')">About</a></li>
-                <li><a href="#contact" onclick="showSection(event, 'contact')">Contact</a></li>
+                <li><a href="#home" class="active-nav">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#news">Feeds</a></li> 
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
     </header>
@@ -66,12 +67,19 @@
 
         <section id="portfolio" class="section">
             <h2>Selected Projects</h2>
-            <p>A showcase of ZSCORE's capabilities in engraving, software development, and audio programming.</p>
+            <p>A showcase of ZSCORE's capabilities in engraving, software development, and audio programming. Click on a project to learn more.</p>
             <div class="portfolio-grid" id="portfolioGrid">
                 <p>Loading portfolio...</p> 
             </div>
         </section>
 
+        <section id="news" class="section">
+            <h2>Latest News & Updates</h2>
+            <p>Stay informed about ZSCORE's latest activities, service updates, and insights.</p>
+            <div class="news-grid" id="newsGrid">
+                <p>Loading news...</p>
+                </div>
+        </section>
         <section id="about" class="section">
             <h2>About ZSCORE</h2>
              <p>
@@ -93,7 +101,6 @@
             <p><a href="tel:+4915734531208">+49 1573 4531208</a></p>
             <p>
                 <a href="https://www.parhambehzad.com" target="_blank" style="margin-right: 15px;">Personal Website</a>
-                <!-- <a href="YOUR_SOUNDCLOUD_LINK_HERE" target="_blank">SoundCloud</a> {/* Update SoundCloud Link */} -->
             </p>
         </section>
     </div>
@@ -102,13 +109,6 @@
         <p>© <span id="currentYear"></span> ZSCORE. All rights reserved.</p>
     </footer>
     
-    <div id="imageLightbox" class="lightbox">
-        <span class="prev" id="lightboxPrev" title="Previous image">&#10094;</span>
-        <img class="lightbox-content" id="lightboxImg">
-        <span class="next" id="lightboxNext" title="Next image">&#10095;</span>
-        <div class="lightbox-caption" id="caption"></div>
-    </div>
-
     <script src="js/scripts.js"></script>
 </body>
 </html>

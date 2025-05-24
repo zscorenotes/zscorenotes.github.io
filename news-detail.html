@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Article - ZSCORE</title> 
+    <link rel="stylesheet" href="CSS/styles.css">
+    <link rel="icon" href="images/logo2.ico" type="image/x-icon">
+    <style>
+        body { display: block; }
+        .project-detail-site-header {
+            text-align: center;
+            padding-top: 2rem; /* Add some spacing from the top */
+            margin-bottom: 1rem; /* Space before the nav */
+        }
+        .project-detail-site-header h1 {
+            font-family: var(--header-font); /* Uses variable from main CSS */
+            font-size: 4rem; /* More modest size for sub-page */
+            font-weight: 700;
+            margin-bottom: 0.25rem; /* Reduced margin */
+            margin-top: 0;
+            color: var(--primary-text); /* Ensure it uses the theme color */
+            /* animation: flicker 180s infinite alternate; /* Optional: remove flicker for sub-pages if distracting */
+        }
+        .project-detail-site-header .logo-separator {
+            font-family: var(--body-font); /* Uses variable from main CSS */
+            font-size: 1.5rem; /* More modest size */
+            font-weight: 700;
+            margin: 0.5rem 0 1rem 0; /* Adjusted margins */
+            color: var(--primary-text);
+        }
+                .project-detail-site-header a { /* Style for the ZSCORE link */
+            text-decoration: none;
+            color: inherit; /* Inherits color from h1 */
+        }
+        .detail-page-nav { 
+            width: 100%;
+            padding: 1rem 0;
+            text-align: center;
+            background-color: var(--primary-bg);
+            border-top: 1px solid var(--border-color); /* Add top border */
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .detail-page-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .detail-page-nav a:hover {
+            color: var(--primary-text);
+            border-bottom-color: var(--primary-text);
+        }
+
+        .news-detail-container {
+            width: 85%;
+            max-width: 900px; 
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .news-detail-header h1 {
+            font-family: var(--header-font);
+            font-size: 2.8rem; 
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        .news-detail-meta-info {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+        .news-detail-meta-info .author {
+            margin-left: 1em;
+        }
+        
+        .news-detail-content .content-block-text p {
+             color: var(--secondary-text);
+             font-size: 1rem; 
+             line-height: 1.8;
+        }
+        .news-detail-content .link-button-container { 
+            margin: 1.5rem 0;
+            text-align: center; 
+        }
+        .news-detail-content .link-button-container a {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+         .news-detail-content .link-button-container a:hover {
+            background-color: var(--primary-text);
+        }
+
+        .news-detail-tags-container { 
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+         .news-detail-tags-container h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-text);
+        }
+
+        .back-to-news-container { 
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .back-to-news-container a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--accent-color);
+        }
+        .back-to-news-container a:hover {
+            color: var(--primary-text);
+            border-bottom-style: solid;
+        }
+    </style>
+</head>
+<body>
+    <header class="project-detail-site-header">
+        <a href="index.html#home">
+            <h1>ZSCORE</h1>
+        </a>
+        <div class="logo-separator">●○</div>
+    </header>
+    <div class="project-detail-nav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#news">Back to News</a>
+        <a href="index.html#contact">Contact</a>
+    </div>
+
+    <div class="news-detail-container" id="newsDetailContainer">
+        <p>Loading article...</p>
+    </div>
+
+    <footer>
+        <p>© <span id="currentYear"></span> ZSCORE. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function setCurrentYear() {
+            const yearSpan = document.getElementById('currentYear');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
+        async function loadNewsArticle() {
+            const newsDetailContainer = document.getElementById('newsDetailContainer');
+            if (!newsDetailContainer) return;
+
+            const params = new URLSearchParams(window.location.search);
+            const articleId = params.get('id');
+
+            if (!articleId) {
+                newsDetailContainer.innerHTML = "<p>Article ID not found. Please return to <a href='index.html#news'>the news page</a>.</p>"; // Updated link
+                return;
+            }
+
+            try {
+                const response = await fetch('news.json');
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const newsData = await response.json();
+                const article = newsData.find(item => item.id === articleId);
+
+                if (article) {
+                    document.title = `${article.title} - ZSCORE News`;
+
+                    let contentHTML = '';
+                    if (article.contentBlocks && article.contentBlocks.length > 0) {
+                        article.contentBlocks.forEach(block => {
+                            if (block.type === 'text') {
+                                contentHTML += `<div class="content-block-text"><p>${block.value.replace(/\n/g, '<br>')}</p></div>`;
+                            } else if (block.type === 'image') {
+                                let imageStyle = '';
+                                if (block.width) imageStyle += `width: ${block.width};`;
+                                let alignClass = '';
+                                if (block.align === 'left') alignClass = 'image-float-left';
+                                else if (block.align === 'right') alignClass = 'image-float-right';
+                                else if (block.align === 'center') alignClass = 'image-center-block';
+
+                                if (block.caption) {
+                                    contentHTML += `
+                                        <figure class="content-block-figure ${alignClass}" style="${imageStyle ? imageStyle.replace(/width:[^;]+;?/g, '') : ''}">
+                                            <img src="${block.src}" alt="${block.alt || article.title + ' image'}" style="${imageStyle}">
+                                            <figcaption>${block.caption}</figcaption>
+                                        </figure>`;
+                                } else {
+                                    contentHTML += `<img src="${block.src}" alt="${block.alt || article.title + ' image'}" class="${alignClass}" style="${imageStyle}">`;
+                                }
+                            } else if (block.type === 'link_button') {
+                                contentHTML += `<div class="link-button-container"><a href="${block.url}" target="_blank">${block.text}</a></div>`;
+                            }
+                        });
+                    }
+
+                    let tagsHTML = '';
+                    if (article.tags && article.tags.length > 0) {
+                        tagsHTML = `<div class="news-detail-tags-container"><h3>Tags:</h3>
+                                        ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                    </div>`;
+                    }
+                    
+                    const formattedDate = new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    newsDetailContainer.innerHTML = `
+                        <div class="news-detail-header">
+                            <h1>${article.title}</h1>
+                        </div>
+                        <div class="news-detail-meta-info">
+                            <span class="date">Published: ${formattedDate}</span>
+                            ${article.author ? `<span class="author">By: ${article.author}</span>` : ''}
+                        </div>
+                        <div class="news-detail-content">
+                            ${contentHTML}
+                            <div style="clear: both;"></div> 
+                        </div>
+                        ${tagsHTML}
+                        <div class="back-to-news-container">
+                            <a href="index.html#news">← Back to News</a> </div>
+                    `;
+
+                    setTimeout(() => {
+                        const mainContentElement = document.getElementById('newsDetailContainer');
+                        if (mainContentElement) {
+                            const elementRect = mainContentElement.getBoundingClientRect();
+                            const absoluteElementTop = elementRect.top + window.pageYOffset;
+                            let headerOffset = 0;
+                            const siteHeader = document.querySelector('.site-header-generic');
+                            const detailNav = document.querySelector('.detail-page-nav');
+                            if(siteHeader) headerOffset += siteHeader.offsetHeight;
+                            if(detailNav) headerOffset += detailNav.offsetHeight;
+                            
+                            window.scrollTo({
+                                top: absoluteElementTop - headerOffset - 20, // 20px for extra margin
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 100);
+
+                } else {
+                    newsDetailContainer.innerHTML = "<p>Article not found. Please return to <a href='index.html#news'>the news page</a>.</p>"; // Updated link
+                }
+            } catch (error) {
+                console.error('Failed to load news article:', error);
+                newsDetailContainer.innerHTML = "<p>Could not load article. Please try again later.</p>";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setCurrentYear();
+            loadNewsArticle();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - ZSCORE</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <link rel="icon" href="images/logo2.ico" type="image/x-icon">
+    <style>
+        /* Styles specific to project-detail page are now primarily in styles.css */
+        /* Keeping body override here for now if it was specifically needed */
+        body {
+            display: block; 
+        }
+
+        /* Header for ZSCORE Title and Logo on Project Detail Page */
+        .project-detail-site-header {
+            text-align: center;
+            padding-top: 2rem; /* Add some spacing from the top */
+            margin-bottom: 1rem; /* Space before the nav */
+        }
+        .project-detail-site-header h1 {
+            font-family: var(--header-font); /* Uses variable from main CSS */
+            font-size: 4rem; /* More modest size for sub-page */
+            font-weight: 700;
+            margin-bottom: 0.25rem; /* Reduced margin */
+            margin-top: 0;
+            color: var(--primary-text); /* Ensure it uses the theme color */
+            /* animation: flicker 180s infinite alternate; /* Optional: remove flicker for sub-pages if distracting */
+        }
+        .project-detail-site-header .logo-separator {
+            font-family: var(--body-font); /* Uses variable from main CSS */
+            font-size: 1.5rem; /* More modest size */
+            font-weight: 700;
+            margin: 0.5rem 0 1rem 0; /* Adjusted margins */
+            color: var(--primary-text);
+        }
+        .project-detail-site-header a { /* Style for the ZSCORE link */
+            text-decoration: none;
+            color: inherit; /* Inherits color from h1 */
+        }
+
+
+        .project-detail-nav {
+            width: 100%;
+            padding: 1rem 0;
+            text-align: center;
+            background-color: var(--primary-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .project-detail-nav a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+        }
+        .project-detail-nav a:hover {
+            color: var(--primary-text);
+            border-bottom-color: var(--primary-text);
+        }
+        /* Styles for image alignment and captions will be in styles.css */
+        /* .project-detail-content .content-block-text, .project-detail-content figure ... */
+    </style>
+</head>
+<body>
+    <header class="project-detail-site-header">
+        <a href="index.html#home">
+            <h1>ZSCORE</h1>
+        </a>
+        <div class="logo-separator">●○</div>
+    </header>
+    <div class="project-detail-nav">
+        <a href="index.html#home">Home</a>
+        <a href="index.html#portfolio">Back to Portfolio</a>
+        <a href="index.html#contact">Contact</a>
+    </div>
+
+    <div class="project-detail-container" id="projectDetailContainer">
+        <p>Loading project details...</p>
+    </div>
+
+    <footer>
+        <p>© <span id="currentYear"></span> ZSCORE. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Set current year in footer
+        function setCurrentYear() {
+            const yearSpan = document.getElementById('currentYear');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+        }
+
+        async function loadProjectDetails() {
+            const projectDetailContainer = document.getElementById('projectDetailContainer');
+            if (!projectDetailContainer) {
+                console.error('Project detail container not found.');
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const projectId = params.get('id');
+
+            if (!projectId) {
+                projectDetailContainer.innerHTML = '<p>Project ID not found. Please return to the <a href="index.html#portfolio">portfolio</a>.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('portfolio.json'); // Ensure this path is correct
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const portfolioData = await response.json();
+                const project = portfolioData.find(p => p.id === projectId);
+
+                if (project) {
+                    document.title = `${project.title} - Project Details - ZSCORE`;
+
+                    let contentHTML = '';
+                    if (project.contentBlocks && project.contentBlocks.length > 0) {
+                        project.contentBlocks.forEach(block => {
+                            if (block.type === 'text') {
+                                contentHTML += `<div class="content-block-text"><p>${block.value.replace(/\n/g, '<br>')}</p></div>`;
+                            } else if (block.type === 'image') {
+                                let imageStyle = '';
+                                if (block.width) {
+                                    imageStyle += `width: ${block.width};`;
+                                }
+                                let alignClass = '';
+                                if (block.align === 'left') {
+                                    alignClass = 'image-float-left';
+                                } else if (block.align === 'right') {
+                                    alignClass = 'image-float-right';
+                                } else if (block.align === 'center') {
+                                    alignClass = 'image-center-block';
+                                }
+
+                                if (block.caption) {
+                                    contentHTML += `
+                                        <figure class="content-block-figure ${alignClass}" style="${imageStyle ? imageStyle.replace(/width:[^;]+;?/g, '') : ''}"> 
+                                            <img src="${block.src}" alt="${block.alt || project.title + ' image'}" style="${imageStyle}">
+                                            <figcaption>${block.caption}</figcaption>
+                                        </figure>`;
+                                } else {
+                                     contentHTML += `<img src="${block.src}" alt="${block.alt || project.title + ' image'}" class="${alignClass}" style="${imageStyle}">`;
+                                }
+                            }
+                        });
+                    } else {
+                        contentHTML = `<p>${project.summary || 'No detailed description available.'}</p>`;
+                    }
+
+                    let tagsHTML = '';
+                    if (project.tags && project.tags.length > 0) {
+                        project.tags.forEach(tag => {
+                            tagsHTML += `<span class="tag">${tag}</span>`;
+                        });
+                    }
+                    
+                    projectDetailContainer.innerHTML = `
+                        <div class="project-detail-header">
+                            <h1>${project.title}</h1>
+                        </div>
+                        <div class="project-detail-content">
+                            ${contentHTML}
+                            <div style="clear: both;"></div> 
+                        </div>
+                        <div class="project-detail-meta"> ${tagsHTML ? `<div class="project-tags-container"><h3>Tags:</h3>${tagsHTML}</div>` : ''}
+                            ${project.link ? `
+                                <div class="project-link-container">
+                                    <a href="${project.link}" target="_blank">${project.linkText || 'View Project Details / Source'}</a>
+                                </div>` : ''}
+                        </div>
+                        <div class="back-to-portfolio-container">
+                            <a href="index.html#portfolio">← Back to Portfolio</a>
+                        </div>
+                    `;
+
+                    // Scroll to the project content after it's loaded
+                    // A slight delay can sometimes help ensure all rendering is complete
+                    setTimeout(() => {
+                        const mainContentElement = document.getElementById('projectDetailContainer');
+                        if (mainContentElement) {
+                           // Calculate the position of the element relative to the document
+                            const elementRect = mainContentElement.getBoundingClientRect();
+                            const absoluteElementTop = elementRect.top + window.pageYOffset;
+                            
+                            // You might want to adjust for any fixed headers if scrollIntoView isn't perfect
+                            // For now, a direct scroll to the element's top
+                            window.scrollTo({
+                                top: absoluteElementTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }, 100); // 100ms delay
+
+                } else {
+                    projectDetailContainer.innerHTML = '<p>Project not found. Please return to the <a href="index.html#portfolio">portfolio</a>.</p>';
+                }
+            } catch (error) {
+                console.error("Could not load project details:", error);
+                projectDetailContainer.innerHTML = "<p>Error loading project details. Please try again or return to the <a href='index.html#portfolio'>portfolio</a>.</p>";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setCurrentYear();
+            loadProjectDetails();
+        });
+    </script>
+</body>
+</html>

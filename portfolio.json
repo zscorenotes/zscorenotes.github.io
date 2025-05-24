@@ -1,53 +1,53 @@
 [
-    {
-      "id": "shpilman-opera",
-      "title": "IMPACT by Amir Shpilman",
-      "coverImage": "images/shpilman-opera-chaos.png",
-      "images": [
-        "images/shpilman-opera-chaos.png",
-        "images/shpilman-opera-stage-mat.png",
-        "images/pb-orchestra-utility-plugin.png"
-      ],
-      "description": "Engraving and computer-assisted orchestration for a new opera featuring orchestra and two stuntwomen. Developed a custom Sibelius plugin to systematically orchestrate and notate material in real-time, streamlining production.",
-      "tags": ["Engraving", "Orchestration", "Sibelius Plugin", "Opera"],
-      "link": "https://www.cultopia.gr/projects/Impact",
-      "linkText": "Project Link"
-    },
-    {
-        "id": "shpilman-opera2",
-        "title": "choir work by Amir Shpilman",
-        "coverImage": "images/shpilman-opera-chaos.png",
-        "images": [
-          "images/shpilman-opera-chaos.png",
-          "images/shpilman-opera-stage-mat.png",
-          "images/pb-orchestra-utility-plugin.png"
-        ],
-        "description": "Engraving and computer-assisted orchestration for a new opera featuring orchestra and two stuntwomen. Developed a custom Sibelius plugin to systematically orchestrate and notate material in real-time, streamlining production.",
-        "tags": ["Engraving", "Orchestration", "Sibelius Plugin", "Opera"],
-        "link": "https://www.cultopia.gr/projects/Impact",
-        "linkText": "Project Link"
-    },
-    {
-      "id": "shpilman-kriat-shema",
-      "title": "\"Kriat Shema\" by Amir Shpilman",
-      "coverImage": "images/shpilman-kriat-shema.png",
-      "images": [
-        "images/shpilman-kriat-shema.png"
-      ],
-      "description": "Score and parts preparation for a new orchestral piece, \"Kriat Shema - Fantasy for Shofar and Orchestra,\" premiered by the Berlin Philharmonic.",
-      "tags": ["Engraving", "Orchestral", "Performance Materials"],
-      "link": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
-      "linkText": "Listen Here (Placeholder)"
-    },
-    {
-      "id": "sibelius-plugins",
-      "title": "Custom Sibelius® Plugins",
-      "coverImage": "images/sibelius-plugins-montage.png",
-      "images": [
-        "images/sibelius-plugins-montage.png"
-      ],
-      "description": "Development of various plugins for Sibelius to enhance workflow, including layout importation, text manipulation, hairpin correction, microtonal accidental insertion (HEJI), and specialized tools for composers like Laure M. Hiendl.",
-      "tags": ["Software Development", "Sibelius", "Automation"],
-      "link": null
-    }
-  ]
+  {
+    "id": "shpilman-opera",
+    "title": "IMPACT by Amir Shpilman",
+    "coverImage": "images/IMPACT/project_39_photo_20230314192747.jpg",
+    "summary": "Engraving and computer-assisted orchestration for a new opera. Developed a custom Sibelius plugin for real-time material orchestration.",
+    "contentBlocks": [
+      {
+        "type": "text",
+        "value": "IMPACT by Amir Shpilman represents a significant project in contemporary opera. My role involved meticulous engraving of the score and the development of computer-assisted orchestration techniques. This opera uniquely featured an orchestra and two stuntwomen, demanding innovative approaches to notation and material preparation."
+      },
+      {
+        "type": "image",
+        "src": "images/IMPACT/1.png",
+        "alt": "Scene from IMPACT opera showing complex staging",
+        "align": "right",
+        "width": "45%",
+        "caption": ""
+      },
+      {
+        "type": "text",
+        "value": "A key challenge was the rapid generation and adaptation of musical material. To address this, I developed a custom Sibelius plugin. This tool allowed for the systematic orchestration and notation of material in real-time, which was crucial for streamlining the production process and meeting tight deadlines. The plugin integrated directly with the composer's workflow, providing a powerful assistant for complex orchestrational tasks. The visual complexity of the score required precise digital tools, and the plugin helped manage this effectively, allowing for quick iterations and adjustments based on rehearsal feedback. This technological integration was vital to the project's success, enabling a fluid collaboration between the composer, performers, and the technical team. The stuntwomen's actions were also intricately timed with the music, adding another layer of complexity that the engraving and orchestration tools helped to manage."
+      },
+      {
+        "type": "image",
+        "src": "images/IMPACT/2.png",
+        "alt": "Close-up of the custom Sibelius plugin interface",
+        "align": "left",
+        "width": "35%",
+        "caption": ""
+      },
+      {
+        "type": "text",
+        "value": "Further details about the performance and its reception can be found on the official project page. The development of such tools not only aids in specific projects but also contributes to a broader understanding of how technology can serve artistic expression in contemporary music. This project was a testament to that synergy. The score itself was over 300 pages, and managing such a volume of detailed notation under pressure was a significant part of the work."
+      },
+      {
+        "type": "image",
+        "src": "images/IMPACT/3.png",
+        "alt": "Another score example from IMPACT",
+        "align": "center",
+        "width": "60%",
+        "caption": ""
+      },
+      {
+        "type": "text",
+        "value": "You can see more about the project via the official link."
+      }
+    ],
+    "tags": ["Engraving", "Orchestration", "Sibelius Plugin", "Opera"],
+    "link": "https://www.cultopia.gr/projects/Impact",
+    "linkText": "View Project on Cultopia"
+  }
+]

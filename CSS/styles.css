@@ -14,22 +14,18 @@ body {
   background-color: var(--primary-bg);
   color: var(--primary-text);
   font-family: var(--body-font);
-  font-weight: 300; /* Slightly lighter default font weight */
+  font-weight: 300;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
   line-height: 1.6;
 }
 
-.container {
-  width: 85%; /* Slightly wider for better content flow */
-  max-width: 900px; /* Increased max-width */
+.container { 
+  width: 85%;
+  max-width: 900px;
   min-width: 300px;
   margin: 0 auto;
-  padding: 0 1rem; /* Add some horizontal padding */
+  padding: 0 1rem;
 }
 
 header {
@@ -37,48 +33,59 @@ header {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-top: 6rem; /* Reduced top margin */
-  margin-bottom: 3rem; /* Added bottom margin for spacing */
+  margin-top: 6rem;
+  margin-bottom: 3rem;
+  width: 100%;
 }
 
 header h1 {
   font-family: var(--header-font);
-  font-size: 10rem; /* Adjusted size */
+  font-size: 10rem;
   font-weight: 700;
   margin-bottom: 0;
   margin-top: 0;
-  animation: flicker 180s infinite alternate; /* Smoother flicker */
+  animation: flicker 180s infinite alternate;
 }
 
 header h3 {
   font-family: var(--body-font);
-  font-weight: 200; /* Lighter weight for subtitle */
+  font-weight: 200;
   font-size: 1.2rem;
-  letter-spacing: 0.1em; /* Added letter spacing */
-  margin-top: -20px; /* Adjusted for better flow with h1 */
-  margin-bottom: 10px; /* Adjusted for better flow with h1 */
+  letter-spacing: 0.1em;
+  margin-top: -20px;
+  margin-bottom: 10px;
   color: var(--secondary-text);
 }
 
-header .logo-separator { /* New class for ●○ */
-  font-family: var(---font);
-  font-size: 10rem;
+header .logo-separator {
+  font-family: var(--body-font); 
+  font-size: 2rem; 
   font-weight: 700;
-  margin: 0rem 0 1.5rem 0; /* Adjusted margins */
+  margin: 1rem 0 1.5rem 0;
   color: var(--primary-text);
 }
 
+header nav { 
+  width: 100%;
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-bg);
+  z-index: 900;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
 
-nav ul {
+header nav ul {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 2.5rem; /* Increased gap */
-  padding: 0; /* Removed default padding */
+  gap: 2.5rem;
+  padding: 0;
   margin: 0;
 }
 
-nav ul li a {
+header nav ul li a {
   color: var(--primary-text);
   text-decoration: none;
   font-weight: 400;
@@ -89,31 +96,33 @@ nav ul li a {
   border-bottom: 2px solid transparent;
 }
 
-nav ul li a:hover,
-nav ul li a.active-nav { /* Added class for active navigation item */
+header nav ul li a:hover,
+header nav ul li a.active-nav {
   color: var(--accent-color);
   border-bottom-color: var(--accent-color);
 }
 
-/* Sections */
 .section {
-  display: none; /* Initially hidden */
-  width: 100%;
-  margin: 3rem auto; /* Increased top/bottom margin */
-  padding: 2rem 0; /* Added vertical padding */
+  display: none; 
+  margin: 0 auto; 
+  padding: 3rem 0; 
   text-align: left;
-  border-top: 1px solid var(--border-color); /* Subtle separator */
+  border-top: 1px solid var(--border-color);
+}
+.section:first-of-type { 
+    border-top: none;
 }
 
 .section.visible {
   display: block;
-  animation: fadeIn 0.5s ease-out; /* Fade in animation */
+  animation: fadeIn 0.5s ease-out;
 }
 
 .section h2 {
   font-family: var(--header-font);
   font-size: 2.5rem;
   font-weight: 700;
+  margin-top: 0;
   margin-bottom: 2rem;
   text-align: center;
   color: var(--accent-color);
@@ -138,11 +147,10 @@ nav ul li a.active-nav { /* Added class for active navigation item */
   border-bottom-style: solid;
 }
 
-/* Service items specific styling */
 .service {
   margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px dashed var(--border-color); /* Lighter separator for services */
+  border-bottom: 1px dashed var(--border-color);
 }
 
 .service:last-child {
@@ -153,29 +161,30 @@ nav ul li a.active-nav { /* Added class for active navigation item */
 .service h3 {
   font-family: var(--body-font);
   font-size: 1.3rem;
-  font-weight: 500; /* Medium weight for service titles */
+  font-weight: 500;
   margin-bottom: 0.75rem;
   color: var(--primary-text);
 }
 
-/* Portfolio Section Styling */
-#portfolio {
+#portfolio, #news { /* Apply to both portfolio and news sections on index.html */
   text-align: center;
 }
 
-.portfolio-grid {
+.portfolio-grid, .news-grid { /* Apply to both grids on index.html */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
 }
 
-.portfolio-item {
+.portfolio-item { /* This class is used for both portfolio and news cards */
   background-color: var(--primary-bg);
   border: 1px solid var(--border-color);
   text-align: left;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden; /* To contain the image */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .portfolio-item:hover {
@@ -183,16 +192,36 @@ nav ul li a.active-nav { /* Added class for active navigation item */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
-.portfolio-item img.portfolio-thumbnail { /* Class for thumbnail image */
-  width: 100%;
-  height: 200px; /* Fixed height for thumbnails */
-  object-fit: cover; /* Ensures image covers the area, might crop */
-  display: block;
-  border-bottom: 1px solid var(--border-color);
+.portfolio-item a.portfolio-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-.portfolio-item-content {
-  padding: 1.5rem;
+.portfolio-item img.portfolio-thumbnail, 
+.portfolio-item .placeholder-thumbnail { /* Style for actual image and placeholder */
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #f0f0f0; /* Background for placeholder */
+  text-align: center; /* Center text in placeholder */
+  line-height: 200px; /* Vertically center text in placeholder */
+  color: var(--secondary-text); /* Text color for placeholder */
+  font-size: 0.9rem;
+}
+
+
+.portfolio-item-content { 
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+}
+
+.portfolio-item-lower-content { 
+  padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .portfolio-item h4 {
@@ -204,29 +233,41 @@ nav ul li a.active-nav { /* Added class for active navigation item */
   color: var(--primary-text);
 }
 
-.portfolio-item p {
+.portfolio-item p { 
   font-size: 0.85rem;
   color: var(--secondary-text);
   margin-bottom: 1rem;
+  flex-grow: 1;
+}
+.portfolio-item p.news-date-summary { /* Specific for news card date */
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
 }
 
-.portfolio-tags {
-  margin-bottom: 1rem;
-}
 
-.portfolio-tags .tag {
+/* Global Tag Styling */
+.tag {
   display: inline-block;
   background-color: rgb(230, 230, 230);
   color: var(--secondary-text);
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
   border-radius: 3px;
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
   font-weight: 400;
 }
 
-.portfolio-item .portfolio-link {
+/* Tag Container on index.html cards (portfolio & news) */
+.portfolio-item .portfolio-tags {
+  margin-bottom: 1rem;
+  margin-top: 0.5rem; /* Add some top margin if needed */
+}
+
+
+.portfolio-item .portfolio-external-link,
+.portfolio-item .news-read-more-link { /* Style for "View Project" and "Read More" */
   display: inline-block;
   font-size: 0.85rem;
   font-weight: 500;
@@ -234,20 +275,19 @@ nav ul li a.active-nav { /* Added class for active navigation item */
   text-decoration: none;
   border-bottom: 1px solid var(--accent-color);
   transition: color 0.3s ease, border-bottom-color 0.3s ease;
+  margin-top: auto; 
 }
 
-.portfolio-item .portfolio-link:hover {
+.portfolio-item .portfolio-external-link:hover,
+.portfolio-item .news-read-more-link:hover {
   color: var(--primary-text);
   border-bottom-color: var(--primary-text);
 }
 
-
-/* Contact Section Specifics */
 #contact p {
     text-align: center;
 }
 
-/* Footer */
 footer {
   text-align: center;
   padding: 3rem 1rem;
@@ -255,180 +295,321 @@ footer {
   border-top: 1px solid var(--border-color);
   color: var(--secondary-text);
   font-size: 0.85rem;
-}
-/* Lightbox Styling */
-.lightbox {
-  display: none; /* Hidden by default */
-  position: fixed;
-  z-index: 1000; /* Ensure it's on top */
-  left: 0;
-  top: 0;
   width: 100%;
-  height: 100%;
-  overflow: auto; /* Enable scroll if image is too big */
-  background-color: rgba(0,0,0,0.9); /* Black with 90% opacity */
-  cursor: pointer; /* Indicate it's clickable to close */
+  box-sizing: border-box; 
 }
 
-.lightbox-content {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 800px; /* Max width for the image */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+/* --- Project Detail Page (project-detail.html) --- */
+.project-detail-nav { /* Already in project-detail.html <style>, but can be here for consistency */
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    background-color: var(--primary-bg);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+.project-detail-nav a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 1rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+.project-detail-nav a:hover {
+    color: var(--primary-text);
+    border-bottom-color: var(--primary-text);
 }
 
-.lightbox-content img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border: 3px solid var(--primary-bg); /* Optional border */
+.project-detail-container {
+    width: 85%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem; 
+    background-color: var(--primary-bg);
 }
 
-.lightbox-caption {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
-  color: #ccc;
-  padding: 10px 0;
-  height: 50px; /* Adjust as needed */
-  position: absolute;
-  bottom: 5%; /* Position caption at the bottom */
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--body-font);
+.project-detail-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
-/* Animation for lightbox */
-.lightbox-content, .lightbox-caption {
-  animation-name: zoom;
-  animation-duration: 0.5s;
-}
-/* Lightbox Navigation Arrows */
-.lightbox .prev, .lightbox .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -30px; /* Half of icon height or adjust as needed */
-  color: white;
-  font-weight: bold;
-  font-size: 30px;
-  transition: 0.3s ease;
-  user-select: none;
-  z-index: 1001; /* Above lightbox image */
-  background-color: rgba(0,0,0,0.3); /* Subtle background for better visibility */
-  border-radius: 0 3px 3px 0;
+.project-detail-header h1 {
+    font-family: var(--header-font);
+    font-size: 3rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
 }
 
-.lightbox .next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
-}
-.lightbox .prev {
-  left: 0;
+.project-detail-content .content-block-text p {
+    color: var(--secondary-text); 
+    font-size: 0.95rem; 
+    line-height: 1.7;
 }
 
-.lightbox .prev:hover, .lightbox .next:hover {
-  background-color: rgba(255,255,255,0.2);
+.project-detail-content img.image-float-left {
+    float: left;
+    margin-right: 1.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 50%; 
+    height: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
-/* Ensure lightbox content doesn't overlap arrows too much */
-.lightbox-content {
-  /* Adjust padding if arrows are obscured */
-  /* padding: 0 50px; /* Example if arrows are large */
-}
-@keyframes zoom {
-  from {transform: translate(-50%, -50%) scale(0.5); opacity: 0;}
-  to {transform: translate(-50%, -50%) scale(1); opacity: 1;}
+.project-detail-content img.image-float-right {
+    float: right;
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 50%;
+    height: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
-.portfolio-item img.portfolio-thumbnail {
-  cursor: pointer; /* Indicate thumbnails are clickable */
+.project-detail-content img.image-center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 80%;
+    height: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
-/* Animations */
+
+.project-detail-content figure.content-block-figure {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    overflow: hidden; 
+}
+
+.project-detail-content figure.image-float-left {
+    float: left;
+    margin-right: 1.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 50%; 
+}
+
+.project-detail-content figure.image-float-right {
+    float: right;
+    margin-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 50%;
+}
+
+.project-detail-content figure.image-center-block {
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80%; 
+}
+
+.project-detail-content figure.content-block-figure img {
+    display: block;
+    width: 100%; 
+    height: auto;
+}
+
+.project-detail-content figure.content-block-figure figcaption {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+.project-detail-content::after { /* Clearfix */
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Tag container on project-detail.html */
+.project-detail-meta .project-tags-container {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem; /* Space before project link if any */
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    clear: both; /* Ensure it's below floated content */
+}
+.project-detail-meta .project-tags-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-text);
+    font-family: var(--body-font); /* Ensure consistent font */
+    font-weight: 500;
+}
+
+.project-detail-meta .project-link-container {
+    margin-top: 1.5rem; /* Space after tags if they exist */
+    margin-bottom: 2rem;
+    clear: both;
+}
+.project-detail-meta .project-link-container a {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+.project-detail-meta .project-link-container a:hover {
+    background-color: var(--primary-text);
+}
+
+.back-to-portfolio-container, .back-to-news-container { /* Shared style */
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+.back-to-portfolio-container a, .back-to-news-container a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dotted var(--accent-color);
+    transition: color 0.3s ease, border-bottom-style 0.3s ease;
+}
+.back-to-portfolio-container a:hover, .back-to-news-container a:hover {
+    color: var(--primary-text);
+    border-bottom-style: solid;
+}
+
+
+/* --- News Detail Page (news-detail.html) --- */
+/* site-header-generic and detail-page-nav are often in <style> of news-detail.html but can be here */
+.news-detail-container {
+    width: 85%;
+    max-width: 900px; 
+    margin: 2rem auto;
+    padding: 1rem;
+}
+.news-detail-header h1 {
+    font-family: var(--header-font);
+    font-size: 2.8rem; 
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+.news-detail-meta-info {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+.news-detail-meta-info .author {
+    margin-left: 1em;
+}
+.news-detail-content .content-block-text p { /* Copied from project-detail for consistency */
+     color: var(--secondary-text);
+     font-size: 1rem; 
+     line-height: 1.8;
+}
+.news-detail-content .link-button-container { 
+    margin: 1.5rem 0;
+    text-align: center; 
+}
+.news-detail-content .link-button-container a {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+ .news-detail-content .link-button-container a:hover {
+    background-color: var(--primary-text);
+}
+
+/* Tag container on news-detail.html */
+.news-detail-container .news-detail-tags-container { /* More specific selector */
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    clear: both; /* Ensure it's below floated content */
+}
+ .news-detail-container .news-detail-tags-container h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-text);
+    font-family: var(--body-font); /* Ensure consistent font */
+    font-weight: 500;
+}
+
+
+/* Animations (Shared) */
 @keyframes flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
-    opacity: 1;
-  }
-  20%, 24%, 55% {
-    opacity: 0.6;
-  }
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.6; }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Media Queries */
-@media (max-width: 991px) { /* Medium devices */
-  header h1 {
-    font-size: 8rem;
+/* Media Queries (Shared and Extended) */
+@media (max-width: 991px) { 
+  header h1 { font-size: 8rem; }
+  .container, .project-detail-container, .news-detail-container { width: 90%; }
+  .project-detail-header h1, .news-detail-header h1 { font-size: 2.5rem; }
+}
+
+@media (max-width: 768px) { 
+  header { margin-top: 4rem; }
+  header h1 { font-size: 6rem; }
+  header h3 { font-size: 1rem; margin-top: -15px; }
+  header .logo-separator { font-size: 1.5rem; }
+  header nav ul { flex-direction: column; gap: 0.5rem; align-items: center; }
+  header nav ul li a { display: block; padding: 0.8rem 1rem; text-align: center; }
+  .section { padding: 2rem 0; }
+  .section h2 { font-size: 2rem; }
+
+  .project-detail-header h1, .news-detail-header h1 { font-size: 2.2rem; }
+  .project-detail-content img.image-float-left,
+  .project-detail-content img.image-float-right,
+  .project-detail-content figure.image-float-left,
+  .project-detail-content figure.image-float-right,
+  .news-detail-content img.image-float-left, /* Apply to news detail as well */
+  .news-detail-content img.image-float-right,
+  .news-detail-content figure.image-float-left,
+  .news-detail-content figure.image-float-right {
+      float: none; display: block; margin-left: auto; margin-right: auto;
+      margin-bottom: 1.5rem; max-width: 90%; width: auto !important; 
   }
-  .container {
-    width: 90%;
+  .project-detail-content img.image-center-block,
+  .project-detail-content figure.image-center-block,
+  .news-detail-content img.image-center-block, /* Apply to news detail */
+  .news-detail-content figure.image-center-block {
+      max-width: 90%;
   }
 }
 
-@media (max-width: 768px) { /* Small devices */
-  header {
-    margin-top: 4rem;
-  }
-  header h1 {
-    font-size: 6rem;
-  }
-  header h3 {
-    font-size: 1rem;
-    margin-top: -15px;
-  }
-  header .logo-separator {
-    font-size: 1.5rem;
-  }
-  nav ul {
-    flex-direction: column;
-    gap: 0.5rem; /* Reduced gap for stacked items */
-  }
-  nav ul li a {
-    display: block; /* Make links take full width for easier tapping */
-    padding: 0.8rem 0;
-    text-align: center;
-  }
-  .section {
-    margin: 2rem auto;
-    padding: 1.5rem 0;
-  }
-  .section h2 {
-    font-size: 2rem;
-  }
-}
+@media (max-width: 480px) { 
+  header h1 { font-size: 4.5rem; }
+  header h3 { font-size: 0.9rem; margin-top: -10px; }
+  header .logo-separator { font-size: 1.2rem; }
 
-@media (max-width: 480px) { /* Tiny devices */
-  header h1 {
-    font-size: 4.5rem;
-  }
-  header h3 {
-    font-size: 0.9rem;
-    margin-top: -10px;
-  }
-  header .logo-separator {
-    font-size: 1.2rem;
-  }
+  .container, .project-detail-container, .news-detail-container { width: 95%; padding: 0 0.5rem; }
+  .project-detail-container, .news-detail-container { padding: 1rem; margin: 1rem auto; }
 
-  .container {
-    width: 95%;
-  }
+  .section h2 { font-size: 1.75rem; }
+  .portfolio-grid, .news-grid { grid-template-columns: 1fr; }
 
-  .section h2 {
-    font-size: 1.75rem;
-  }
-  .portfolio-grid {
-    grid-template-columns: 1fr; /* Stack portfolio items on very small screens */
-  }
+  .project-detail-header h1, .news-detail-header h1 { font-size: 1.8rem; }
+  
+  header nav ul li a { font-size: 0.85rem; padding: 0.6rem 0.5rem; }
+  /* detail-page-nav a styles are in <style> of detail pages, can be moved here if desired */
 }
