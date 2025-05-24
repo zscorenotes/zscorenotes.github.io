@@ -8,37 +8,36 @@
     <link rel="icon" href="images/logo2.ico" type="image/x-icon">
     <style>
         body { display: block; }
-        .project-detail-site-header {
+        .project-detail-site-header { /* Using this class name for consistency with project-detail */
             text-align: center;
-            padding-top: 2rem; /* Add some spacing from the top */
-            margin-bottom: 1rem; /* Space before the nav */
+            padding-top: 2rem;
+            margin-bottom: 1rem;
         }
         .project-detail-site-header h1 {
-            font-family: var(--header-font); /* Uses variable from main CSS */
-            font-size: 4rem; /* More modest size for sub-page */
+            font-family: var(--header-font);
+            font-size: 4rem;
             font-weight: 700;
-            margin-bottom: 0.25rem; /* Reduced margin */
+            margin-bottom: 0.25rem;
             margin-top: 0;
-            color: var(--primary-text); /* Ensure it uses the theme color */
-            /* animation: flicker 180s infinite alternate; /* Optional: remove flicker for sub-pages if distracting */
-        }
-        .project-detail-site-header .logo-separator {
-            font-family: var(--body-font); /* Uses variable from main CSS */
-            font-size: 1.5rem; /* More modest size */
-            font-weight: 700;
-            margin: 0.5rem 0 1rem 0; /* Adjusted margins */
             color: var(--primary-text);
         }
-                .project-detail-site-header a { /* Style for the ZSCORE link */
+        .project-detail-site-header .logo-separator {
+            font-family: var(--body-font);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0 1rem 0;
+            color: var(--primary-text);
+        }
+        .project-detail-site-header a {
             text-decoration: none;
-            color: inherit; /* Inherits color from h1 */
+            color: inherit;
         }
         .detail-page-nav { 
             width: 100%;
             padding: 1rem 0;
             text-align: center;
             background-color: var(--primary-bg);
-            border-top: 1px solid var(--border-color); /* Add top border */
+            border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 2rem;
         }
@@ -80,11 +79,46 @@
             margin-left: 1em;
         }
         
+        /* Styles for Markdown generated content */
+        .news-detail-content .content-block-text h1,
+        .news-detail-content .content-block-text h2,
+        .news-detail-content .content-block-text h3,
+        .news-detail-content .content-block-text h4,
+        .news-detail-content .content-block-text h5,
+        .news-detail-content .content-block-text h6 {
+            font-family: var(--header-font);
+            color: var(--accent-color); /* Or var(--primary-text) */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .news-detail-content .content-block-text h1 { font-size: 2em; } /* Adjusted sizes for news context */
+        .news-detail-content .content-block-text h2 { font-size: 1.6em; }
+        .news-detail-content .content-block-text h3 { font-size: 1.3em; }
+
         .news-detail-content .content-block-text p {
              color: var(--secondary-text);
              font-size: 1rem; 
              line-height: 1.8;
+             margin-bottom: 1rem; /* Ensure paragraphs have bottom margin */
         }
+        .news-detail-content .content-block-text ul,
+        .news-detail-content .content-block-text ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem; /* Standard indent for lists */
+            color: var(--secondary-text);
+        }
+        .news-detail-content .content-block-text li {
+            margin-bottom: 0.5rem; /* Spacing between list items */
+        }
+         .news-detail-content .content-block-text a { /* Styling for links from Markdown */
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        .news-detail-content .content-block-text a:hover {
+            color: var(--primary-text);
+        }
+
+
         .news-detail-content .link-button-container { 
             margin: 1.5rem 0;
             text-align: center; 
@@ -133,15 +167,13 @@
     </style>
 </head>
 <body>
-    <header class="project-detail-site-header">
-        <a href="index.html#home">
+    <header class="project-detail-site-header"> <a href="index.html#home">
             <h1>ZSCORE</h1>
         </a>
         <div class="logo-separator">●○</div>
     </header>
-    <div class="project-detail-nav">
-        <a href="index.html#home">Home</a>
-        <a href="index.html#news">Back to News</a>
+    <div class="detail-page-nav"> <a href="index.html#home">Home</a>
+        <a href="index.html#news">Back to Feeds</a>
         <a href="index.html#contact">Contact</a>
     </div>
 
@@ -153,13 +185,115 @@
         <p>© <span id="currentYear"></span> ZSCORE. All rights reserved.</p>
     </footer>
 
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <a class="lightbox-prev" onclick="changeLightboxImage(-1)">&#10094;</a>
+        <a class="lightbox-next" onclick="changeLightboxImage(1)">&#10095;</a>
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+
     <script>
+        // --- Global Lightbox Variables ---
+        let lightboxImages = []; // To store all gallery images on the page {src, caption}
+        let currentLightboxImageIndex = 0;
+        const lightboxElement = document.getElementById('lightbox');
+        const lightboxImgElement = document.getElementById('lightboxImg');
+        const lightboxCaptionElement = document.getElementById('lightboxCaption');
+
+
         function setCurrentYear() {
             const yearSpan = document.getElementById('currentYear');
             if (yearSpan) {
                 yearSpan.textContent = new Date().getFullYear();
             }
         }
+
+        // --- Simple Markdown to HTML Parser ---
+        function inlineMarkdownParse(text) {
+            let html = text;
+            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+            html = html.replace(/__(.*?)__/gim, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+            html = html.replace(/_(.*?)_/gim, '<em>$1</em>');
+            html = html.replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            return html;
+        }
+
+        function markdownToHtml(md) {
+            let html = '';
+            const blocks = md.replace(/\r\n/g, '\n').split(/\n\s*\n/);
+            blocks.forEach(block => {
+                if (block.trim() === '') return;
+                if (block.match(/^###\s+/m)) { html += `<h3>${inlineMarkdownParse(block.replace(/^###\s+/, ''))}</h3>\n`; return; }
+                if (block.match(/^##\s+/m))  { html += `<h2>${inlineMarkdownParse(block.replace(/^##\s+/, ''))}</h2>\n`; return; }
+                if (block.match(/^#\s+/m))   { html += `<h1>${inlineMarkdownParse(block.replace(/^#\s+/, ''))}</h1>\n`; return; }
+                
+                const ulMatch = block.match(/^(\s*[-\*\+]\s+.*(?:\n\s*[-\*\+]\s+.*)*)/m);
+                if (ulMatch && ulMatch[0].trim() === block.trim()) {
+                    let listItems = block.split('\n').map(line => {
+                        const itemMatch = line.match(/^(\s*[-\*\+]\s+)(.*)/);
+                        return itemMatch ? `  <li>${inlineMarkdownParse(itemMatch[2])}</li>` : null;
+                    }).filter(item => item !== null);
+                    if (listItems.length > 0) {
+                        html += '<ul>\n' + listItems.join('\n') + '\n</ul>\n';
+                        return;
+                    }
+                }
+                const olMatch = block.match(/^(\s*\d+\.\s+.*(?:\n\s*\d+\.\s+.*)*)/m);
+                 if (olMatch && olMatch[0].trim() === block.trim()) {
+                    let listItems = block.split('\n').map(line => {
+                        const itemMatch = line.match(/^\s*\d+\.\s+(.*)/);
+                        return itemMatch ? `  <li>${inlineMarkdownParse(itemMatch[1])}</li>` : null;
+                    }).filter(item => item !== null);
+                    if (listItems.length > 0) {
+                        html += '<ol>\n' + listItems.join('\n') + '\n</ol>\n';
+                        return;
+                    }
+                }
+                html += `<p>${inlineMarkdownParse(block.replace(/\n/g, '<br>'))}</p>\n`;
+            });
+            return html;
+        }
+        // --- End of Markdown Parser ---
+
+        // --- Lightbox Functions ---
+        function openLightbox(index) {
+            if (!lightboxImages[index]) return;
+            currentLightboxImageIndex = index;
+            lightboxImgElement.src = lightboxImages[currentLightboxImageIndex].src;
+            lightboxCaptionElement.textContent = lightboxImages[currentLightboxImageIndex].caption || '';
+            lightboxElement.style.display = 'block';
+            document.addEventListener('keydown', handleLightboxKeys);
+        }
+
+        function closeLightbox() {
+            lightboxElement.style.display = 'none';
+            document.removeEventListener('keydown', handleLightboxKeys);
+        }
+
+        function changeLightboxImage(offset) {
+            currentLightboxImageIndex += offset;
+            if (currentLightboxImageIndex >= lightboxImages.length) {
+                currentLightboxImageIndex = 0;
+            } else if (currentLightboxImageIndex < 0) {
+                currentLightboxImageIndex = lightboxImages.length - 1;
+            }
+             if (!lightboxImages[currentLightboxImageIndex]) return;
+            lightboxImgElement.src = lightboxImages[currentLightboxImageIndex].src;
+            lightboxCaptionElement.textContent = lightboxImages[currentLightboxImageIndex].caption || '';
+        }
+
+        function handleLightboxKeys(event) {
+            if (event.key === "Escape") {
+                closeLightbox();
+            } else if (event.key === "ArrowLeft") {
+                changeLightboxImage(-1);
+            } else if (event.key === "ArrowRight") {
+                changeLightboxImage(1);
+            }
+        }
+
 
         async function loadNewsArticle() {
             const newsDetailContainer = document.getElementById('newsDetailContainer');
@@ -169,9 +303,11 @@
             const articleId = params.get('id');
 
             if (!articleId) {
-                newsDetailContainer.innerHTML = "<p>Article ID not found. Please return to <a href='index.html#news'>the news page</a>.</p>"; // Updated link
+                newsDetailContainer.innerHTML = "<p>Article ID not found. Please return to <a href='index.html#news'>the news page</a>.</p>";
                 return;
             }
+            
+            lightboxImages = []; // Reset for the page
 
             try {
                 const response = await fetch('news.json');
@@ -186,7 +322,7 @@
                     if (article.contentBlocks && article.contentBlocks.length > 0) {
                         article.contentBlocks.forEach(block => {
                             if (block.type === 'text') {
-                                contentHTML += `<div class="content-block-text"><p>${block.value.replace(/\n/g, '<br>')}</p></div>`;
+                                contentHTML += `<div class="content-block-text">${markdownToHtml(block.value)}</div>`;
                             } else if (block.type === 'image') {
                                 let imageStyle = '';
                                 if (block.width) imageStyle += `width: ${block.width};`;
@@ -206,9 +342,24 @@
                                 }
                             } else if (block.type === 'link_button') {
                                 contentHTML += `<div class="link-button-container"><a href="${block.url}" target="_blank">${block.text}</a></div>`;
+                            } else if (block.type === 'gallery' && block.images && block.images.length > 0) {
+                                let galleryItemsHTML = '';
+                                block.images.forEach(imgData => {
+                                    const currentIndex = lightboxImages.length; 
+                                    lightboxImages.push({ src: imgData.src, caption: imgData.caption || '' });
+                                    galleryItemsHTML += `
+                                        <figure onclick="openLightbox(${currentIndex})">
+                                            <img src="${imgData.src}" alt="${imgData.caption || 'Gallery image'}" class="gallery-image">
+                                            ${imgData.caption ? `<figcaption>${imgData.caption}</figcaption>` : ''}
+                                        </figure>`;
+                                });
+                                contentHTML += `<div class="content-block-gallery">${galleryItemsHTML}</div>`;
                             }
                         });
+                    } else {
+                        contentHTML = `<div class="content-block-text">${markdownToHtml(article.summary || 'No detailed description available.')}</div>`;
                     }
+
 
                     let tagsHTML = '';
                     if (article.tags && article.tags.length > 0) {
@@ -242,20 +393,20 @@
                             const elementRect = mainContentElement.getBoundingClientRect();
                             const absoluteElementTop = elementRect.top + window.pageYOffset;
                             let headerOffset = 0;
-                            const siteHeader = document.querySelector('.site-header-generic');
+                            const siteHeader = document.querySelector('.project-detail-site-header'); 
                             const detailNav = document.querySelector('.detail-page-nav');
                             if(siteHeader) headerOffset += siteHeader.offsetHeight;
                             if(detailNav) headerOffset += detailNav.offsetHeight;
                             
                             window.scrollTo({
-                                top: absoluteElementTop - headerOffset - 20, // 20px for extra margin
+                                top: absoluteElementTop - headerOffset - 20, 
                                 behavior: 'smooth'
                             });
                         }
                     }, 100);
 
                 } else {
-                    newsDetailContainer.innerHTML = "<p>Article not found. Please return to <a href='index.html#news'>the news page</a>.</p>"; // Updated link
+                    newsDetailContainer.innerHTML = "<p>Article not found. Please return to <a href='index.html#news'>the news page</a>.</p>";
                 }
             } catch (error) {
                 console.error('Failed to load news article:', error);
@@ -266,6 +417,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             setCurrentYear();
             loadNewsArticle();
+            // Lightbox close if clicking outside the image content
+            lightboxElement.addEventListener('click', function(event) {
+                if (event.target === lightboxElement) { 
+                    closeLightbox();
+                }
+            });
         });
     </script>
 </body>

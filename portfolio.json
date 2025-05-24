@@ -7,7 +7,7 @@
     "contentBlocks": [
       {
         "type": "text",
-        "value": "IMPACT by Amir Shpilman represents a significant project in contemporary opera. My role involved meticulous engraving of the score and the development of computer-assisted orchestration techniques. This opera uniquely featured an orchestra and two stuntwomen, demanding innovative approaches to notation and material preparation."
+        "value": "**IMPACT by Amir Shpilman** represents a significant project in the opera genre. The Opera is for orchestra, choir, and two stuntwomen. Our role involved engraving of the score. However, under tight deadlines, pressure, and considering the complexity of some parts of the piece, we had to develop innovative solutions to engrave these sections. These solutions also facilitate the easy generation of performance documentation, reduce rehearsal time, and bring clarity to the performance of the piece through the development of **computer-assisted engraving techniques**."
       },
       {
         "type": "image",
@@ -19,11 +19,11 @@
       },
       {
         "type": "text",
-        "value": "A key challenge was the rapid generation and adaptation of musical material. To address this, I developed a custom Sibelius plugin. This tool allowed for the systematic orchestration and notation of material in real-time, which was crucial for streamlining the production process and meeting tight deadlines. The plugin integrated directly with the composer's workflow, providing a powerful assistant for complex orchestrational tasks. The visual complexity of the score required precise digital tools, and the plugin helped manage this effectively, allowing for quick iterations and adjustments based on rehearsal feedback. This technological integration was vital to the project's success, enabling a fluid collaboration between the composer, performers, and the technical team. The stuntwomen's actions were also intricately timed with the music, adding another layer of complexity that the engraving and orchestration tools helped to manage."
+        "value": "A key challenge was the rapid generation and adaptation of musical material. To address this, we developed a **custom Sibelius plugin**. This tool allowed for the systematic notation and orchestration of material in real-time, which was crucial for streamlining the production process and meeting tight deadlines. The plugin integrated directly with the composer's workflow, providing a powerful assistant for complex orchestrational tasks. The visual complexity of the score required precise digital tools, and the plugin helped manage this effectively, allowing for quick iterations and adjustments based on rehearsal feedback. This technological integration was vital to the project's success, enabling a fluid collaboration between the composer, performers, and the technical team. The stuntwomen's actions were also intricately timed with the music, adding another layer of complexity that the engraving and orchestration tools helped to manage."
       },
       {
         "type": "image",
-        "src": "images/IMPACT/2.png",
+        "src": "images/IMPACT/8.png",
         "alt": "Close-up of the custom Sibelius plugin interface",
         "align": "left",
         "width": "35%",
@@ -31,23 +31,71 @@
       },
       {
         "type": "text",
-        "value": "Further details about the performance and its reception can be found on the official project page. The development of such tools not only aids in specific projects but also contributes to a broader understanding of how technology can serve artistic expression in contemporary music. This project was a testament to that synergy. The score itself was over 300 pages, and managing such a volume of detailed notation under pressure was a significant part of the work."
+        "value": "Further details about the performance and its reception can be found on the [official project page](https://www.cultopia.gr/projects/Impact)."
+      },
+      {
+        "type": "gallery",
+        "images": [
+          { "src": "images/IMPACT/2.png", "caption": "Performance legenda and documentation Excerpt - Copyright © Amir Shpilman. All rights reserved." },
+          { "src": "images/IMPACT/3.png", "caption": "Score Excerpt #1 - Copyright © Amir Shpilman. All rights reserved." },
+          { "src": "images/IMPACT/4.png", "caption": "Score Excerpt #2 - Copyright © Amir Shpilman. All rights reserved." },
+          { "src": "images/IMPACT/5.png", "caption": "Score Excerpt #3 - Copyright © Amir Shpilman. All rights reserved." },
+          { "src": "images/IMPACT/6.png", "caption": "Score Excerpt #4 - Copyright © Amir Shpilman. All rights reserved." },
+          { "src": "images/IMPACT/7.png", "caption": "Score Excerpt #5 - Copyright © Amir Shpilman. All rights reserved." }
+
+        ]
+      }
+    ],
+    "tags": ["Engraving", "Orchestration", "Sibelius Plugin", "Opera", "Computer-Assisted Engraving", "Choir"],
+    "link": "https://www.cultopia.gr/projects/Impact",
+    "linkText": "View Project on Cultopia"
+  },
+  {
+    "id": "kriat-shema-shpilman-2025",
+    "title": "Kriat Shema by Amir Shpilman (2025)",
+    "coverImage": "images/portfolio/kriat_shema_score.png",
+    "summary": "Score, parts, and performance materials for Amir Shpilman's 'Kriat Shema,' a Fantasy for Shofar and Orchestra. Premiered by the Berlin Philharmonic.",
+    "contentBlocks": [
+      {
+        "type": "text",
+        "value": "**ZSCORE.art studio**, under **Parham Behzad**, was responsible for the preparation of the score, individual parts, and all performance materials for Amir Shpilman's new orchestral piece, *'Kriat Shema – Fantasy for Shofar and Orchestra'*. Is the second work we did for him and it was premiered by **Berlin Philharmonic**.\n\nThe piece is dedicated to Bar Zemach and Yehezkel Tchorz, RIP."
       },
       {
         "type": "image",
-        "src": "images/IMPACT/3.png",
-        "alt": "Another score example from IMPACT",
+        "src": "images/portfolio/kriat_shema_detail.png",
+        "alt": "Detail from the score of Kriat Shema",
         "align": "center",
-        "width": "60%",
-        "caption": ""
+        "width": "70%",
+        "caption": "Excerpt from Amir Shpilman's 'Kriat Shema'"
       },
       {
         "type": "text",
-        "value": "You can see more about the project via the official link."
+        "value": "The engraving and material preparation ensured clarity and precision for the orchestral textures and the unique inclusion of the Shofar.\n\nCopyright for the work is held by Amir Shpilman, and all right is resereved. The score typesetting and engraving credited to **Parham Behzad (ZSCORE)**."
       }
     ],
-    "tags": ["Engraving", "Orchestration", "Sibelius Plugin", "Opera"],
-    "link": "https://www.cultopia.gr/projects/Impact",
-    "linkText": "View Project on Cultopia"
+    "tags": ["Engraving", "Orchestral Score", "Performance Materials", "Amir Shpilman", "Berlin Philharmonic", "Shofar", "Contemporary Classical"],
+    "link": "",
+    "linkText": "Listen Here (Link to be provided)"
+  },
+  {
+    "id": "mass-choir-engraving-current",
+    "title": "Engraving for Mass Choir Collaborative Performance",
+    "coverImage": "images/portfolio/mass_choir_engraving.png",
+    "summary": "Current, large-scale engraving project for a collaborative performance piece involving a mass choir of over 100 singers.",
+    "contentBlocks": [
+      {
+        "type": "text",
+        "value": "This ongoing project involves the detailed engraving of a new work designed for a **mass choir with more than 100 singers**. The focus is on creating clear, accurate, and performer-friendly scores and parts to facilitate a large-scale collaborative performance.\n\nThe nature of the work demands careful attention to layout and part extraction to manage the complexities of a large ensemble."
+      },
+      {
+        "type": "image",
+        "src": "images/portfolio/mass_choir_score_example.png",
+        "alt": "Example of choral engraving style for the project",
+        "align": "center",
+        "width": "70%",
+        "caption": "Score preparation for over 100 singers"
+      }
+    ],
+    "tags": ["Engraving", "Choral Music", "Large Ensemble", "Collaborative Performance", "Work in Progress", "Contemporary Choir"]
   }
 ]

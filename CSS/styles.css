@@ -20,7 +20,7 @@ body {
   line-height: 1.6;
 }
 
-.container { 
+.container {
   width: 85%;
   max-width: 900px;
   min-width: 300px;
@@ -58,14 +58,14 @@ header h3 {
 }
 
 header .logo-separator {
-  font-family: var(--body-font); 
-  font-size: 2rem; 
+  font-family: var(--body-font);
+  font-size: 2rem;
   font-weight: 700;
   margin: 1rem 0 1.5rem 0;
   color: var(--primary-text);
 }
 
-header nav { 
+header nav {
   width: 100%;
   position: sticky;
   top: 0;
@@ -103,15 +103,30 @@ header nav ul li a.active-nav {
 }
 
 .section {
-  display: none; 
-  margin: 0 auto; 
-  padding: 3rem 0; 
+  display: none;
+  margin: 0 auto;
+  padding: 3rem 0;
   text-align: left;
   border-top: 1px solid var(--border-color);
 }
-.section:first-of-type { 
+.section:first-of-type {
     border-top: none;
 }
+
+/* Styling for the #home section */
+#home {
+    /* No specific positioning needed here for the video to be a block element after text */
+    /* overflow: hidden; /* Can be kept if desired, but not strictly necessary for this layout */
+}
+
+/* Text content in #home - no special z-index needed now */
+#home > p {
+    /* position: relative; /* Not needed */
+    /* z-index: 1; /* Not needed */
+    /* Optional text readability enhancements can still be applied if the video content is very busy,
+       but they are not for layering purposes anymore. */
+}
+
 
 .section.visible {
   display: block;
@@ -146,6 +161,44 @@ header nav ul li a.active-nav {
   color: var(--primary-text);
   border-bottom-style: solid;
 }
+
+/* Video container styling - to appear as a block after text */
+#home .video-container {
+  position: relative; /* Needed for the overlay positioning */
+  /* z-index: -1; /* REMOVED - so overlay can be on top within this container */
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  overflow: hidden; /* Good to keep, helps with border-radius on children */
+  border-radius: 0px; /* Match video's border-radius, or set as desired */
+                     /* If you want rounded corners for the video and overlay, set it here */
+}
+
+/* Overlay for the video */
+#home .video-container::after {
+  content: ""; /* Necessary for pseudo-elements */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.01); /* Example: 30% transparent black. Adjust as needed. */
+                                       /* e.g., rgba(255, 0, 0, 0.2) for a light red tint */
+  z-index: 1; /* Places overlay on top of the video */
+  pointer-events: none; /* Makes the overlay non-interactive */
+  border-radius: inherit; /* Inherits border-radius from .video-container */
+}
+
+#home .video-container video {
+  display: block;
+  width: 100%;
+  height: auto; /* Or 100% if you want to force container height */
+  object-fit: cover;
+  pointer-events: none;
+  border-radius: 0px; /* Can be 'inherit' if parent .video-container has the radius */
+  position: relative; /* Optional: to explicitly set stacking context if needed */
+  z-index: 0;         /* Optional: video is below the overlay */
+}
+
 
 .service {
   margin-bottom: 2.5rem;
@@ -185,11 +238,12 @@ header nav ul li a.active-nav {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-radius: 8px; /* Added rounded corners */
 }
 
 .portfolio-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); /* Slightly adjusted shadow */
 }
 
 .portfolio-item a.portfolio-item-link {
@@ -198,7 +252,7 @@ header nav ul li a.active-nav {
     display: block;
 }
 
-.portfolio-item img.portfolio-thumbnail, 
+.portfolio-item img.portfolio-thumbnail,
 .portfolio-item .placeholder-thumbnail { /* Style for actual image and placeholder */
   width: 100%;
   height: 200px;
@@ -210,14 +264,15 @@ header nav ul li a.active-nav {
   line-height: 200px; /* Vertically center text in placeholder */
   color: var(--secondary-text); /* Text color for placeholder */
   font-size: 0.9rem;
+  /* Removed border-radius from here to apply to .portfolio-item for overall rounding */
 }
 
 
-.portfolio-item-content { 
+.portfolio-item-content {
   padding: 1rem 1.5rem 0.5rem 1.5rem;
 }
 
-.portfolio-item-lower-content { 
+.portfolio-item-lower-content {
   padding: 0.5rem 1.5rem 1.5rem 1.5rem;
   flex-grow: 1;
   display: flex;
@@ -233,7 +288,7 @@ header nav ul li a.active-nav {
   color: var(--primary-text);
 }
 
-.portfolio-item p { 
+.portfolio-item p {
   font-size: 0.85rem;
   color: var(--secondary-text);
   margin-bottom: 1rem;
@@ -253,7 +308,7 @@ header nav ul li a.active-nav {
   color: var(--secondary-text);
   padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
-  border-radius: 3px;
+  border-radius: 4px; /* Slightly more rounded */
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
   font-weight: 400;
@@ -275,7 +330,7 @@ header nav ul li a.active-nav {
   text-decoration: none;
   border-bottom: 1px solid var(--accent-color);
   transition: color 0.3s ease, border-bottom-color 0.3s ease;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .portfolio-item .portfolio-external-link:hover,
@@ -296,7 +351,7 @@ footer {
   color: var(--secondary-text);
   font-size: 0.85rem;
   width: 100%;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 /* --- Project Detail Page (project-detail.html) --- */
@@ -326,7 +381,7 @@ footer {
     width: 85%;
     max-width: 900px;
     margin: 2rem auto;
-    padding: 1rem; 
+    padding: 1rem;
     background-color: var(--primary-bg);
 }
 
@@ -345,8 +400,8 @@ footer {
 }
 
 .project-detail-content .content-block-text p {
-    color: var(--secondary-text); 
-    font-size: 0.95rem; 
+    color: var(--secondary-text);
+    font-size: 0.95rem;
     line-height: 1.7;
 }
 
@@ -354,7 +409,7 @@ footer {
     float: left;
     margin-right: 1.5rem;
     margin-bottom: 0.5rem;
-    max-width: 50%; 
+    max-width: 50%;
     height: auto;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -389,14 +444,14 @@ footer {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     background-color: #f9f9f9;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 .project-detail-content figure.image-float-left {
     float: left;
     margin-right: 1.5rem;
     margin-bottom: 0.5rem;
-    max-width: 50%; 
+    max-width: 50%;
 }
 
 .project-detail-content figure.image-float-right {
@@ -407,15 +462,15 @@ footer {
 }
 
 .project-detail-content figure.image-center-block {
-    display: block; 
+    display: block;
     margin-left: auto;
     margin-right: auto;
-    max-width: 80%; 
+    max-width: 80%;
 }
 
 .project-detail-content figure.content-block-figure img {
     display: block;
-    width: 100%; 
+    width: 100%;
     height: auto;
 }
 
@@ -491,13 +546,13 @@ footer {
 /* site-header-generic and detail-page-nav are often in <style> of news-detail.html but can be here */
 .news-detail-container {
     width: 85%;
-    max-width: 900px; 
+    max-width: 900px;
     margin: 2rem auto;
     padding: 1rem;
 }
 .news-detail-header h1 {
     font-family: var(--header-font);
-    font-size: 2.8rem; 
+    font-size: 2.8rem;
     color: var(--accent-color);
     margin-bottom: 0.5rem;
 }
@@ -513,12 +568,12 @@ footer {
 }
 .news-detail-content .content-block-text p { /* Copied from project-detail for consistency */
      color: var(--secondary-text);
-     font-size: 1rem; 
+     font-size: 1rem;
      line-height: 1.8;
 }
-.news-detail-content .link-button-container { 
+.news-detail-content .link-button-container {
     margin: 1.5rem 0;
-    text-align: center; 
+    text-align: center;
 }
 .news-detail-content .link-button-container a {
     display: inline-block;
@@ -561,13 +616,13 @@ footer {
 }
 
 /* Media Queries (Shared and Extended) */
-@media (max-width: 991px) { 
+@media (max-width: 991px) {
   header h1 { font-size: 8rem; }
   .container, .project-detail-container, .news-detail-container { width: 90%; }
   .project-detail-header h1, .news-detail-header h1 { font-size: 2.5rem; }
 }
 
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
   header { margin-top: 4rem; }
   header h1 { font-size: 6rem; }
   header h3 { font-size: 1rem; margin-top: -15px; }
@@ -587,7 +642,7 @@ footer {
   .news-detail-content figure.image-float-left,
   .news-detail-content figure.image-float-right {
       float: none; display: block; margin-left: auto; margin-right: auto;
-      margin-bottom: 1.5rem; max-width: 90%; width: auto !important; 
+      margin-bottom: 1.5rem; max-width: 90%; width: auto !important;
   }
   .project-detail-content img.image-center-block,
   .project-detail-content figure.image-center-block,
@@ -597,7 +652,7 @@ footer {
   }
 }
 
-@media (max-width: 480px) { 
+@media (max-width: 480px) {
   header h1 { font-size: 4.5rem; }
   header h3 { font-size: 0.9rem; margin-top: -10px; }
   header .logo-separator { font-size: 1.2rem; }
@@ -609,7 +664,160 @@ footer {
   .portfolio-grid, .news-grid { grid-template-columns: 1fr; }
 
   .project-detail-header h1, .news-detail-header h1 { font-size: 1.8rem; }
-  
+
   header nav ul li a { font-size: 0.85rem; padding: 0.6rem 0.5rem; }
   /* detail-page-nav a styles are in <style> of detail pages, can be moved here if desired */
+}
+
+/* Lightbox Styles */
+.lightbox {
+    position: fixed;
+    z-index: 1000; /* Ensure it's on top */
+    padding-top: 60px; /* Space from top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.9); /* Black background with opacity */
+    display: none; /* Hidden by default */
+}
+
+.lightbox-content {
+    margin: auto;
+    display: block;
+    width: auto; /* Adjust width automatically */
+    max-width: 85%; /* Max width of the image */
+    max-height: 80vh; /* Max height of the image, leaving space for controls/caption */
+    border-radius: 4px;
+}
+
+#lightboxCaption {
+    text-align: center;
+    color: #ccc;
+    padding: 10px 20px;
+    height: 50px; 
+    font-family: var(--body-font);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus {
+    color: #bbb;
+    text-decoration: none;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -30px; /* Adjust to vertically center with image */
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    -webkit-user-select: none;
+    background-color: rgba(0,0,0,0.3); /* Slight background for better visibility */
+}
+.lightbox-next {
+    right: 15px; /* Position from right edge */
+    border-radius: 3px 0 0 3px;
+}
+.lightbox-prev {
+    left: 15px; /* Position from left edge */
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background-color: rgba(0,0,0,0.7);
+}
+
+/* Gallery image styling on the page */
+.gallery-image {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    max-width: 100%; 
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid var(--border-color); /* Optional: border around thumbnails */
+}
+
+.gallery-image:hover {
+    opacity: 0.7;
+}
+
+/* Container for gallery images on the page */
+.project-detail-content .content-block-gallery,
+.news-detail-content .content-block-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller thumbnails */
+    gap: 10px; /* Spacing between thumbnails */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 10px; /* Padding around the gallery block */
+    background-color: rgba(0,0,0,0.02); /* Subtle background for the gallery block */
+    border-radius: 4px;
+}
+
+.project-detail-content .content-block-gallery figure,
+.news-detail-content .content-block-gallery figure {
+    margin: 0;
+    display: flex; 
+    flex-direction: column;
+    background-color: var(--primary-bg); /* Background for each item */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden; /* Ensure image corners are rounded if image itself isn't */
+}
+
+.project-detail-content .content-block-gallery figure img, /* The actual image */
+.news-detail-content .content-block-gallery figure img {
+    width: 100%;
+    height: 100px; /* Fixed height for thumbnails */
+    object-fit: cover; /* Cover to fill, might crop */
+}
+
+
+.project-detail-content .content-block-gallery figcaption,
+.news-detail-content .content-block-gallery figcaption {
+    font-size: 0.75rem; /* Smaller caption for thumbnails */
+    text-align: center;
+    padding: 6px;
+    color: var(--secondary-text);
+    background-color: #f7f7f7; 
+    border-top: 1px solid var(--border-color);
+    white-space: nowrap; /* Prevent caption from wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis if text is too long */
+    min-height: 28px; /* Ensure consistent height even with short/no caption */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure single images that might become part of a lightbox also have a pointer */
+/* This is more of a note: if you make individual non-gallery images lightbox triggers, add a class like .lightbox-trigger */
+.lightbox-trigger {
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+.lightbox-trigger:hover {
+    opacity: 0.7;
 }
