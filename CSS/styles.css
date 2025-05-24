@@ -238,7 +238,7 @@ header nav ul li a.active-nav {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-radius: 8px; /* Added rounded corners */
+  border-radius: 0px; /* Added rounded corners */
 }
 
 .portfolio-item:hover {
@@ -308,7 +308,7 @@ header nav ul li a.active-nav {
   color: var(--secondary-text);
   padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
-  border-radius: 4px; /* Slightly more rounded */
+  border-radius: 0px; /* Slightly more rounded */
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
   font-weight: 400;
@@ -412,7 +412,7 @@ footer {
     max-width: 50%;
     height: auto;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 .project-detail-content img.image-float-right {
@@ -422,7 +422,7 @@ footer {
     max-width: 50%;
     height: auto;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 .project-detail-content img.image-center-block {
@@ -434,7 +434,7 @@ footer {
     max-width: 80%;
     height: auto;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 .project-detail-content figure.content-block-figure {
@@ -442,7 +442,7 @@ footer {
     margin-bottom: 1.5rem;
     padding: 0;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 0px;
     background-color: #f9f9f9;
     overflow: hidden;
 }
@@ -515,7 +515,7 @@ footer {
     background-color: var(--accent-color);
     color: var(--primary-bg);
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 0px;
     font-weight: 500;
     transition: background-color 0.3s ease;
 }
@@ -581,7 +581,7 @@ footer {
     background-color: var(--accent-color);
     color: var(--primary-bg);
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 0px;
     font-weight: 500;
     transition: background-color 0.3s ease;
 }
@@ -689,7 +689,7 @@ footer {
     width: auto; /* Adjust width automatically */
     max-width: 85%; /* Max width of the image */
     max-height: 80vh; /* Max height of the image, leaving space for controls/caption */
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 #lightboxCaption {
@@ -755,7 +755,7 @@ footer {
     transition: opacity 0.3s ease;
     max-width: 100%; 
     height: auto;
-    border-radius: 4px;
+    border-radius: 0px;
     border: 1px solid var(--border-color); /* Optional: border around thumbnails */
 }
 
@@ -773,7 +773,7 @@ footer {
     margin-bottom: 1rem;
     padding: 10px; /* Padding around the gallery block */
     background-color: rgba(0,0,0,0.02); /* Subtle background for the gallery block */
-    border-radius: 4px;
+    border-radius: 0px;
 }
 
 .project-detail-content .content-block-gallery figure,
@@ -783,7 +783,7 @@ footer {
     flex-direction: column;
     background-color: var(--primary-bg); /* Background for each item */
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 0px;
     overflow: hidden; /* Ensure image corners are rounded if image itself isn't */
 }
 
