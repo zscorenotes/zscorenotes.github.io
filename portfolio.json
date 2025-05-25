@@ -2,16 +2,16 @@
   {
     "id": "shpilman-opera",
     "title": "IMPACT by Amir Shpilman",
-    "coverImage": "images/IMPACT/project_39_photo_20230314192747.jpg",
+    "coverImage": "images/projects/IMPACT/project_39_photo_20230314192747.jpg",
     "summary": "Engraving and computer-assisted orchestration for a new opera. Developed a custom Sibelius plugin for real-time material orchestration.",
     "contentBlocks": [
       {
         "type": "text",
-        "value": "**IMPACT by Amir Shpilman** represents a significant project in the opera genre. The Opera is for orchestra, choir, and two stuntwomen. Our role involved engraving of the score. However, under tight deadlines, pressure, and considering the complexity of some parts of the piece, we had to develop innovative solutions to engrave these sections. These solutions also facilitate the easy generation of performance documentation, reduce rehearsal time, and bring clarity to the performance of the piece through the development of **computer-assisted engraving techniques**."
+        "value": "**IMPACT by Amir Shpilman** is an ambitious contemporary opera for orchestra, choir, and two stuntwomen. The score demanded versatile and advanced notation techniques. Our role focused on engraving, but the scope and complexity required the development of custom digital solutions under intense production pressure. These methods not only streamlined the engraving process but also enabled faster creation of performance materials, optimized rehearsal time, and improved clarity in interpreting the score through **computer-assisted engraving techniques**."
       },
       {
         "type": "image",
-        "src": "images/IMPACT/1.png",
+        "src": "images/projects/IMPACT/1.png",
         "alt": "Scene from IMPACT opera showing complex staging",
         "align": "right",
         "width": "45%",
@@ -19,30 +19,29 @@
       },
       {
         "type": "text",
-        "value": "A key challenge was the rapid generation and adaptation of musical material. To address this, we developed a **custom Sibelius plugin**. This tool allowed for the systematic notation and orchestration of material in real-time, which was crucial for streamlining the production process and meeting tight deadlines. The plugin integrated directly with the composer's workflow, providing a powerful assistant for complex orchestrational tasks. The visual complexity of the score required precise digital tools, and the plugin helped manage this effectively, allowing for quick iterations and adjustments based on rehearsal feedback. This technological integration was vital to the project's success, enabling a fluid collaboration between the composer, performers, and the technical team. The stuntwomen's actions were also intricately timed with the music, adding another layer of complexity that the engraving and orchestration tools helped to manage."
+        "value": "A central technical challenge was the rapid generation and orchestration of musical material. To solve this, we developed a **custom Sibelius plugin** tailored to real-time material transformation. It allowed systematic orchestration and notation aligned directly with the composer's workflow. The plugin enabled quick iteration based on rehearsal feedback and supported precise control over the score's visual and musical complexity. Its integration was crucial in managing the interplay between music and tightly synchronized stage action, including the stunt choreography."
       },
       {
         "type": "image",
-        "src": "images/IMPACT/8.png",
+        "src": "images/projects/IMPACT/plugin635236.png",
         "alt": "Close-up of the custom Sibelius plugin interface",
         "align": "left",
-        "width": "35%",
-        "caption": ""
+        "width": "100%",
+        "caption": "The plugin written with ManuScript™️ for Sibelius®"
       },
       {
         "type": "text",
-        "value": "Further details about the performance and its reception can be found on the [official project page](https://www.cultopia.gr/projects/Impact)."
+        "value": "Further information about the performance and its reception can be found on the [official project page](https://www.cultopia.gr/projects/Impact)."
       },
       {
         "type": "gallery",
         "images": [
-          { "src": "images/IMPACT/2.png", "caption": "Performance legenda and documentation Excerpt - Copyright © Amir Shpilman. All rights reserved." },
-          { "src": "images/IMPACT/3.png", "caption": "Score Excerpt #1 - Copyright © Amir Shpilman. All rights reserved." },
-          { "src": "images/IMPACT/4.png", "caption": "Score Excerpt #2 - Copyright © Amir Shpilman. All rights reserved." },
-          { "src": "images/IMPACT/5.png", "caption": "Score Excerpt #3 - Copyright © Amir Shpilman. All rights reserved." },
-          { "src": "images/IMPACT/6.png", "caption": "Score Excerpt #4 - Copyright © Amir Shpilman. All rights reserved." },
-          { "src": "images/IMPACT/7.png", "caption": "Score Excerpt #5 - Copyright © Amir Shpilman. All rights reserved." }
-
+          { "src": "images/projects/IMPACT/2.jpg", "caption": "Performance legenda and documentation excerpt" },
+          { "src": "images/projects/IMPACT/3.jpg", "caption": "Score excerpt #1" },
+          { "src": "images/projects/IMPACT/4.jpg", "caption": "Score excerpt #2" },
+          { "src": "images/projects/IMPACT/5.jpg", "caption": "Score excerpt #3" },
+          { "src": "images/projects/IMPACT/6.jpg", "caption": "Score excerpt #4" },
+          { "src": "images/projects/IMPACT/7.jpg", "caption": "Score excerpt #5" }
         ]
       }
     ],
@@ -53,34 +52,41 @@
   {
     "id": "kriat-shema-shpilman-2025",
     "title": "Kriat Shema by Amir Shpilman (2025)",
-    "coverImage": "images/portfolio/kriat_shema_score.png",
-    "summary": "Score, parts, and performance materials for Amir Shpilman's 'Kriat Shema,' a Fantasy for Shofar and Orchestra. Premiered by the Berlin Philharmonic.",
+    "coverImage": "images/projects/kriat-shema/cvr7364234.png",
+    "summary": "Score, parts, and performance materials for Amir Shpilman's 'Kriat Shema,' a Fantasy for Shofar and Orchestra. Premiered by the **Berlin Philharmonic**.",
     "contentBlocks": [
       {
         "type": "text",
-        "value": "**ZSCORE.art studio**, under **Parham Behzad**, was responsible for the preparation of the score, individual parts, and all performance materials for Amir Shpilman's new orchestral piece, *'Kriat Shema – Fantasy for Shofar and Orchestra'*. Is the second work we did for him and it was premiered by **Berlin Philharmonic**.\n\nThe piece is dedicated to Bar Zemach and Yehezkel Tchorz, RIP."
+        "value": "**ZSCORE.art studio**, led by **Parham Behzad**, was responsible for the preparation of the full score, individual parts, and all performance materials for Amir Shpilman's *Kriat Shema – Fantasy for Shofar and Orchestra*.\n\nThis was our second collaboration with the composer. The work was premiered by the **Berlin Philharmonic** and is dedicated to **Bar Zemach** and **Yehezkel Tchorz** (RIP)."
       },
       {
         "type": "image",
-        "src": "images/portfolio/kriat_shema_detail.png",
+        "src": "images/projects/kriat-shema/1.jpg",
         "alt": "Detail from the score of Kriat Shema",
         "align": "center",
-        "width": "70%",
-        "caption": "Excerpt from Amir Shpilman's 'Kriat Shema'"
+        "width": "40%",
+        "caption": ""
       },
       {
         "type": "text",
-        "value": "The engraving and material preparation ensured clarity and precision for the orchestral textures and the unique inclusion of the Shofar.\n\nCopyright for the work is held by Amir Shpilman, and all right is resereved. The score typesetting and engraving credited to **Parham Behzad (ZSCORE)**."
+        "value": "The engraving and preparation process emphasized clarity in the orchestral textures and supported the integration of the Shofar—a non-standard orchestral instrument requiring careful handling in notation.\n\nAll rights to the work are held by **Amir Shpilman**. Score typesetting and engraving by **Parham Behzad (ZSCORE.art)**."
+      },
+      {
+        "type": "gallery",
+        "images": [
+          { "src": "images/projects/kriat-shema/3.png", "caption": "Score excerpt #1" },
+          { "src": "images/projects/kriat-shema/2.jpg", "caption": "Score excerpt #2" }
+        ]
       }
     ],
     "tags": ["Engraving", "Orchestral Score", "Performance Materials", "Amir Shpilman", "Berlin Philharmonic", "Shofar", "Contemporary Classical"],
-    "link": "",
-    "linkText": "Listen Here (Link to be provided)"
-  },
+    "link": "https://www.youtube.com/watch?v=ByWcq4eKAKw",
+    "linkText": "Watch Here (YouTube)"
+  },  
   {
     "id": "mass-choir-engraving-current",
     "title": "Engraving for Mass Choir Collaborative Performance",
-    "coverImage": "images/portfolio/mass_choir_engraving.png",
+    "coverImage": "",
     "summary": "Current, large-scale engraving project for a collaborative performance piece involving a mass choir of over 100 singers.",
     "contentBlocks": [
       {
