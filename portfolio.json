@@ -1,5 +1,20 @@
 [
   {
+    "id": "download-portfolio-samples",
+    "title": "Download Our Portfolio of Work Samples",
+    "coverImage": "images/projects/portfolio_cover.png",
+    "summary": "A curated portfolio showing engraving, orchestration, software tools, and editorial work. Download directly.",
+    "contentBlocks": [
+      {
+      "type": "text",
+      "value": "Download our portfolio of selected work samples. The file includes engraving excerpts. Direct, unfiltered look at what we deliver."
+      }
+    ],
+    "link": "assets/ZSCORE-portfolio.pdf",
+    "linkText": "Download our portfolio",
+    "tags": ["Engraving", "Portfolio", "Sibelius"]
+  },
+  {
     "id": "shpilman-opera",
     "title": "IMPACT by Amir Shpilman",
     "coverImage": "images/projects/IMPACT/project_39_photo_20230314192747.jpg",
