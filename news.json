@@ -1,5 +1,28 @@
 [
   {
+    "id": "engraving-adventure-markus-gotz-rundel",
+    "title": "Part-Engraving 'Adventure' by Markus Götz for RUNDEL Verlag",
+    "date": "2025-07-01",
+    "coverImage": "images/feeds/adventure_gotz_rundel.png",
+    "summary": "Started engraving parts for Markus Götz’s piece 'Adventure' for RUNDEL Verlag. A beautiful work taking shape in Rot an der Rot. First collaboration with RUNDEL Verlag, hope for many more.",
+    "author": "ZSCORE Team",
+    "tags": ["Engraving", "Score Preparation", "RUNDEL Verlag", "Markus Götz", "Rot an der Rot", "Band Music", "New Collaboration"],
+    "contentBlocks": [
+      {
+        "type": "text",
+        "value": "Today we started engraving a fresh set of parts for *Adventure* by Markus Götz, published by RUNDEL Verlag. A beautiful piece, soon to be ready in the quiet town of Rot an der Rot. Our first collaboration with RUNDEL Verlag. Hope for many more."
+      },
+      {
+        "type": "image",
+        "src": "images/feeds/adventure_gotz_rundel2.png",
+        "alt": "Engraving session for Markus Götz's Adventure",
+        "align": "center",
+        "width": "75%",
+        "caption": "First collaboration with RUNDEL Verlag."
+      }
+    ]
+  },
+  {
     "id": "zscore-art-official-launch-welcome",
     "title": "Welcome to zscore.art - We Are Officially Live!",
     "date": "2025-05-23",
