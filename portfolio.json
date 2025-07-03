@@ -1,17 +1,17 @@
 [
   {
     "id": "download-portfolio-samples",
-    "title": "Download Our Portfolio of Work Samples",
+    "title": "Download Our Mini Portfolio of Work Samples",
     "coverImage": "images/projects/portfolio_cover.png",
     "summary": "A curated portfolio showing engraving, orchestration, software tools, and editorial work. Download directly.",
     "contentBlocks": [
       {
       "type": "text",
-      "value": "Download our portfolio of selected work samples. The file includes engraving excerpts. Direct, unfiltered look at what we deliver."
+      "value": "Download our mini portfolio of selected work samples. The file includes engraving excerpts. Direct, unfiltered look at what we deliver."
       }
     ],
     "link": "assets/ZSCORE-portfolio.pdf",
-    "linkText": "Download our portfolio",
+    "linkText": "Download our mini portfolio",
     "tags": ["Engraving", "Portfolio", "Sibelius"]
   },
   {
