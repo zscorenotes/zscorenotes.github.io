@@ -1,9 +1,11 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-// https://vite.dev/config/
 export default defineConfig({
+  // Add this line
+  base: '/zscorenotes.github.ioe/', 
   plugins: [react()],
   server: {
     allowedHosts: true
