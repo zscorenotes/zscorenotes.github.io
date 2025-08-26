@@ -23,7 +23,7 @@ export default function SvgScrollAnimation({ scrollProgress, isVisible }) {
 
   // 1. Fetch the SVG content from the URL once on component mount.
   useEffect(() => {
-    const svgUrl = 'https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/assets/main.svg';
+    const svgUrl = '/src/assets/main.svg';
     fetch(svgUrl)
       .then(response => response.ok ? response.text() : Promise.reject('Network response was not ok'))
       .then(data => setSvgContent(data))

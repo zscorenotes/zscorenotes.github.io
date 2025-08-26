@@ -5,7 +5,7 @@ import path from 'path'
 
 export default defineConfig({
   // Add this line
-  base: '/zscorenotes.github.ioe/', 
+  base: '/', 
   plugins: [react()],
   server: {
     allowedHosts: true
