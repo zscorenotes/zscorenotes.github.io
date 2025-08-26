@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Content Control Panel</title>
+    <!-- Tailwind CSS (used for layout, will be overridden by custom styles) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SortableJS for Drag and Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Quill.js for Rich Text Editing -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles inspired by your provided CSS */
+        :root {
+          --primary-bg: rgb(252, 252, 252);
+          --primary-text: rgb(1, 1, 1);
+          --secondary-text: rgb(80, 80, 80);
+          --accent-color: rgb(50, 50, 50);
+          --border-color: rgb(200, 200, 200);
+          --header-font: 'Courier New', Courier, monospace;
+          --body-font: 'JetBrains Mono', monospace;
+        }
+
+        body {
+          background-color: var(--primary-bg);
+          color: var(--primary-text);
+          font-family: var(--body-font);
+          font-weight: 300;
+          line-height: 1.6;
+        }
+
+        /* General UI Elements */
+        .btn {
+            padding: 0.5rem 1rem;
+            font-family: var(--body-font);
+            font-weight: 400;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+            text-align: center;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            border-color: var(--accent-color);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-text);
+            border-color: var(--primary-text);
+        }
+        .btn-secondary {
+            background-color: var(--primary-bg);
+            color: var(--accent-color);
+        }
+        .btn-secondary:hover {
+            background-color: #f0f0f0;
+            border-color: var(--accent-color);
+        }
+         .btn-danger {
+            background-color: #dc2626; /* red-600 */
+            color: var(--primary-bg);
+            border-color: #dc2626;
+        }
+        .btn-danger:hover {
+            background-color: #b91c1c; /* red-700 */
+            border-color: #b91c1c;
+        }
+        .btn:disabled {
+            background-color: #e5e5e5;
+            border-color: #e5e5e5;
+            color: var(--secondary-text);
+            cursor: not-allowed;
+        }
+        
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--body-font);
+            font-size: 0.9rem;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary-text);
+        }
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 1px var(--accent-color);
+        }
+        
+        /* Custom Switch for Boolean values */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        /* Drag and Drop Styles */
+        .drag-handle {
+            cursor: grab;
+        }
+        .ghost {
+            opacity: 0.5;
+            background: #f0f0f0;
+        }
+
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" v-cloak class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[var(--primary-bg)] border-r border-[var(--border-color)] p-6 flex flex-col">
+            <h1 class="font-bold text-2xl mb-2" style="font-family: var(--header-font);">CPANEL</h1>
+            <h2 class="font-normal text-sm text-[var(--secondary-text)] mb-8 tracking-wider">Content Manager</h2>
+            
+            <nav class="space-y-2 flex-1">
+                <button v-for="file in availableFiles"
+                        @click="selectFile(file.key)"
+                        :class="['w-full text-left px-4 py-2 transition-colors text-sm font-medium border-l-2', currentFileKey === file.key ? 'border-[var(--accent-color)] text-[var(--primary-text)] bg-gray-100' : 'border-transparent text-[var(--secondary-text)] hover:bg-gray-50 hover:border-gray-300']">
+                    {{ file.name }}
+                </button>
+            </nav>
+            <div class="mt-8 p-4 bg-gray-50 border border-[var(--border-color)] text-xs text-[var(--secondary-text)]">
+                <p class="font-bold mb-2">Instructions:</p>
+                <ol class="list-decimal list-inside space-y-1">
+                    <li>Select a content type.</li>
+                    <li>Load your JSON file.</li>
+                    <li>Edit, add, or delete.</li>
+                    <li>Save to modify the file.</li>
+                </ol>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main class="flex-1 flex flex-col bg-gray-50/50">
+            <header class="bg-[var(--primary-bg)] border-b border-[var(--border-color)] px-8 py-4 flex justify-between items-center">
+                <h2 v-if="currentFileKey" class="text-xl font-normal">
+                    File: <span class="font-medium text-[var(--accent-color)]">{{ currentFileName }}</span>
+                </h2>
+                 <h2 v-else class="text-xl font-normal text-[var(--secondary-text)]">Select a Content Type</h2>
+                <div class="flex items-center gap-4">
+                     <button @click="loadJsonWithPicker" class="btn btn-secondary">Load JSON</button>
+                     <input id="file-upload-fallback" type="file" @change="loadJsonFromFile" accept=".json" class="hidden">
+                    <button @click="saveJsonToFile" :disabled="!data.length" class="btn btn-primary">
+                        Save File
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Entry List -->
+                <div class="w-1/3 overflow-y-auto p-8 border-r border-[var(--border-color)] bg-[var(--primary-bg)]">
+                    <button @click="addNewEntry" class="w-full mb-6 btn btn-secondary font-bold">
+                        + Add New Entry
+                    </button>
+                    <div v-if="data.length" class="space-y-3">
+                        <div v-for="(item, index) in data" :key="item.id"
+                             @click="selectEntry(item)"
+                             :class="['p-3 cursor-pointer border transition-all', currentEntry && currentEntry.id === item.id ? 'border-[var(--accent-color)] bg-white' : 'border-[var(--border-color)] bg-white hover:border-[var(--accent-color)] hover:bg-white']">
+                            <h3 class="font-bold truncate text-sm">{{ item.title || item.name || `Entry ${item.id}` }}</h3>
+                            <p class="text-xs text-[var(--secondary-text)] truncate">{{ item.summary || item.description || item.date || 'No summary' }}</p>
+                        </div>
+                    </div>
+                     <div v-else-if="currentFileKey" class="text-center text-[var(--secondary-text)] mt-10 text-sm">
+                        <p>No entries found.</p>
+                        <p>Load a JSON file or add a new entry.</p>
+                    </div>
+                </div>
+
+                <!-- Editor Panel -->
+                <div class="flex-1 overflow-y-auto p-8">
+                    <div v-if="currentEntry" :key="currentEntry.id">
+                        <form @submit.prevent="saveEntry" class="space-y-6 bg-[var(--primary-bg)] p-6 border border-[var(--border-color)]">
+                            <!-- Regular Fields -->
+                            <div v-for="(value, key) in currentEntry" :key="key">
+                                <div v-if="key !== 'content_blocks'">
+                                    <label :for="key" class="block text-sm font-medium text-[var(--secondary-text)] mb-1 tracking-wider">{{ formatLabel(key) }}</label>
+                                    
+                                    <div v-if="key === 'category'">
+                                        <select v-model="currentEntry[key]">
+                                            <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
+                                        </select>
+                                    </div>
+                                    <div v-else-if="typeof value === 'boolean'">
+                                         <label class="switch">
+                                            <input type="checkbox" :id="key" v-model="currentEntry[key]">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div v-else-if="key === 'image_urls'" class="space-y-3">
+                                        <div v-for="(imageUrl, index) in currentEntry.image_urls" :key="index" class="p-3 border border-[var(--border-color)] bg-white space-y-2">
+                                            <div class="flex justify-between items-center">
+                                                <h5 class="font-bold text-sm">Image {{ index + 1 }}</h5>
+                                                <button type="button" @click="removePortfolioImage(index)" class="text-red-600 hover:text-red-800 text-xs font-bold">REMOVE</button>
+                                            </div>
+                                            <div class="mt-1 flex items-center gap-4">
+                                                <img v-if="imageUrl" :src="imageUrl" class="h-20 w-20 object-cover border border-[var(--border-color)]">
+                                                <span v-else class="h-20 w-20 bg-gray-100 flex items-center justify-center text-xs text-[var(--secondary-text)] border border-[var(--border-color)]">No Image</span>
+                                                <label :for="'portfolio-image-upload-' + index" class="btn btn-secondary text-xs">Change</label>
+                                                <input :id="'portfolio-image-upload-' + index" type="file" @change="handlePortfolioImageUpload($event, index)" accept="image/*" class="hidden">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Image URL</label>
+                                                <input type="text" v-model="currentEntry.image_urls[index]">
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="addPortfolioImage" class="btn btn-secondary w-full text-xs">+ Add Image</button>
+                                    </div>
+                                    <div v-else-if="isImage(key)">
+                                        <div class="mt-1 flex items-center gap-4">
+                                            <img v-if="value" :src="value" class="h-20 w-20 object-cover border border-[var(--border-color)]">
+                                            <span v-else class="h-20 w-20 bg-gray-100 flex items-center justify-center text-xs text-[var(--secondary-text)] border border-[var(--border-color)]">No Image</span>
+                                            <label :for="'image-upload-' + key" class="btn btn-secondary text-xs">Change</label>
+                                            <input :id="'image-upload-' + key" type="file" @change="handleImageUpload($event, key)" accept="image/*" class="hidden">
+                                        </div>
+                                    </div>
+                                    <div v-else-if="isTextarea(key)">
+                                        <textarea :id="key" v-model="currentEntry[key]" rows="4"></textarea>
+                                    </div>
+                                    <input v-else type="text" :id="key" v-model="currentEntry[key]">
+                                </div>
+                            </div>
+
+                            <!-- Content Blocks Editor -->
+                            <div v-if="'content_blocks' in currentEntry" class="space-y-4 pt-4 border-t border-[var(--border-color)]">
+                                <h3 class="text-base font-medium text-[var(--secondary-text)] tracking-wider">Content Blocks</h3>
+                                <div ref="contentBlocksContainer">
+                                    <div v-for="(block, index) in currentEntry.content_blocks" :key="block._uid" class="p-4 border border-[var(--border-color)] bg-gray-50/50 space-y-3 mb-3">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="drag-handle h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                                </svg>
+                                                <h4 class="font-bold">Block {{ index + 1 }}</h4>
+                                            </div>
+                                            <button type="button" @click="removeContentBlock(index)" class="text-red-600 hover:text-red-800 text-xs font-bold">REMOVE</button>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Type</label>
+                                            <select v-model="block.type" @change="onBlockTypeChange(block)">
+                                                <option value="heading">Heading</option>
+                                                <option value="paragraph">Paragraph</option>
+                                                <option value="markdown">Markdown</option>
+                                                <option value="image">Image</option>
+                                                <option value="gallery">Gallery</option>
+                                            </select>
+                                        </div>
+                                        <div v-if="['heading', 'paragraph', 'markdown'].includes(block.type)">
+                                            <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Content</label>
+                                            <textarea v-model="block.content" rows="6"></textarea>
+                                        </div>
+                                        <div v-if="block.type === 'image'" class="space-y-2">
+                                            <div class="mt-1 flex items-center gap-4">
+                                                <img v-if="block.src" :src="block.src" class="h-20 w-20 object-cover border border-[var(--border-color)]">
+                                                <span v-else class="h-20 w-20 bg-gray-100 flex items-center justify-center text-xs text-[var(--secondary-text)] border border-[var(--border-color)]">No Image</span>
+                                                <label :for="'block-image-upload-' + index" class="btn btn-secondary text-xs">Change</label>
+                                                <input :id="'block-image-upload-' + index" type="file" @change="handleBlockImageUpload($event, index)" accept="image/*" class="hidden">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Source URL (or leave blank for uploaded image)</label>
+                                                <input type="text" v-model="block.src">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Caption</label>
+                                                <input type="text" v-model="block.caption">
+                                            </div>
+                                        </div>
+                                        <div v-if="block.type === 'gallery'" class="space-y-3">
+                                            <div v-for="(image, imgIndex) in block.images" :key="imgIndex" class="p-3 border border-[var(--border-color)] bg-white space-y-2">
+                                                 <div class="flex justify-between items-center">
+                                                    <h5 class="font-bold text-sm">Image {{ imgIndex + 1 }}</h5>
+                                                    <button type="button" @click="removeGalleryImage(index, imgIndex)" class="text-red-600 hover:text-red-800 text-xs font-bold">REMOVE</button>
+                                                </div>
+                                                <div class="mt-1 flex items-center gap-4">
+                                                    <img v-if="image.src" :src="image.src" class="h-20 w-20 object-cover border border-[var(--border-color)]">
+                                                    <span v-else class="h-20 w-20 bg-gray-100 flex items-center justify-center text-xs text-[var(--secondary-text)] border border-[var(--border-color)]">No Image</span>
+                                                    <label :for="'gallery-image-upload-' + index + '-' + imgIndex" class="btn btn-secondary text-xs">Change</label>
+                                                    <input :id="'gallery-image-upload-' + index + '-' + imgIndex" type="file" @change="handleGalleryImageUpload($event, index, imgIndex)" accept="image/*" class="hidden">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Source URL</label>
+                                                    <input type="text" v-model="image.src">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-[var(--secondary-text)] mb-1">Caption</label>
+                                                    <input type="text" v-model="image.caption">
+                                                </div>
+                                            </div>
+                                            <button type="button" @click="addGalleryImage(index)" class="btn btn-secondary w-full text-xs">+ Add Image to Gallery</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" @click="addContentBlock" class="btn btn-secondary w-full">+ Add Content Block</button>
+                            </div>
+
+                            <div class="flex justify-end gap-4 pt-4 border-t border-[var(--border-color)]">
+                                <button type="button" @click="deleteEntry" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div v-else class="flex items-center justify-center h-full text-[var(--secondary-text)] text-sm">
+                        <p>Select an entry to edit or add a new one.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Vue.js for reactivity -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    availableFiles: [
+                        { key: 'NewsItem', name: 'News Items', structure: { id: '', title: '', date: '', summary: '', content: '', image: '', featured: false, tags: [] } },
+                        { key: 'PortfolioItem', name: 'Portfolio Items', structure: { id: '', created_date: '', updated_date: '', created_by: '', title: '', description: '', composer: '', publisher: '', instrumentation: '', project_type: '', image_urls: [], completion_year: 2023, tags: '', external_link: '', external_link_text: '', content_blocks: [] } },
+                        { key: 'Service', name: 'Services', structure: { id: '', title: '', description: '', category: 'engraving', featured: false, cover_image_url: '', content_blocks: [] } },
+                        { key: 'ContactInquiry', name: 'Contact Inquiries', structure: { id: '', name: '', email: '', message: '', date: '' } }
+                    ],
+                    availableCategories: ["engraving", "editorial", "automation", "orchestration", "audio", "consulting"],
+                    currentFileKey: null,
+                    data: [], 
+                    currentEntry: null,
+                    fileHandle: null,
+                    sortableInstance: null,
+                };
+            },
+            watch: {
+                currentEntry(newEntry, oldEntry) {
+                    if (newEntry) {
+                        this.$nextTick(() => {
+                            this.initSortable();
+                        });
+                    }
+                }
+            },
+            computed: {
+                currentFileName() {
+                    const file = this.availableFiles.find(f => f.key === this.currentFileKey);
+                    return file ? file.name : '';
+                }
+            },
+            methods: {
+                initSortable() {
+                    if (this.sortableInstance) {
+                        this.sortableInstance.destroy();
+                    }
+                    const container = this.$refs.contentBlocksContainer;
+                    if (container) {
+                        this.sortableInstance = Sortable.create(container, {
+                            handle: '.drag-handle',
+                            ghostClass: 'ghost',
+                            animation: 150,
+                            onEnd: (evt) => {
+                                const item = this.currentEntry.content_blocks.splice(evt.oldIndex, 1)[0];
+                                this.currentEntry.content_blocks.splice(evt.newIndex, 0, item);
+                            },
+                        });
+                    }
+                },
+                selectFile(fileKey) {
+                    this.currentFileKey = fileKey;
+                    this.data = [];
+                    this.currentEntry = null;
+                    this.fileHandle = null;
+                },
+                async loadJsonWithPicker() {
+                    if (!this.currentFileKey) {
+                        alert("Please select a content type from the sidebar first.");
+                        return;
+                    }
+                    if ('showOpenFilePicker' in window) {
+                        try {
+                            const [handle] = await window.showOpenFilePicker({
+                                types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }],
+                                multiple: false,
+                            });
+                            this.fileHandle = handle;
+                            const file = await handle.getFile();
+                            const content = await file.text();
+                            this.parseAndLoadData(content);
+                        } catch (err) {
+                            console.error("User cancelled the file picker or an error occurred.", err);
+                        }
+                    } else {
+                        alert("Your browser doesn't support direct file editing. Using fallback to load a file.");
+                        document.getElementById('file-upload-fallback').click();
+                    }
+                },
+                loadJsonFromFile(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => this.parseAndLoadData(e.target.result);
+                    reader.readAsText(file);
+                    event.target.value = '';
+                },
+                parseAndLoadData(jsonString) {
+                    try {
+                        const jsonData = JSON.parse(jsonString);
+                        if (Array.isArray(jsonData)) {
+                            this.data = jsonData;
+                            this.currentEntry = null;
+                        } else {
+                            alert("Error: JSON file must contain an array of objects.");
+                        }
+                    } catch (error) {
+                        alert("Error parsing JSON file: " + error.message);
+                    }
+                },
+                async saveJsonToFile() {
+                    if (!this.data.length) return;
+                    // Create a clean version of the data without temporary IDs before saving
+                    const dataToSave = JSON.parse(JSON.stringify(this.data));
+                    dataToSave.forEach(entry => {
+                        if (entry.content_blocks) {
+                            entry.content_blocks.forEach(block => delete block._uid);
+                        }
+                    });
+                    const jsonString = JSON.stringify(dataToSave, null, 2);
+
+                    if (this.fileHandle) {
+                        try {
+                            const writable = await this.fileHandle.createWritable();
+                            await writable.write(jsonString);
+                            await writable.close();
+                            alert(`Successfully saved changes to ${this.fileHandle.name}`);
+                        } catch (err) {
+                            console.error("Error saving file:", err);
+                            alert("Could not save the file. Please try again.");
+                        }
+                    } else {
+                        const blob = new Blob([jsonString], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${this.currentFileKey}.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                },
+                selectEntry(entry) {
+                    const newEntry = JSON.parse(JSON.stringify(entry));
+                    // Assign a unique ID to each block for stable rendering and drag-drop
+                    if (newEntry.content_blocks) {
+                        newEntry.content_blocks.forEach(block => {
+                            block._uid = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                        });
+                    }
+                    this.currentEntry = newEntry;
+                },
+                addNewEntry() {
+                    if (!this.currentFileKey) {
+                        alert("Please select a content type first.");
+                        return;
+                    }
+                    const fileType = this.availableFiles.find(f => f.key === this.currentFileKey);
+                    const newEntry = JSON.parse(JSON.stringify(fileType.structure));
+                    newEntry.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+                    this.currentEntry = newEntry;
+                },
+                saveEntry() {
+                    if (!this.currentEntry) return;
+                    const index = this.data.findIndex(item => item.id === this.currentEntry.id);
+                    if (index !== -1) {
+                        this.data[index] = this.currentEntry;
+                    } else {
+                        this.data.unshift(this.currentEntry);
+                    }
+                    this.data = [...this.data];
+                },
+                handleImageUpload(event, key) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.currentEntry[key] = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+                handlePortfolioImageUpload(event, index) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.currentEntry.image_urls[index] = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+                addPortfolioImage() {
+                    if (!this.currentEntry.image_urls) {
+                        this.currentEntry.image_urls = [];
+                    }
+                    this.currentEntry.image_urls.push('');
+                },
+                removePortfolioImage(index) {
+                    this.currentEntry.image_urls.splice(index, 1);
+                },
+                handleBlockImageUpload(event, blockIndex) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.currentEntry.content_blocks[blockIndex].src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+                handleGalleryImageUpload(event, blockIndex, imgIndex) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.currentEntry.content_blocks[blockIndex].images[imgIndex].src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                },
+                updateImageUrls(event, key) {
+                    const value = event.target.value;
+                    this.currentEntry[key] = value.split('\n').map(url => url.trim()).filter(Boolean);
+                },
+                addContentBlock() {
+                    if (!this.currentEntry.content_blocks) {
+                        this.currentEntry.content_blocks = [];
+                    }
+                    this.currentEntry.content_blocks.push({ 
+                        type: 'paragraph', 
+                        content: '',
+                        _uid: Date.now().toString(36) + Math.random().toString(36).substr(2) 
+                    });
+                },
+                removeContentBlock(index) {
+                    this.currentEntry.content_blocks.splice(index, 1);
+                },
+                onBlockTypeChange(block) {
+                    const type = block.type;
+                    const uid = block._uid; // Preserve the unique ID
+                    for (const key in block) {
+                        delete block[key];
+                    }
+                    block.type = type;
+                    block._uid = uid;
+
+                    if (['heading', 'paragraph', 'markdown'].includes(type)) {
+                        block.content = '';
+                    } else if (type === 'image') {
+                        block.src = '';
+                        block.caption = '';
+                    } else if (type === 'gallery') {
+                        block.images = [];
+                    }
+                },
+                addGalleryImage(blockIndex) {
+                    if (!this.currentEntry.content_blocks[blockIndex].images) {
+                        this.currentEntry.content_blocks[blockIndex].images = [];
+                    }
+                    this.currentEntry.content_blocks[blockIndex].images.push({ src: '', caption: '' });
+                },
+                removeGalleryImage(blockIndex, imageIndex) {
+                    this.currentEntry.content_blocks[blockIndex].images.splice(imageIndex, 1);
+                },
+                formatLabel(key) {
+                    return key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                },
+                isImage(key) {
+                    return ['image', 'imageUrl', 'thumbnail', 'icon', 'logo', 'cover_image_url'].includes(key.toLowerCase());
+                },
+                isTextarea(key) {
+                    return ['summary', 'message', 'description'].includes(key.toLowerCase());
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

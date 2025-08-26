@@ -1,0 +1,24 @@
+[
+  {
+    "id": "news_abc123def456",
+    "created_date": "2024-05-15T09:30:00Z",
+    "updated_date": "2024-05-15T10:00:00Z",
+    "created_by": "parham@zscore.studio",
+    "title": "Will update soon...",
+    "content": "",
+    "excerpt": "",
+    "category": "project_update",
+    "featured": true,
+    "publication_date": "2024-08-24",
+    "tags": [
+      "notation",
+      "software",
+      "innovation",
+      "composers"
+    ],
+    "image_urls": [],
+    "content_blocks": [],
+    "external_link": "",
+    "external_link_text": ""
+  }
+]
