@@ -1,8 +1,8 @@
-# Base44 App
+# ZSCORE.studio
 
 
 This app was created by Parham Behzad for ZSCORE.studio.
-It's a Vite+React app.
+
 
 ## Running the app
 
