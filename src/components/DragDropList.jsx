@@ -113,24 +113,11 @@ export default function DragDropList({
 
   return (
     <div className="space-y-2">
-      {/* Add New Item Button */}
-      {onAdd && (
-        <button
-          onClick={onAdd}
-          className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center gap-2 mb-4"
-        >
-          <Plus size={20} />
-          Add New {itemType}
-        </button>
-      )}
-
       {/* Sortable List */}
       {items.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           <p>No {itemType}s added yet</p>
-          {onAdd && (
-            <p className="text-sm mt-2">Click the button above to add your first {itemType}</p>
-          )}
+          <p className="text-sm mt-2">Use the "Add New" button above to create your first {itemType}</p>
         </div>
       ) : (
         <div className="space-y-2">
