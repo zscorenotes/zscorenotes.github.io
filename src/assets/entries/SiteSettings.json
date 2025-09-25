@@ -1,0 +1,21 @@
+{
+  "site_title": "ZSCORE.studio - Ultimate Music Engraver",
+  "site_description": "You need professional music engraving. ZSCORE provides precise, score solutions for composers, ensuring performance-ready parts and structural integrity.",
+  "site_keywords": "music engraving, music notation, score preparation, music publishing, professional scores",
+  "logo": {
+    "text": "ZSCORE",
+    "subtitle": ".studio",
+    "tagline": "The Art of Music Notation"
+  },
+  "footer": {
+    "copyright": "© 2025 ZSCORE",
+    "tagline": "Professional Music Engraving",
+    "credit": "Built with ♡ by a Composer"
+  },
+  "seo": {
+    "meta_title": "ZSCORE.studio - Ultimate Music Engraver",
+    "meta_description": "You need professional music engraving. ZSCORE provides precise, score solutions for composers and publishers.",
+    "canonical_url": "https://zscore.studio",
+    "og_image": "/images/og-image.jpg"
+  }
+}

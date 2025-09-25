@@ -1,0 +1,49 @@
+[{
+    "name": "ContactInquiry",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Client name"
+      },
+      "email": {
+        "type": "string",
+        "description": "Client email"
+      },
+      "project_type": {
+        "type": "string",
+        "enum": [
+          "score_engraving",
+          "orchestration",
+          "audio_programming",
+          "consultation",
+          "other"
+        ],
+        "description": "Type of project inquiry"
+      },
+      "message": {
+        "type": "string",
+        "description": "Detailed project description"
+      },
+      "timeline": {
+        "type": "string",
+        "description": "Project timeline or deadline"
+      },
+      "budget_range": {
+        "type": "string",
+        "enum": [
+          "under_1000",
+          "1000_5000",
+          "5000_10000",
+          "over_10000",
+          "flexible"
+        ],
+        "description": "Budget range for project"
+      }
+    },
+    "required": [
+      "name",
+      "email",
+      "message"
+    ]
+  }]

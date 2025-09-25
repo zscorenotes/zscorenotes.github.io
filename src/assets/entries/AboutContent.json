@@ -1,0 +1,30 @@
+{
+  "section_title": "About ZSCORE",
+  "section_subtitle": "The Art of Music Notation",
+  "philosophy_paragraphs": [
+    "Music notation is both science and art—requiring mathematical precision while serving the deeply human need for musical expression.",
+    "At ZSCORE, we bridge the gap between traditional craftsmanship and modern technology, ensuring every note serves the music's ultimate purpose: to be performed beautifully."
+  ],
+  "team_members": [
+    {
+      "name": "Parham Behzad",
+      "role": "Founder & Music Engraver",
+      "bio": "Professional composer and music engraver with extensive experience in creating performance-ready scores.",
+      "image": "/images/parham-behzad.jpg"
+    }
+  ],
+  "technical_expertise": [
+    "Professional Music Engraving",
+    "Score Preparation",
+    "Part Extraction",
+    "Digital Music Publishing",
+    "Music Technology"
+  ],
+  "musical_background": [
+    "Classical Composition",
+    "Contemporary Music",
+    "Film Scoring",
+    "Chamber Music",
+    "Orchestral Works"
+  ]
+}

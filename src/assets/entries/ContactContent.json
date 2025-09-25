@@ -1,0 +1,42 @@
+{
+  "section_title": "Let's Create Something Beautiful",
+  "section_subtitle": "Ready to bring your musical vision to life?",
+  "contact_info": {
+    "email": "hello@zscore.studio",
+    "phone": "+1 (555) 123-4567",
+    "address": "Professional Music Services"
+  },
+  "form_fields": [
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Full Name",
+      "required": true
+    },
+    {
+      "name": "email",
+      "type": "email",
+      "label": "Email Address",
+      "required": true
+    },
+    {
+      "name": "project_type",
+      "type": "select",
+      "label": "Project Type",
+      "required": true,
+      "options": [
+        "Music Engraving",
+        "Score Preparation",
+        "Part Extraction",
+        "Music Publishing",
+        "Custom Request"
+      ]
+    },
+    {
+      "name": "message",
+      "type": "textarea",
+      "label": "Project Details",
+      "required": true
+    }
+  ]
+}
