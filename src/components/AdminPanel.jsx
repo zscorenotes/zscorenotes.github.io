@@ -6,6 +6,7 @@ import AuthGuard from './AuthGuard';
 import RichEditor from './RichEditor';
 import { getStoredInquiries, updateInquiryStatus, deleteInquiry } from '@/api.js';
 import ImageUpload from './ImageUpload';
+import DragDropList from './DragDropList';
 import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive } from 'lucide-react';
 
 /**
@@ -181,6 +182,73 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Error creating new item:', error);
       setSaveStatus('Error creating item');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
+  };
+
+  const handleItemsReorder = async (reorderedItems) => {
+    try {
+      setSaveStatus('Reordering...');
+      
+      // Update the content state with reordered items
+      const updatedContent = { ...content };
+      updatedContent[activeSection] = reorderedItems;
+      setContent(updatedContent);
+      
+      // Save each item with its new order
+      await Promise.all(reorderedItems.map(item => 
+        ContentManager.updateContent(activeSection, item.id, item)
+      ));
+      
+      setSaveStatus('Order saved!');
+      setTimeout(() => setSaveStatus(''), 2000);
+      
+      // Trigger content update event for live preview
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('zscore-content-updated', {
+          detail: { contentType: activeSection }
+        }));
+      }
+    } catch (error) {
+      console.error('Error reordering items:', error);
+      setSaveStatus('Error saving order');
+      setTimeout(() => setSaveStatus(''), 3000);
+    }
+  };
+
+  const handleItemDelete = async (item) => {
+    if (!window.confirm(`Are you sure you want to delete "${item.title || 'this item'}"?`)) {
+      return;
+    }
+    
+    try {
+      setSaveStatus('Deleting...');
+      await ContentManager.deleteContent(activeSection, item.id);
+      
+      // Update local state
+      const updatedContent = { ...content };
+      if (updatedContent[activeSection]) {
+        updatedContent[activeSection] = updatedContent[activeSection].filter(i => i.id !== item.id);
+        setContent(updatedContent);
+        
+        // Clear selection if deleted item was selected
+        if (selectedItem?.id === item.id) {
+          setSelectedItem(null);
+        }
+      }
+      
+      setSaveStatus('Deleted!');
+      setTimeout(() => setSaveStatus(''), 2000);
+      
+      // Trigger content update event for live preview
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('zscore-content-updated', {
+          detail: { contentType: activeSection }
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      setSaveStatus('Error deleting');
       setTimeout(() => setSaveStatus(''), 3000);
     }
   };
@@ -499,68 +567,120 @@ export default function AdminPanel() {
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto">
-          {items.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <currentSection.icon className="w-8 h-8 text-gray-400" />
-              </div>
-              <h4 className="font-medium text-gray-900 mb-2">No items yet</h4>
-              <p className="text-sm text-gray-500 mb-4">
-                Create your first {activeSection} item to get started.
-              </p>
-              <button
-                onClick={handleAddNew}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-              >
-                Create First Item →
-              </button>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => handleItemSelect(item)}
-                  className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors relative ${
-                    selectedItem?.id === item.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+        <div className="flex-1 overflow-y-auto p-4">
+          {/* Only show drag-drop for services and portfolio */}
+          {(activeSection === 'services' || activeSection === 'portfolio') ? (
+            <DragDropList
+              items={items}
+              onReorder={handleItemsReorder}
+              onEdit={handleItemSelect}
+              onDelete={handleItemDelete}
+              onAdd={handleAddNew}
+              itemType={activeSection.slice(0, -1)} // Remove 's' from end
+              renderItem={(item, index) => (
+                <div 
+                  className={`flex items-start justify-between p-3 bg-white rounded border cursor-pointer hover:bg-gray-50 transition-colors ${
+                    selectedItem?.id === item.id ? 'border-blue-500 bg-blue-50' : ''
                   }`}
+                  onClick={() => handleItemSelect(item)}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm text-gray-900 truncate mb-1">
-                        {item.title || 'Untitled'}
-                      </h4>
-                      <p className="text-xs text-gray-500 mb-2">
-                        {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'No date'}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-sm text-gray-900 truncate mb-1">
+                      {item.title || 'Untitled'}
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-2">
+                      {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'No date'}
+                    </p>
+                    {item.excerpt && (
+                      <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                        {item.excerpt}
                       </p>
-                      {item.excerpt && (
-                        <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                          {item.excerpt}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-1">
-                        {item.category && (
-                          <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
-                            {item.category}
-                          </span>
-                        )}
-                        {item.featured && (
-                          <span className="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded">
-                            Featured
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    {selectedItem?.id === item.id && (
-                      <div className="ml-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      </div>
                     )}
+                    <div className="flex flex-wrap gap-1">
+                      {item.category && (
+                        <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
+                          {item.category}
+                        </span>
+                      )}
+                      {item.featured && (
+                        <span className="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded">
+                          Featured
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  {selectedItem?.id === item.id && (
+                    <div className="ml-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
+              )}
+            />
+          ) : (
+            // Fallback to original list for other sections (news, etc.)
+            items.length === 0 ? (
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <currentSection.icon className="w-8 h-8 text-gray-400" />
+                </div>
+                <h4 className="font-medium text-gray-900 mb-2">No items yet</h4>
+                <p className="text-sm text-gray-500 mb-4">
+                  Create your first {activeSection} item to get started.
+                </p>
+                <button
+                  onClick={handleAddNew}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  Create First Item →
+                </button>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => handleItemSelect(item)}
+                    className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors relative ${
+                      selectedItem?.id === item.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm text-gray-900 truncate mb-1">
+                          {item.title || 'Untitled'}
+                        </h4>
+                        <p className="text-xs text-gray-500 mb-2">
+                          {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'No date'}
+                        </p>
+                        {item.excerpt && (
+                          <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                            {item.excerpt}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-1">
+                          {item.category && (
+                            <span className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">
+                              {item.category}
+                            </span>
+                          )}
+                          {item.featured && (
+                            <span className="inline-block bg-yellow-100 text-yellow-700 text-xs px-2 py-1 rounded">
+                              Featured
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {selectedItem?.id === item.id && (
+                        <div className="ml-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>

@@ -24,3 +24,13 @@ test2.py
 2400ppi/3Asset 3.png
 2400ppi/4Asset 2.png
 node_modules
+
+# Protect content data from accidental deletion
+src/assets/entries/*.json
+public/images/uploads/
+public/images/*-*.png
+
+# Next.js build artifacts
+.next/
+.DS_Store
+*.DS_Store
