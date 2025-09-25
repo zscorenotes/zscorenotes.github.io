@@ -5,29 +5,14 @@ import { SiteSettings } from '@/assets/entries/SiteSettings';
 import { ServicesContent } from '@/assets/entries/ServicesContent';
 import { PortfolioContent } from '@/assets/entries/PortfolioContent';
 
-// Import existing data files for services and portfolio with fallbacks
-let servicesData, portfolioData, contactInquiryData;
+// Import fallback data files
+import servicesDefaultData from '@/assets/entries/Services.default.json';
+import portfolioDefaultData from '@/assets/entries/PortfolioItem.default.json';
 
-try {
-  servicesData = require('@/assets/entries/Services.json');
-} catch (e) {
-  console.warn('Services.json not found, using default');
-  servicesData = require('@/assets/entries/Services.default.json');
-}
-
-try {
-  portfolioData = require('@/assets/entries/PortfolioItem.json');
-} catch (e) {
-  console.warn('PortfolioItem.json not found, using default');
-  portfolioData = require('@/assets/entries/PortfolioItem.default.json');
-}
-
-try {
-  contactInquiryData = require('@/assets/entries/ContactInquiry.json');
-} catch (e) {
-  console.warn('ContactInquiry.json not found, using empty array');
-  contactInquiryData = [];
-}
+// Initialize data with defaults - will be replaced by dynamic loading if files exist
+let servicesData = servicesDefaultData;
+let portfolioData = portfolioDefaultData;
+let contactInquiryData = [];
 
 /**
  * Centralized Content Management System
@@ -142,6 +127,52 @@ export class ContentManager {
     }
   };
 
+  // Dynamic data loading flag
+  static _dataLoaded = false;
+
+  /**
+   * Dynamically load real data files if they exist (client-side only)
+   * This allows the build to succeed with defaults while using real data when available
+   */
+  static async loadRealDataIfAvailable() {
+    if (this._dataLoaded || typeof window === 'undefined') return;
+    
+    this._dataLoaded = true;
+    
+    try {
+      // Try to dynamically import real Services.json
+      const servicesModule = await import('@/assets/entries/Services.json');
+      if (servicesModule.default && Array.isArray(servicesModule.default)) {
+        servicesData = servicesModule.default;
+        console.log('Loaded real Services.json data');
+      }
+    } catch (e) {
+      console.log('Using default Services data (real file not found)');
+    }
+
+    try {
+      // Try to dynamically import real PortfolioItem.json
+      const portfolioModule = await import('@/assets/entries/PortfolioItem.json');
+      if (portfolioModule.default && Array.isArray(portfolioModule.default)) {
+        portfolioData = portfolioModule.default;
+        console.log('Loaded real PortfolioItem.json data');
+      }
+    } catch (e) {
+      console.log('Using default Portfolio data (real file not found)');
+    }
+
+    try {
+      // Try to dynamically import ContactInquiry.json
+      const contactModule = await import('@/assets/entries/ContactInquiry.json');
+      if (contactModule.default && Array.isArray(contactModule.default)) {
+        contactInquiryData = contactModule.default;
+        console.log('Loaded ContactInquiry.json data');
+      }
+    } catch (e) {
+      console.log('No contact inquiry data found');
+    }
+  }
+
   /**
    * Get all available content types
    * @returns {Array} Array of content type definitions
@@ -200,6 +231,9 @@ export class ContentManager {
     if (typeof window === 'undefined') {
       return this.getMockData();
     }
+
+    // Load real data files if available (client-side only)
+    await this.loadRealDataIfAvailable();
 
     // Try to load from localStorage first, but ensure mock data structure is preserved
     const STORAGE_KEY = 'zscore_cms_content';
