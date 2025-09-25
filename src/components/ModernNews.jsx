@@ -6,6 +6,7 @@ import ContentManager from '@/entities/ContentManager';
 import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { getTagColor } from '@/utils/tagColors';
 
 /**
  * Displays the "Feed" section.
@@ -157,14 +158,7 @@ function ModernNews() {
   ];
 
   const getCategoryColor = (category) => {
-    const colors = {
-      project_update: "bg-blue-100 text-blue-800",
-      technology: "bg-purple-100 text-purple-800",
-      industry_news: "bg-green-100 text-green-800",
-      announcement: "bg-orange-100 text-orange-800",
-      tutorial: "bg-pink-100 text-pink-800"
-    };
-    return colors[category] || "bg-gray-100 text-gray-800";
+    return getTagColor(category, 'news');
   };
 
   return (

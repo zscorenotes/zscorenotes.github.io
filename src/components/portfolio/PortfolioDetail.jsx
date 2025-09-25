@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getTagColor } from '@/utils/tagColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -238,10 +239,10 @@ export default function PortfolioDetail({ item, onClose }) {
                     <div className="flex flex-wrap gap-2">
                       {Array.isArray(item.project_type) ? (
                         item.project_type.map((type) => (
-                          <span key={type} className="bg-black/10 px-2 py-1 text-xs uppercase">{getProjectTypeLabel(type)}</span>
+                          <span key={type} className={`px-2 py-1 text-xs uppercase rounded ${getTagColor(type, 'portfolio')}`}>{getProjectTypeLabel(type)}</span>
                         ))
                       ) : (
-                        <span className="bg-black/10 px-2 py-1 text-xs uppercase">{getProjectTypeLabel(item.project_type)}</span>
+                        <span className={`px-2 py-1 text-xs uppercase rounded ${getTagColor(item.project_type, 'portfolio')}`}>{getProjectTypeLabel(item.project_type)}</span>
                       )}
                     </div>
                   </div>

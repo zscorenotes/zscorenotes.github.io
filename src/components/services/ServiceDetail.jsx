@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getTagColor } from '@/utils/tagColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -158,15 +159,7 @@ export default function ServiceDetail({ service, onClose }) {
   };
 
   const getCategoryColor = (category) => {
-    const colors = {
-      engraving: "bg-blue-100 text-blue-800",
-      orchestration: "bg-purple-100 text-purple-800",
-      automation: "bg-green-100 text-green-800",
-      audio: "bg-pink-100 text-pink-800",
-      consulting: "bg-orange-100 text-orange-800",
-      editorial: "bg-yellow-100 text-yellow-800",
-    };
-    return colors[category] || "bg-gray-100 text-gray-800";
+    return getTagColor(category, 'services');
   };
 
   return (

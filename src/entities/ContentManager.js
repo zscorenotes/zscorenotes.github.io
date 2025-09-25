@@ -5,10 +5,29 @@ import { SiteSettings } from '@/assets/entries/SiteSettings';
 import { ServicesContent } from '@/assets/entries/ServicesContent';
 import { PortfolioContent } from '@/assets/entries/PortfolioContent';
 
-// Import existing data files for services and portfolio
-import servicesData from '@/assets/entries/Services.json';
-import portfolioData from '@/assets/entries/PortfolioItem.json';
-import contactInquiryData from '@/assets/entries/ContactInquiry.json';
+// Import existing data files for services and portfolio with fallbacks
+let servicesData, portfolioData, contactInquiryData;
+
+try {
+  servicesData = require('@/assets/entries/Services.json');
+} catch (e) {
+  console.warn('Services.json not found, using default');
+  servicesData = require('@/assets/entries/Services.default.json');
+}
+
+try {
+  portfolioData = require('@/assets/entries/PortfolioItem.json');
+} catch (e) {
+  console.warn('PortfolioItem.json not found, using default');
+  portfolioData = require('@/assets/entries/PortfolioItem.default.json');
+}
+
+try {
+  contactInquiryData = require('@/assets/entries/ContactInquiry.json');
+} catch (e) {
+  console.warn('ContactInquiry.json not found, using empty array');
+  contactInquiryData = [];
+}
 
 /**
  * Centralized Content Management System

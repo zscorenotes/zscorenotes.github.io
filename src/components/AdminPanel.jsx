@@ -7,7 +7,8 @@ import RichEditor from './RichEditor';
 import { getStoredInquiries, updateInquiryStatus, deleteInquiry } from '@/api.js';
 import ImageUpload from './ImageUpload';
 import DragDropList from './DragDropList';
-import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive } from 'lucide-react';
+import TagManager from './TagManager';
+import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive, Palette } from 'lucide-react';
 
 /**
  * Main Admin Panel for Content Management
@@ -23,6 +24,7 @@ export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [inquiries, setInquiries] = useState([]);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [showTagManager, setShowTagManager] = useState(false);
 
   // Content sections configuration with enhanced features
   const sections = [
@@ -640,13 +642,15 @@ export default function AdminPanel() {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    onClick={() => handleItemSelect(item)}
-                    className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors relative ${
+                    className={`group p-4 hover:bg-gray-50 transition-colors relative ${
                       selectedItem?.id === item.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
+                      <div 
+                        className="flex-1 min-w-0 cursor-pointer"
+                        onClick={() => handleItemSelect(item)}
+                      >
                         <h4 className="font-semibold text-sm text-gray-900 truncate mb-1">
                           {item.title || 'Untitled'}
                         </h4>
@@ -671,11 +675,21 @@ export default function AdminPanel() {
                           )}
                         </div>
                       </div>
-                      {selectedItem?.id === item.id && (
-                        <div className="ml-2">
+                      <div className="flex items-center gap-2 ml-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleItemDelete(item);
+                          }}
+                          className="p-2 text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                          title="Delete item"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        {selectedItem?.id === item.id && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -798,6 +812,16 @@ export default function AdminPanel() {
                 </span>
               </div>
               <div className="flex items-center gap-4">
+                {/* Tag Manager Button - only show for content sections */}
+                {['services', 'portfolio', 'news'].includes(activeSection) && (
+                  <button
+                    onClick={() => setShowTagManager(true)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200 transition-colors"
+                  >
+                    <Palette size={16} />
+                    Manage Tags
+                  </button>
+                )}
                 <button
                   onClick={() => setPreviewMode(!previewMode)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -885,6 +909,14 @@ export default function AdminPanel() {
           {activeSection === 'inquiries' ? renderInquiryViewer() : renderEditor()}
         </div>
       </div>
+
+      {/* Tag Manager Modal */}
+      {showTagManager && (
+        <TagManager
+          sectionType={activeSection}
+          onClose={() => setShowTagManager(false)}
+        />
+      )}
     </AuthGuard>
   );
 }
@@ -1104,6 +1136,62 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                     <Plus size={16} />
                     Add Project Image
                   </button>
+                </div>
+              )}
+
+              {/* Portfolio-specific fields */}
+              {section === 'portfolio' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-lg shadow-sm border">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Composer</label>
+                    <input
+                      type="text"
+                      value={item.composer || ''}
+                      onChange={(e) => handleFieldChange('composer', e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Enter composer name..."
+                    />
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg shadow-sm border">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Publisher</label>
+                    <input
+                      type="text"
+                      value={item.publisher || ''}
+                      onChange={(e) => handleFieldChange('publisher', e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Enter publisher name..."
+                    />
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg shadow-sm border">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Instrumentation</label>
+                    <input
+                      type="text"
+                      value={item.instrumentation || ''}
+                      onChange={(e) => handleFieldChange('instrumentation', e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="e.g., Orchestra, String Quartet, Piano Solo..."
+                    />
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg shadow-sm border">
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Project Type</label>
+                    <select
+                      value={item.project_type || ''}
+                      onChange={(e) => handleFieldChange('project_type', e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="">Select project type...</option>
+                      <option value="Engraving">🎼 Engraving</option>
+                      <option value="Composition">🎵 Composition</option>
+                      <option value="Arrangement">🎶 Arrangement</option>
+                      <option value="Transcription">📝 Transcription</option>
+                      <option value="Orchestration">🎺 Orchestration</option>
+                      <option value="Music Production">🎙️ Music Production</option>
+                      <option value="Audio Editing">🎧 Audio Editing</option>
+                    </select>
+                  </div>
                 </div>
               )}
 

@@ -26,7 +26,8 @@ test2.py
 node_modules
 
 # Protect content data from accidental deletion
-src/assets/entries/*.json
+# Allow essential files for deployment but protect user uploads
+src/assets/entries/ContactInquiry.json
 public/images/uploads/
 public/images/*-*.png
 
