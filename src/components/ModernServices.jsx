@@ -36,7 +36,23 @@ export default function ModernServices() {
     try {
       const contentData = await ContentManager.getAllContent();
       let serviceData = contentData.services || [];
-      serviceData.sort((a, b) => new Date(b.created_at || b.created_date) - new Date(a.created_at || a.created_date));
+      
+      // Sort by order field (ascending), fallback to creation date
+      serviceData.sort((a, b) => {
+        // If both have order, sort by order
+        if (a.order !== undefined && b.order !== undefined) {
+          return a.order - b.order;
+        }
+        // If only one has order, prioritize it
+        if (a.order !== undefined) return -1;
+        if (b.order !== undefined) return 1;
+        
+        // If neither has order, sort by creation date (newest first)
+        const dateA = new Date(a.created_at || a.created_date || 0);
+        const dateB = new Date(b.created_at || b.created_date || 0);
+        return dateB - dateA;
+      });
+      
       setServices(serviceData);
     } catch (error) {
       console.error("Error loading services:", error);

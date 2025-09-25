@@ -59,7 +59,24 @@ export default function ModernPortfolio() {
       setPortfolio([]); // Clear previous data
       const contentData = await ContentManager.getAllContent();
       const portfolioData = contentData.portfolio || [];
-      setPortfolio(portfolioData);
+      
+      // Sort by order field (ascending), fallback to creation date
+      const sortedPortfolio = portfolioData.sort((a, b) => {
+        // If both have order, sort by order
+        if (a.order !== undefined && b.order !== undefined) {
+          return a.order - b.order;
+        }
+        // If only one has order, prioritize it
+        if (a.order !== undefined) return -1;
+        if (b.order !== undefined) return 1;
+        
+        // If neither has order, sort by creation date (newest first)
+        const dateA = new Date(a.created_at || a.created_date || 0);
+        const dateB = new Date(b.created_at || b.created_date || 0);
+        return dateB - dateA;
+      });
+      
+      setPortfolio(sortedPortfolio);
     } catch (error) {
       console.error("Error loading portfolio:", error);
     } finally {
