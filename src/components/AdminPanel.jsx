@@ -558,6 +558,7 @@ export default function AdminPanel() {
               </p>
             </div>
             <button
+              type="button"
               onClick={handleAddNew}
               className="flex items-center gap-2 bg-black text-white px-4 py-2 text-sm rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
             >
@@ -629,6 +630,7 @@ export default function AdminPanel() {
                   Create your first {activeSection} item to get started.
                 </p>
                 <button
+                  type="button"
                   onClick={handleAddNew}
                   className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                 >
@@ -712,6 +714,7 @@ export default function AdminPanel() {
               Choose an item from the sidebar to start editing, or create a new one to get started.
             </p>
             <button
+              type="button"
               onClick={handleAddNew}
               className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors mx-auto"
             >

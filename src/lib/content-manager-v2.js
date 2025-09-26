@@ -239,8 +239,8 @@ export async function updateContentItem(contentType, itemId, updatedItem) {
       };
     }
 
-    // Save back to blob storage
-    const result = await saveContent('site_content', allContent);
+    // Save the specific content type to blob storage
+    const result = await saveContent(contentType, allContent[contentType]);
     return result;
 
   } catch (error) {
@@ -290,8 +290,8 @@ export async function deleteContentItem(contentType, itemId) {
       if (itemIndex !== -1) {
         allContent[contentType].splice(itemIndex, 1);
         
-        // Save back to blob storage
-        await saveContent('site_content', allContent);
+        // Save the specific content type to blob storage
+        await saveContent(contentType, allContent[contentType]);
         return true;
       }
     }
