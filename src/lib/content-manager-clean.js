@@ -1,7 +1,15 @@
 /**
  * Clean Content Manager - Single source of truth for all content operations
- * Simple, consistent, no legacy baggage
+ * Enhanced with HTML content separation for better SEO and performance
  */
+
+import { 
+  saveHTMLContent, 
+  loadHTMLContent, 
+  deleteHTMLContent, 
+  migrateContentToHTMLFiles,
+  createExcerptFromHTML 
+} from './html-content-manager.js';
 
 const CONTENT_TYPES = {
   news: { key: 'news', isArray: true },
@@ -63,13 +71,49 @@ export async function addItem(contentType, item) {
   const allContent = await getAllContent();
   const items = allContent[contentType] || [];
   
+  // Calculate next order value (highest + 10)
+  const orderValues = items.map(i => i.order).filter(order => typeof order === 'number');
+  const maxOrder = orderValues.length > 0 ? Math.max(...orderValues) : 0;
+  const nextOrder = maxOrder + 10;
+  
   // Generate ID and timestamps
+  const itemId = `${contentType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Prepare the new item (without HTML content)
   const newItem = {
     ...item,
-    id: `${contentType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    id: itemId,
+    order: nextOrder,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
+  
+  // Handle HTML content separation
+  if (item.content && typeof item.content === 'string') {
+    try {
+      // Save HTML content to separate file
+      const htmlResult = await saveHTMLContent(contentType, itemId, item.content);
+      
+      if (htmlResult.success) {
+        // Add content_file reference and create excerpt
+        newItem.content_file = htmlResult.content_file;
+        
+        // Create excerpt if not provided
+        if (!newItem.excerpt) {
+          newItem.excerpt = createExcerptFromHTML(item.content);
+        }
+        
+        // Remove the content field from the item (it's now in a separate file)
+        delete newItem.content;
+      } else {
+        throw new Error('Failed to save HTML content');
+      }
+    } catch (error) {
+      console.error('Error saving HTML content for new item:', error);
+      // Fallback: keep content in JSON for now
+      // This ensures the item is still created even if HTML file saving fails
+    }
+  }
   
   items.push(newItem);
   const success = await saveContent(contentType, items);
@@ -78,7 +122,7 @@ export async function addItem(contentType, item) {
 }
 
 /**
- * Update existing item in array-type content
+ * Update existing item in array-type content with HTML content separation
  */
 export async function updateItem(contentType, itemId, updatedItem) {
   const config = CONTENT_TYPES[contentType];
@@ -90,11 +134,46 @@ export async function updateItem(contentType, itemId, updatedItem) {
   const index = items.findIndex(item => item.id === itemId);
   if (index === -1) throw new Error(`Item ${itemId} not found`);
   
-  items[index] = {
+  const existingItem = items[index];
+  
+  // Prepare updated item
+  const itemToUpdate = {
     ...updatedItem,
     id: itemId,
     updated_at: new Date().toISOString()
   };
+  
+  // Handle HTML content separation
+  if (updatedItem.content && typeof updatedItem.content === 'string') {
+    try {
+      // Save HTML content to separate file
+      const htmlResult = await saveHTMLContent(contentType, itemId, updatedItem.content);
+      
+      if (htmlResult.success) {
+        // Add content_file reference and create/update excerpt
+        itemToUpdate.content_file = htmlResult.content_file;
+        
+        // Create excerpt if not provided
+        if (!itemToUpdate.excerpt) {
+          itemToUpdate.excerpt = createExcerptFromHTML(updatedItem.content);
+        }
+        
+        // Remove the content field from the item (it's now in a separate file)
+        delete itemToUpdate.content;
+      } else {
+        throw new Error('Failed to save HTML content');
+      }
+    } catch (error) {
+      console.error('Error saving HTML content for updated item:', error);
+      // Fallback: keep content in JSON for now
+      // This ensures the update still works even if HTML file saving fails
+    }
+  } else if (existingItem.content_file && !updatedItem.content) {
+    // Preserve existing content_file if no new content provided
+    itemToUpdate.content_file = existingItem.content_file;
+  }
+  
+  items[index] = itemToUpdate;
   
   return await saveContent(contentType, items);
 }
@@ -109,10 +188,21 @@ export async function deleteItem(contentType, itemId) {
   const allContent = await getAllContent();
   const items = allContent[contentType] || [];
   
-  // Find the item to delete and extract image URLs
+  // Find the item to delete and clean up associated resources
   const itemToDelete = items.find(item => item.id === itemId);
   if (itemToDelete) {
+    // Delete associated images
     await deleteItemImages(itemToDelete);
+    
+    // Delete associated HTML content file
+    if (itemToDelete.content_file) {
+      try {
+        await deleteHTMLContent(itemToDelete.content_file);
+        console.log(`Deleted HTML content file: ${itemToDelete.content_file}`);
+      } catch (error) {
+        console.warn('Error deleting HTML content file:', error);
+      }
+    }
   }
   
   const filteredItems = items.filter(item => item.id !== itemId);
@@ -233,6 +323,84 @@ export async function updateObject(contentType, data) {
   };
   
   return await saveContent(contentType, updatedData);
+}
+
+/**
+ * Load content with HTML content included (for admin panel editing)
+ */
+export async function getContentWithHTML(contentType, itemId) {
+  try {
+    const allContent = await getAllContent();
+    const items = allContent[contentType] || [];
+    
+    const item = items.find(i => i.id === itemId);
+    if (!item) {
+      throw new Error(`Item ${itemId} not found in ${contentType}`);
+    }
+    
+    // If item has a content_file, load the HTML content
+    if (item.content_file) {
+      const htmlContent = await loadHTMLContent(item.content_file);
+      return {
+        ...item,
+        content: htmlContent // Add the HTML content for editing
+      };
+    }
+    
+    return item;
+  } catch (error) {
+    console.error('Error loading content with HTML:', error);
+    throw error;
+  }
+}
+
+/**
+ * Migrate existing content to new HTML file structure
+ */
+export async function migrateAllContentToHTML() {
+  try {
+    console.log('Starting migration to HTML file structure...');
+    
+    const allContent = await getAllContent();
+    let hasChanges = false;
+    
+    for (const contentType of ['news', 'services', 'portfolio']) {
+      const items = allContent[contentType] || [];
+      
+      if (items.length > 0) {
+        console.log(`Migrating ${contentType} (${items.length} items)...`);
+        
+        const migratedItems = await migrateContentToHTMLFiles(contentType, items);
+        
+        // Check if any items were actually migrated
+        const wasMigrated = migratedItems.some((item, index) => {
+          const original = items[index];
+          return item.content_file && !original.content_file;
+        });
+        
+        if (wasMigrated) {
+          allContent[contentType] = migratedItems;
+          hasChanges = true;
+          console.log(`Migrated ${contentType} successfully`);
+        }
+      }
+    }
+    
+    // Save the updated content if there were changes
+    if (hasChanges) {
+      for (const contentType of ['news', 'services', 'portfolio']) {
+        await saveContent(contentType, allContent[contentType]);
+      }
+      console.log('Migration completed successfully!');
+      return true;
+    } else {
+      console.log('No migration needed - content already uses HTML files');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error during migration:', error);
+    throw error;
+  }
 }
 
 /**

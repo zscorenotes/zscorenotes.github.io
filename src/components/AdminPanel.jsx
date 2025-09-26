@@ -52,7 +52,18 @@ export default function AdminPanel() {
     try {
       const allContent = await ContentManager.getAllContent();
       console.log('✅ Clean content loaded:', Object.keys(allContent));
-      setContent(allContent);
+      
+      // Auto-migrate existing content to HTML file structure if needed
+      try {
+        await ContentManager.migrateAllContentToHTML();
+        // Reload content after potential migration
+        const updatedContent = await ContentManager.getAllContent();
+        setContent(updatedContent);
+      } catch (migrationError) {
+        console.warn('Migration warning:', migrationError);
+        // Use original content if migration fails
+        setContent(allContent);
+      }
       
       // Auto-select content based on active section type
       if (activeSection === 'about' || activeSection === 'settings') {
@@ -112,8 +123,24 @@ export default function AdminPanel() {
     }
   };
 
-  const handleItemSelect = (item) => {
-    setSelectedItem(item);
+  const handleItemSelect = async (item) => {
+    try {
+      // If item has content_file, load the HTML content for editing
+      if (item.content_file) {
+        setSaveStatus('Loading content...');
+        const itemWithHTML = await ContentManager.getContentWithHTML(activeSection, item.id);
+        setSelectedItem(itemWithHTML);
+        setSaveStatus('');
+      } else {
+        setSelectedItem(item);
+      }
+    } catch (error) {
+      console.error('Error loading item content:', error);
+      setSaveStatus('Error loading content');
+      setTimeout(() => setSaveStatus(''), 3000);
+      // Fallback to item without HTML content
+      setSelectedItem(item);
+    }
   };
 
   const handleItemSave = async (updatedItem) => {

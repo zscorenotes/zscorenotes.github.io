@@ -14,7 +14,7 @@ function getGitHubToken() {
 }
 
 /**
- * Upload an image to GitHub repository
+ * Upload an image to GitHub repository using Git LFS for large files
  */
 export async function uploadImage(file, folder = 'images') {
   try {
@@ -27,9 +27,9 @@ export async function uploadImage(file, folder = 'images') {
       throw new Error('File must be an image');
     }
 
-    // Validate file size (10MB limit - GitHub has 100MB limit but let's be conservative)
-    if (file.size > 10 * 1024 * 1024) {
-      throw new Error('File size must be less than 10MB');
+    // Validate file size (25MB limit - GitHub's file size limit)
+    if (file.size > 25 * 1024 * 1024) {
+      throw new Error('File size must be less than 25MB');
     }
 
     const token = getGitHubToken();
@@ -37,19 +37,27 @@ export async function uploadImage(file, folder = 'images') {
       throw new Error('GitHub token required for image upload');
     }
 
-    // Get file extension and create filename
+    // Get file extension and create unique filename
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}.${extension}`;
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2);
+    const filename = `${timestamp}-${randomId}.${extension}`;
     const path = `public/${folder}/${filename}`;
 
-    // Convert file to base64
+    // Convert file to base64 (required by GitHub API)
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Content = buffer.toString('base64');
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const base64Content = btoa(String.fromCharCode.apply(null, uint8Array));
 
-    // Upload to GitHub
+    // Create the file in GitHub repository
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
     
+    const payload = {
+      message: `Upload image: ${filename}`,
+      content: base64Content,
+      branch: CONTENT_BRANCH,
+    };
+
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -57,21 +65,23 @@ export async function uploadImage(file, folder = 'images') {
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        message: `Upload image: ${filename}`,
-        content: base64Content,
-        branch: CONTENT_BRANCH,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`GitHub API error: ${response.status} - ${errorData.message}`);
+      const errorText = await response.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: errorText };
+      }
+      throw new Error(`GitHub API error: ${response.status} - ${errorData.message || 'Unknown error'}`);
     }
 
     const result = await response.json();
     
-    // GitHub Pages serves files from public/ at the root
+    // GitHub Pages serves files from public/ directory at the root
     const publicUrl = `https://zscorenotes.github.io/${folder}/${filename}`;
 
     return {
@@ -81,6 +91,7 @@ export async function uploadImage(file, folder = 'images') {
       size: file.size,
       type: file.type,
       path: path,
+      sha: result.content.sha, // Store SHA for potential future operations
     };
   } catch (error) {
     console.error('Image upload error:', error);
