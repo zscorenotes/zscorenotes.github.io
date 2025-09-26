@@ -149,22 +149,39 @@ export default function AdminPanel() {
     }
   };
 
-  const handleAddNew = async () => {
+  const handleAddNew = async (event) => {
+    console.log('🎯 handleAddNew called - event:', event);
+    
+    // Prevent form submission if this button is inside a form
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🛑 preventDefault() and stopPropagation() called');
+    }
+    
+    console.log('📝 Creating new item for section:', activeSection);
+    
     const newItem = {
       title: 'New Item',
       ...getDefaultFieldsForSection(activeSection)
     };
     
     try {
+      console.log('💾 Starting ContentManager.addContent...');
       setSaveStatus('Creating...');
       const success = await ContentManager.addContent(activeSection, newItem);
+      console.log('✅ ContentManager.addContent completed:', success);
       
       if (success) {
+        console.log('🔄 Reloading all content...');
         // Reload content to get the new item with generated ID
         await loadAllContent();
+        console.log('✅ loadAllContent completed');
+        
         setSaveStatus('Created!');
         setTimeout(() => setSaveStatus(''), 2000);
         
+        console.log('🔍 Looking for newly created item...');
         // Select the newly created item
         const updatedContent = await ContentManager.getAllContent();
         const newItems = updatedContent[activeSection];
@@ -172,18 +189,25 @@ export default function AdminPanel() {
           // Find the item that was just created
           const createdItem = newItems.find(item => item.title === 'New Item' && item.created_at);
           if (createdItem) {
+            console.log('✅ Setting selected item:', createdItem.id);
             setSelectedItem(createdItem);
+          } else {
+            console.log('⚠️ Could not find newly created item');
           }
         }
+        console.log('🎉 handleAddNew completed successfully');
       } else {
+        console.log('❌ ContentManager.addContent returned false');
         setSaveStatus('Error creating item');
         setTimeout(() => setSaveStatus(''), 3000);
       }
     } catch (error) {
-      console.error('Error creating new item:', error);
+      console.error('❌ Error in handleAddNew:', error);
       setSaveStatus('Error creating item');
       setTimeout(() => setSaveStatus(''), 3000);
     }
+    
+    console.log('🏁 handleAddNew function ending');
   };
 
   const handleItemsReorder = async (reorderedItems) => {
