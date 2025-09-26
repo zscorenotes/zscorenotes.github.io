@@ -59,6 +59,8 @@ export async function getAllContent(forceRefresh = false) {
  */
 export async function saveContent(type, data) {
   try {
+    console.log('🔍 ContentManagerV2.saveContent called:', { type, dataKeys: Object.keys(data || {}), dataType: typeof data });
+    
     const response = await fetch('/api/content', {
       method: 'POST',
       headers: {

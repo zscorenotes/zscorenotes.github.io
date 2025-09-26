@@ -230,13 +230,16 @@ export class ContentManager {
    * @returns {Promise<Object>} Object with all content types and their data
    */
   static async getAllContent() {
-    // Check if we should use the new blob storage system
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      // Production: Use blob storage
+    // Always try blob storage first in browser environment (for testing)
+    if (typeof window !== 'undefined') {
+      // Try blob storage (both development and production)
       try {
-        return await ContentManagerV2.getAllContent();
+        console.log('🔍 Trying blob storage for content...');
+        const content = await ContentManagerV2.getAllContent();
+        console.log('✅ Blob storage content loaded:', Object.keys(content));
+        return content;
       } catch (error) {
-        console.warn('Blob storage unavailable, falling back to legacy system:', error);
+        console.warn('🔄 Blob storage unavailable, falling back to legacy system:', error);
       }
     }
 
@@ -630,14 +633,16 @@ export class ContentManager {
    * @returns {Promise<boolean>} Success status
    */
   static async saveContent(contentType, data) {
-    // Check if we should use the new blob storage system
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      // Production: Use blob storage
+    // Always try blob storage first in browser environment (for testing)
+    if (typeof window !== 'undefined') {
+      // Try blob storage (both development and production)
       try {
+        console.log('💾 Trying to save to blob storage:', { contentType, dataKeys: Object.keys(data) });
         await ContentManagerV2.saveContent(contentType, data);
+        console.log('✅ Blob storage save successful');
         return true;
       } catch (error) {
-        console.warn('Blob storage save failed, falling back to localStorage:', error);
+        console.warn('🔄 Blob storage save failed, falling back to localStorage:', error);
         // Fall through to localStorage as backup
       }
     }
@@ -724,8 +729,8 @@ export class ContentManager {
         allContent[contentType] = { ...allContent[contentType], ...updatedItem };
       }
       
-      // Save back to localStorage
-      const success = await this.saveAllContent(allContent);
+      // Save back to storage (blob storage or localStorage)
+      const success = await this.saveContent('site_content', allContent);
       
       if (success) {
         // Dispatch update event
@@ -817,8 +822,8 @@ export class ContentManager {
         if (itemIndex !== -1) {
           allContent[contentType].splice(itemIndex, 1);
           
-          // Save back to localStorage
-          const success = await this.saveAllContent(allContent);
+          // Save back to storage (blob storage or localStorage)
+          const success = await this.saveContent('site_content', allContent);
           
           if (success) {
             // Dispatch update event

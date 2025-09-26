@@ -69,15 +69,21 @@ export async function uploadImage(file, folder = 'images') {
  */
 export async function uploadData(dataKey, data) {
   try {
+    console.log('🔍 uploadData called:', { dataKey, dataSize: JSON.stringify(data).length });
+    
     const filename = `data/${dataKey}.json`;
     const jsonString = JSON.stringify(data, null, 2);
     const jsonBlob = new Blob([jsonString], { type: 'application/json' });
+
+    console.log('📤 Uploading to blob storage:', { filename, size: jsonBlob.size });
 
     const blob = await put(filename, jsonBlob, {
       access: 'public',
       addRandomSuffix: false, // Keep consistent filename for data
       contentType: 'application/json',
     });
+
+    console.log('✅ Blob upload successful:', { url: blob.url, pathname: blob.pathname });
 
     return {
       success: true,
@@ -86,7 +92,7 @@ export async function uploadData(dataKey, data) {
       dataKey,
     };
   } catch (error) {
-    console.error('Data upload error:', error);
+    console.error('❌ Data upload error:', error);
     throw new Error(`Data upload failed: ${error.message}`);
   }
 }
@@ -96,14 +102,22 @@ export async function uploadData(dataKey, data) {
  */
 export async function fetchData(dataKey) {
   try {
+    console.log('🔍 fetchData called:', { dataKey });
+    
     const filename = `data/${dataKey}.json`;
+    console.log('📥 Listing blobs with prefix:', filename);
+    
     const blobs = await list({ prefix: filename });
+    console.log('📦 Found blobs:', { count: blobs.blobs.length, blobs: blobs.blobs.map(b => b.pathname) });
     
     if (blobs.blobs.length === 0) {
+      console.log('🔄 No blob found for:', filename);
       return null; // Data doesn't exist
     }
 
     const blob = blobs.blobs[0];
+    console.log('📥 Fetching blob content from:', blob.url);
+    
     const response = await fetch(blob.url);
     
     if (!response.ok) {
@@ -111,9 +125,10 @@ export async function fetchData(dataKey) {
     }
 
     const data = await response.json();
+    console.log('✅ Blob data fetched successfully:', { dataKey, dataKeys: Object.keys(data) });
     return data;
   } catch (error) {
-    console.error('Data fetch error:', error);
+    console.error('❌ Data fetch error:', error);
     return null; // Return null on error, let caller handle fallback
   }
 }
