@@ -100,7 +100,7 @@ export async function updateItem(contentType, itemId, updatedItem) {
 }
 
 /**
- * Delete item from array-type content
+ * Delete item from array-type content and associated images
  */
 export async function deleteItem(contentType, itemId) {
   const config = CONTENT_TYPES[contentType];
@@ -109,9 +109,115 @@ export async function deleteItem(contentType, itemId) {
   const allContent = await getAllContent();
   const items = allContent[contentType] || [];
   
+  // Find the item to delete and extract image URLs
+  const itemToDelete = items.find(item => item.id === itemId);
+  if (itemToDelete) {
+    await deleteItemImages(itemToDelete);
+  }
+  
   const filteredItems = items.filter(item => item.id !== itemId);
   
   return await saveContent(contentType, filteredItems);
+}
+
+/**
+ * Delete all images associated with an item from GitHub
+ */
+async function deleteItemImages(item) {
+  try {
+    const imageUrls = [];
+    
+    // Collect all image URLs from the item
+    if (item.image_urls && Array.isArray(item.image_urls)) {
+      imageUrls.push(...item.image_urls);
+    }
+    
+    // Delete each image from GitHub repository
+    for (const imageUrl of imageUrls) {
+      if (imageUrl && typeof imageUrl === 'string') {
+        try {
+          await deleteImageFromGitHub(imageUrl);
+        } catch (error) {
+          console.warn('Error deleting image:', imageUrl, error);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Error deleting item images:', error);
+  }
+}
+
+/**
+ * Delete an image file from GitHub repository
+ */
+async function deleteImageFromGitHub(imageUrl) {
+  try {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      console.warn('No GitHub token found for image deletion');
+      return;
+    }
+
+    // Extract filename from URL (e.g., https://zscorenotes.github.io/images/filename.jpg)
+    const urlParts = imageUrl.split('/');
+    const filename = urlParts.pop();
+    const folder = urlParts.pop();
+    
+    if (!filename || !folder) {
+      console.warn('Invalid image URL format:', imageUrl);
+      return;
+    }
+
+    const path = `public/${folder}/${filename}`;
+    const GITHUB_REPO = 'zscorenotes.github.io';
+    const GITHUB_OWNER = 'zscorenotes';
+
+    // First, get the file to get its SHA (required for deletion)
+    const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+    
+    const getResponse = await fetch(getUrl, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!getResponse.ok) {
+      if (getResponse.status === 404) {
+        console.warn('Image file not found for deletion:', path);
+        return;
+      }
+      throw new Error(`Failed to get file info: ${getResponse.status}`);
+    }
+
+    const fileData = await getResponse.json();
+
+    // Delete the file
+    const deleteUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+    
+    const deleteResponse = await fetch(deleteUrl, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `Delete image: ${filename}`,
+        sha: fileData.sha,
+        branch: 'main',
+      }),
+    });
+
+    if (!deleteResponse.ok) {
+      throw new Error(`Failed to delete image: ${deleteResponse.status}`);
+    }
+
+    console.log('Successfully deleted image:', path);
+  } catch (error) {
+    console.error('Error deleting image from GitHub:', error);
+    throw error;
+  }
 }
 
 /**
