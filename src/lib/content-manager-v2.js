@@ -207,23 +207,37 @@ export async function updateContentItem(contentType, itemId, updatedItem) {
     // Get current content
     const allContent = await getAllContent();
     
+    console.log('🔧 updateContentItem called:', { contentType, itemId, currentContent: allContent[contentType] });
+    
+    // Determine if this content type should be an array or object
+    const arrayTypes = ['news', 'services', 'portfolio', 'news_items', 'portfolio_items'];
+    const shouldBeArray = arrayTypes.includes(contentType);
+    
     if (!allContent[contentType]) {
-      allContent[contentType] = [];
+      allContent[contentType] = shouldBeArray ? [] : {};
+      console.log('🔧 Initialized empty content:', { contentType, shouldBeArray, initialized: allContent[contentType] });
     }
 
-    // Handle array vs object content types
-    if (Array.isArray(allContent[contentType])) {
+    if (shouldBeArray) {
+      // Ensure it's an array (fix any bad data)
+      if (!Array.isArray(allContent[contentType])) {
+        console.log('🔧 Converting non-array to array for:', contentType);
+        allContent[contentType] = [];
+      }
+      
       // For array types (news, services, portfolio)
       const itemIndex = allContent[contentType].findIndex(item => item.id === itemId);
       
       if (itemIndex !== -1) {
         // Update existing item
+        console.log('🔧 Updating existing item at index:', itemIndex);
         allContent[contentType][itemIndex] = { 
           ...updatedItem,
           updated_at: new Date().toISOString()
         };
       } else {
         // Add new item if not found
+        console.log('🔧 Adding new item to array');
         allContent[contentType].push({ 
           ...updatedItem,
           created_at: new Date().toISOString(),
@@ -232,12 +246,20 @@ export async function updateContentItem(contentType, itemId, updatedItem) {
       }
     } else {
       // For object types (about, settings)
+      console.log('🔧 Updating object type content');
       allContent[contentType] = { 
         ...allContent[contentType], 
         ...updatedItem,
         updated_at: new Date().toISOString()
       };
     }
+
+    console.log('🔧 Final content before save:', { 
+      contentType, 
+      isArray: Array.isArray(allContent[contentType]),
+      length: Array.isArray(allContent[contentType]) ? allContent[contentType].length : 'N/A',
+      content: allContent[contentType]
+    });
 
     // Save the specific content type to blob storage
     const result = await saveContent(contentType, allContent[contentType]);
