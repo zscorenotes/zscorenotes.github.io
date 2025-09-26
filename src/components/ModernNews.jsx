@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from "react";
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";

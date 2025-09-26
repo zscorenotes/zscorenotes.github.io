@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import ServiceDetail from "./services/ServiceDetail";
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import { getTagColorSync } from '@/utils/tagColors';
 
 export default function ModernServices() {

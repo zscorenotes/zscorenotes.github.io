@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import NewsDetail from '../../../components/news/NewsDetail';
-import ContentManager from '../../../entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 
 // Generate static params for all news articles
 export async function generateStaticParams() {

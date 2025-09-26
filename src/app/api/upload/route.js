@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { uploadImage, uploadImages } from '@/lib/blob-storage';
+import { uploadImage, uploadImages } from '@/lib/image-storage';
 
 /**
  * POST /api/upload
@@ -75,7 +75,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const folder = searchParams.get('folder') || 'images';
 
-    const { listFiles } = await import('@/lib/blob-storage');
+    const { listFiles } = await import('@/lib/image-storage');
     const files = await listFiles(folder);
 
     return NextResponse.json({

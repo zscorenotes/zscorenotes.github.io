@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from "react";
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import coverImage from '@/assets/imgs/example_1.jpg'
 
 /**

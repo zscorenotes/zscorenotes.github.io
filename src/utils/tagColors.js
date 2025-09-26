@@ -2,7 +2,7 @@
  * Tag Color Management Utility
  * Provides functions to get tag colors from the ContentManager system
  */
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 
 // Color mapping from color names to Tailwind classes
 const COLOR_CLASSES = {

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, ChevronLeft, ChevronRight, X } from 'lucide-react';

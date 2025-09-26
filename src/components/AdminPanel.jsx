@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import AuthGuard from './AuthGuard';
 import RichEditor from './RichEditor';
 import { getStoredInquiries, updateInquiryStatus, deleteInquiry } from '@/api.js';
@@ -48,33 +48,21 @@ export default function AdminPanel() {
   }, [activeSection]);
 
   const loadAllContent = async () => {
-    console.log('🔄 loadAllContent started');
     setIsLoading(true);
     try {
       const allContent = await ContentManager.getAllContent();
-      console.log('📦 Content loaded, setting state...');
-      console.log('🔍 Initial content structure:', {
-        services: { isArray: Array.isArray(allContent.services), type: typeof allContent.services, content: allContent.services },
-        portfolio: { isArray: Array.isArray(allContent.portfolio), type: typeof allContent.portfolio, content: allContent.portfolio },
-        news: { isArray: Array.isArray(allContent.news), type: typeof allContent.news, content: allContent.news }
-      });
+      console.log('✅ Clean content loaded:', Object.keys(allContent));
       setContent(allContent);
       
       // Auto-select content based on active section type
-      if (activeSection === 'about') {
-        // For object-type content, select the entire object
-        console.log('🎯 Auto-selecting about content');
+      if (activeSection === 'about' || activeSection === 'settings') {
         setSelectedItem(allContent[activeSection] || {});
       } else if (allContent[activeSection] && Array.isArray(allContent[activeSection]) && allContent[activeSection].length > 0) {
-        // For array-type content, select first item
-        console.log('🎯 Auto-selecting first item');
         setSelectedItem(allContent[activeSection][0]);
       }
-      console.log('✅ loadAllContent state updates completed');
     } catch (error) {
-      console.error('❌ Error loading content:', error);
+      console.error('Error loading content:', error);
     } finally {
-      console.log('🏁 loadAllContent finally block - setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -129,66 +117,38 @@ export default function AdminPanel() {
   };
 
   const handleItemSave = async (updatedItem) => {
-    console.log('💾 handleItemSave called:', {
-      section: activeSection,
-      itemId: updatedItem.id,
-      itemData: updatedItem
-    });
-    
     setSaveStatus('Saving...');
     try {
-      console.log('🔄 Calling ContentManager.updateContent...');
-      const result = await ContentManager.updateContent(activeSection, updatedItem.id, updatedItem);
-      console.log('✅ ContentManager.updateContent result:', result);
+      const success = await ContentManager.updateItem(activeSection, updatedItem.id, updatedItem);
       
-      if (result) {
+      if (success) {
         // Update local state
         const updatedContent = { ...content };
-        if (updatedContent[activeSection]) {
-          const itemIndex = updatedContent[activeSection].findIndex(item => item.id === updatedItem.id);
-          console.log('🔍 Looking for item index:', { itemIndex, totalItems: updatedContent[activeSection].length });
-          if (itemIndex !== -1) {
-            console.log('✅ Updating local state at index:', itemIndex);
-            updatedContent[activeSection][itemIndex] = updatedItem;
-            setContent(updatedContent);
-            setSelectedItem(updatedItem);
-          } else {
-            console.log('❌ Item not found in local state');
-          }
+        const itemIndex = updatedContent[activeSection].findIndex(item => item.id === updatedItem.id);
+        if (itemIndex !== -1) {
+          updatedContent[activeSection][itemIndex] = updatedItem;
+          setContent(updatedContent);
+          setSelectedItem(updatedItem);
         }
         
         setSaveStatus('Saved!');
         setTimeout(() => setSaveStatus(''), 2000);
-        
-        // Trigger content update event for live preview
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('zscore-content-updated', {
-            detail: { contentType: activeSection }
-          }));
-        }
       } else {
-        console.log('❌ ContentManager.updateContent returned false');
         setSaveStatus('Error saving');
         setTimeout(() => setSaveStatus(''), 3000);
       }
     } catch (error) {
-      console.error('❌ Error saving:', error);
+      console.error('Error saving:', error);
       setSaveStatus('Error saving');
       setTimeout(() => setSaveStatus(''), 3000);
     }
   };
 
   const handleAddNew = async (event) => {
-    console.log('🎯 handleAddNew called - event:', event);
-    
-    // Prevent form submission if this button is inside a form
     if (event) {
       event.preventDefault();
       event.stopPropagation();
-      console.log('🛑 preventDefault() and stopPropagation() called');
     }
-    
-    console.log('📝 Creating new item for section:', activeSection);
     
     const newItem = {
       title: 'New Item',
@@ -196,28 +156,27 @@ export default function AdminPanel() {
     };
     
     try {
-      console.log('💾 Starting ContentManager.addContent...');
       setSaveStatus('Creating...');
-      const success = await ContentManager.addContent(activeSection, newItem);
-      console.log('✅ ContentManager.addContent completed:', success);
+      const createdItem = await ContentManager.addItem(activeSection, newItem);
       
-      if (success) {
-        console.log('🔄 Reloading content...');
-        await loadAllContent();
+      if (createdItem) {
+        // Update local state immediately
+        const updatedContent = { ...content };
+        updatedContent[activeSection] = [...(updatedContent[activeSection] || []), createdItem];
+        setContent(updatedContent);
+        setSelectedItem(createdItem);
+        
         setSaveStatus('Created!');
         setTimeout(() => setSaveStatus(''), 2000);
       } else {
-        console.log('❌ ContentManager.addContent returned false');
         setSaveStatus('Error creating item');
         setTimeout(() => setSaveStatus(''), 3000);
       }
     } catch (error) {
-      console.error('❌ Error in handleAddNew:', error);
+      console.error('Error creating item:', error);
       setSaveStatus('Error creating item');
       setTimeout(() => setSaveStatus(''), 3000);
     }
-    
-    console.log('🏁 handleAddNew function ending');
   };
 
   const handleItemsReorder = async (reorderedItems) => {
@@ -231,7 +190,7 @@ export default function AdminPanel() {
       
       // Save each item with its new order
       await Promise.all(reorderedItems.map(item => 
-        ContentManager.updateContent(activeSection, item.id, item)
+        ContentManager.updateItem(activeSection, item.id, item)
       ));
       
       setSaveStatus('Order saved!');
@@ -257,11 +216,11 @@ export default function AdminPanel() {
     
     try {
       setSaveStatus('Deleting...');
-      await ContentManager.deleteContent(activeSection, item.id);
+      const success = await ContentManager.deleteItem(activeSection, item.id);
       
-      // Update local state
-      const updatedContent = { ...content };
-      if (updatedContent[activeSection]) {
+      if (success) {
+        // Update local state
+        const updatedContent = { ...content };
         updatedContent[activeSection] = updatedContent[activeSection].filter(i => i.id !== item.id);
         setContent(updatedContent);
         
@@ -269,16 +228,12 @@ export default function AdminPanel() {
         if (selectedItem?.id === item.id) {
           setSelectedItem(null);
         }
-      }
-      
-      setSaveStatus('Deleted!');
-      setTimeout(() => setSaveStatus(''), 2000);
-      
-      // Trigger content update event for live preview
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('zscore-content-updated', {
-          detail: { contentType: activeSection }
-        }));
+        
+        setSaveStatus('Deleted!');
+        setTimeout(() => setSaveStatus(''), 2000);
+      } else {
+        setSaveStatus('Error deleting');
+        setTimeout(() => setSaveStatus(''), 3000);
       }
     } catch (error) {
       console.error('Error deleting item:', error);

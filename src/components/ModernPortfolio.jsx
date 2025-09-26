@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from "react";
-import ContentManager from '@/entities/ContentManager';
+import * as ContentManager from '@/lib/content-manager-clean';
 import PortfolioDetail from "./portfolio/PortfolioDetail";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getTagColorSync } from '@/utils/tagColors';
