@@ -12,9 +12,24 @@ export async function GET(request) {
 
     console.log('API Content GET - Requested type:', type);
 
-    if (type && DATA_KEYS[type.toUpperCase()]) {
-      // Fetch specific content type
-      const dataKey = DATA_KEYS[type.toUpperCase()];
+    // Map admin panel content types to DATA_KEYS
+    const typeMapping = {
+      'news': 'NEWS_ITEMS',
+      'portfolio': 'PORTFOLIO_ITEMS', 
+      'about': 'ABOUT_CONTENT',
+      'services': 'SERVICES',
+      'categories': 'CATEGORIES',
+      'site_settings': 'SITE_SETTINGS',
+      'hero_content': 'HERO_CONTENT',
+      'contact_content': 'CONTACT_CONTENT'
+    };
+
+    if (type) {
+      const mappedType = typeMapping[type] || type.toUpperCase();
+      const dataKey = DATA_KEYS[mappedType];
+      
+      if (dataKey) {
+        // Fetch specific content type
       console.log('Fetching from blob storage:', { type, dataKey });
       
       const data = await fetchData(dataKey);
@@ -25,6 +40,7 @@ export async function GET(request) {
         data: data || getDefaultData(type),
         source: data ? 'blob' : 'default',
       });
+      }
     }
 
     // Fetch all content as individual files
@@ -86,9 +102,23 @@ export async function POST(request) {
       );
     }
 
-    const dataKey = DATA_KEYS[type.toUpperCase()];
+    // Map admin panel content types to DATA_KEYS
+    const typeMapping = {
+      'news': 'NEWS_ITEMS',
+      'portfolio': 'PORTFOLIO_ITEMS', 
+      'about': 'ABOUT_CONTENT',
+      'services': 'SERVICES',
+      'categories': 'CATEGORIES',
+      'site_settings': 'SITE_SETTINGS',
+      'hero_content': 'HERO_CONTENT',
+      'contact_content': 'CONTACT_CONTENT'
+    };
+
+    const mappedType = typeMapping[type] || type.toUpperCase();
+    const dataKey = DATA_KEYS[mappedType];
+    
     if (!dataKey) {
-      console.log('Invalid content type:', type, 'Available keys:', Object.keys(DATA_KEYS));
+      console.log('Invalid content type:', type, 'Mapped to:', mappedType, 'Available keys:', Object.keys(DATA_KEYS));
       return NextResponse.json(
         { error: 'Invalid content type' },
         { status: 400 }
