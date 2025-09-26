@@ -90,6 +90,7 @@ export async function addItem(contentType, item) {
   
   // Handle HTML content separation
   if (item.content && typeof item.content === 'string') {
+    console.log(`🔄 Found HTML content for new ${contentType} item, saving to separate file...`);
     try {
       // Save HTML content to separate file
       const htmlResult = await saveHTMLContent(contentType, itemId, item.content);
@@ -145,6 +146,7 @@ export async function updateItem(contentType, itemId, updatedItem) {
   
   // Handle HTML content separation
   if (updatedItem.content && typeof updatedItem.content === 'string') {
+    console.log(`🔄 Found HTML content for updated ${contentType} item, saving to separate file...`);
     try {
       // Save HTML content to separate file
       const htmlResult = await saveHTMLContent(contentType, itemId, updatedItem.content);

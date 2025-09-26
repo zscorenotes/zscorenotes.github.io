@@ -23,8 +23,11 @@ function getGitHubToken() {
  */
 export async function saveHTMLContent(contentType, itemId, htmlContent) {
   try {
+    console.log(`🔄 Saving HTML content for ${contentType}/${itemId}`);
+    
     const token = getGitHubToken();
     if (!token) {
+      console.error('❌ No GitHub token found for HTML content saving');
       throw new Error('GitHub token required for saving HTML content');
     }
 
@@ -51,8 +54,8 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
       // File doesn't exist yet, that's fine
     }
 
-    // Convert HTML content to base64
-    const base64Content = btoa(htmlContent);
+    // Convert HTML content to base64 (handle UTF-8 properly in Node.js)
+    const base64Content = Buffer.from(htmlContent, 'utf8').toString('base64');
 
     // Create/update the HTML file
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
@@ -90,6 +93,8 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
     }
 
     const result = await response.json();
+    
+    console.log(`✅ HTML content saved successfully: ${path}`);
 
     // Return the path to the HTML file
     return {
@@ -136,7 +141,8 @@ export async function loadHTMLContent(contentFilePath) {
     }
 
     const data = await response.json();
-    const htmlContent = atob(data.content);
+    // Decode base64 content properly (handle UTF-8)
+    const htmlContent = Buffer.from(data.content, 'base64').toString('utf8');
     
     return htmlContent;
   } catch (error) {

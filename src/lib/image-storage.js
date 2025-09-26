@@ -81,8 +81,8 @@ export async function uploadImage(file, folder = 'images') {
 
     const result = await response.json();
     
-    // GitHub Pages serves files from public/ directory at the root
-    const publicUrl = `https://zscorenotes.github.io/${folder}/${filename}`;
+    // Use raw GitHub URL for direct file access (more reliable than GitHub Pages)
+    const publicUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/public/${folder}/${filename}`;
 
     return {
       success: true,
@@ -157,7 +157,7 @@ export async function listFiles(folder = 'images') {
     return files
       .filter(item => item.type === 'file' && item.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i))
       .map(file => ({
-        url: `https://zscorenotes.github.io/${folder}/${file.name}`,
+        url: `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/public/${folder}/${file.name}`,
         pathname: file.name,
         size: file.size,
         uploadedAt: new Date().toISOString(), // GitHub doesn't provide upload time in this API
