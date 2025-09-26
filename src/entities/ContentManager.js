@@ -36,6 +36,25 @@ export class ContentManager {
         });
       }
       
+      // CRITICAL FIX: Ensure array types are actually arrays
+      const arrayTypes = ['news', 'services', 'portfolio', 'news_items', 'portfolio_items'];
+      arrayTypes.forEach(type => {
+        if (content[type] && !Array.isArray(content[type])) {
+          console.log('🔧 ContentManager: Converting', type, 'from object to array');
+          // Convert object with numeric keys back to array
+          const obj = content[type];
+          const arr = [];
+          Object.keys(obj).forEach(key => {
+            if (!isNaN(key)) { // If key is numeric
+              arr[parseInt(key)] = obj[key];
+            }
+          });
+          // Filter out undefined elements and ensure we have a proper array
+          content[type] = arr.filter(item => item !== undefined);
+          console.log('🔧 Converted result:', { type, isArray: Array.isArray(content[type]), length: content[type].length });
+        }
+      });
+      
       return content;
     } catch (error) {
       console.error('Blob storage failed:', error);
