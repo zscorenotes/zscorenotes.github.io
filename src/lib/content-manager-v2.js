@@ -3,9 +3,9 @@
  * Replaces localStorage with persistent blob storage
  */
 
-// Cache for client-side performance - now per content type
-let contentCache = new Map();
-let cacheTimestamps = new Map();
+// Cache for client-side performance
+let contentCache = null;
+let cacheTimestamp = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 /**
