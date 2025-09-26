@@ -230,6 +230,8 @@ export const DATA_KEYS = {
   SITE_CONTENT: 'site-content',
   NEWS_ITEMS: 'news-items', 
   PORTFOLIO_ITEMS: 'portfolio-items',
+  NEWS: 'news',  // Admin panel uses these
+  PORTFOLIO: 'portfolio',  // Admin panel uses these
   SERVICES: 'services',
   CATEGORIES: 'categories',
   SITE_SETTINGS: 'site-settings',

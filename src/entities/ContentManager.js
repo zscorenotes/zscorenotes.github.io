@@ -17,6 +17,11 @@ export class ContentManager {
       console.log('Loading content from blob storage...', forceRefresh ? '(force refresh)' : '');
       const content = await ContentManagerV2.getAllContent(forceRefresh);
       console.log('Blob storage content loaded:', Object.keys(content));
+      console.log('🔍 Raw content before processing:', {
+        news: { type: typeof content.news, isArray: Array.isArray(content.news), length: content.news?.length, data: content.news },
+        services: { type: typeof content.services, isArray: Array.isArray(content.services), length: content.services?.length, data: content.services },
+        portfolio: { type: typeof content.portfolio, isArray: Array.isArray(content.portfolio), length: content.portfolio?.length, data: content.portfolio }
+      });
       
       // Fix any nested structure issues from old data format
       if (content.site_content && typeof content.site_content === 'object') {

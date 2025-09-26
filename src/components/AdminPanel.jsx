@@ -129,32 +129,50 @@ export default function AdminPanel() {
   };
 
   const handleItemSave = async (updatedItem) => {
+    console.log('💾 handleItemSave called:', {
+      section: activeSection,
+      itemId: updatedItem.id,
+      itemData: updatedItem
+    });
+    
     setSaveStatus('Saving...');
     try {
-      await ContentManager.updateContent(activeSection, updatedItem.id, updatedItem);
+      console.log('🔄 Calling ContentManager.updateContent...');
+      const result = await ContentManager.updateContent(activeSection, updatedItem.id, updatedItem);
+      console.log('✅ ContentManager.updateContent result:', result);
       
-      // Update local state
-      const updatedContent = { ...content };
-      if (updatedContent[activeSection]) {
-        const itemIndex = updatedContent[activeSection].findIndex(item => item.id === updatedItem.id);
-        if (itemIndex !== -1) {
-          updatedContent[activeSection][itemIndex] = updatedItem;
-          setContent(updatedContent);
-          setSelectedItem(updatedItem);
+      if (result) {
+        // Update local state
+        const updatedContent = { ...content };
+        if (updatedContent[activeSection]) {
+          const itemIndex = updatedContent[activeSection].findIndex(item => item.id === updatedItem.id);
+          console.log('🔍 Looking for item index:', { itemIndex, totalItems: updatedContent[activeSection].length });
+          if (itemIndex !== -1) {
+            console.log('✅ Updating local state at index:', itemIndex);
+            updatedContent[activeSection][itemIndex] = updatedItem;
+            setContent(updatedContent);
+            setSelectedItem(updatedItem);
+          } else {
+            console.log('❌ Item not found in local state');
+          }
         }
-      }
-      
-      setSaveStatus('Saved!');
-      setTimeout(() => setSaveStatus(''), 2000);
-      
-      // Trigger content update event for live preview
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('zscore-content-updated', {
-          detail: { contentType: activeSection }
-        }));
+        
+        setSaveStatus('Saved!');
+        setTimeout(() => setSaveStatus(''), 2000);
+        
+        // Trigger content update event for live preview
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('zscore-content-updated', {
+            detail: { contentType: activeSection }
+          }));
+        }
+      } else {
+        console.log('❌ ContentManager.updateContent returned false');
+        setSaveStatus('Error saving');
+        setTimeout(() => setSaveStatus(''), 3000);
       }
     } catch (error) {
-      console.error('Error saving:', error);
+      console.error('❌ Error saving:', error);
       setSaveStatus('Error saving');
       setTimeout(() => setSaveStatus(''), 3000);
     }
