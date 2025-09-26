@@ -8,13 +8,14 @@ export class ContentManager {
 
   /**
    * Get all content for the admin panel
+   * @param {boolean} forceRefresh - Force bypass cache
    * @returns {Promise<Object>} Object with all content types and their data
    */
-  static async getAllContent() {
+  static async getAllContent(forceRefresh = false) {
     // Always use blob storage (both development and production)
     try {
-      console.log('Loading content from blob storage...');
-      const content = await ContentManagerV2.getAllContent();
+      console.log('Loading content from blob storage...', forceRefresh ? '(force refresh)' : '');
+      const content = await ContentManagerV2.getAllContent(forceRefresh);
       console.log('Blob storage content loaded:', Object.keys(content));
       
       // Fix any nested structure issues from old data format

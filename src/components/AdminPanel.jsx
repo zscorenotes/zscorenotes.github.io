@@ -53,6 +53,11 @@ export default function AdminPanel() {
     try {
       const allContent = await ContentManager.getAllContent();
       console.log('📦 Content loaded, setting state...');
+      console.log('🔍 Initial content structure:', {
+        services: { isArray: Array.isArray(allContent.services), type: typeof allContent.services, content: allContent.services },
+        portfolio: { isArray: Array.isArray(allContent.portfolio), type: typeof allContent.portfolio, content: allContent.portfolio },
+        news: { isArray: Array.isArray(allContent.news), type: typeof allContent.news, content: allContent.news }
+      });
       setContent(allContent);
       
       // Auto-select content based on active section type
@@ -179,47 +184,41 @@ export default function AdminPanel() {
       console.log('✅ ContentManager.addContent completed:', success);
       
       if (success) {
-        console.log('🔄 Refreshing content without loading screen...');
-        // Reload content WITHOUT setting isLoading to avoid page refresh
-        try {
-          const updatedContent = await ContentManager.getAllContent();
-          console.log('📦 Fresh content loaded, updating state...');
-          setContent(updatedContent);
-          
-          setSaveStatus('Created!');
-          setTimeout(() => setSaveStatus(''), 2000);
-          
-          console.log('🔍 Looking for newly created item...');
-          console.log('📊 Available content keys:', Object.keys(updatedContent));
-          console.log('🎯 Looking in section:', activeSection);
-          console.log('📝 Section content:', updatedContent[activeSection]);
-          
-          // Select the newly created item
-          const newItems = updatedContent[activeSection];
-          if (Array.isArray(newItems) && newItems.length > 0) {
-            console.log('📋 Found items array with length:', newItems.length);
-            // Find the item that was just created (latest item)
-            const createdItem = newItems[newItems.length - 1]; // Get the last item (most recent)
-            if (createdItem) {
-              console.log('✅ Setting selected item:', createdItem.id);
-              setSelectedItem(createdItem);
-            } else {
-              console.log('⚠️ Could not find newly created item');
-            }
-          } else {
-            console.log('❌ No items found or not an array:', { 
-              isArray: Array.isArray(newItems), 
-              length: newItems?.length,
-              type: typeof newItems,
-              content: newItems 
-            });
-          }
-          console.log('🎉 handleAddNew completed successfully');
-        } catch (error) {
-          console.error('❌ Error refreshing content:', error);
-          setSaveStatus('Error refreshing content');
-          setTimeout(() => setSaveStatus(''), 3000);
+        console.log('🔄 Updating local state immediately...');
+        
+        // Update local state directly instead of waiting for blob storage
+        const currentContent = { ...content };
+        
+        // Ensure the section exists as an array
+        if (!Array.isArray(currentContent[activeSection])) {
+          console.log('🔧 Converting local content to array for:', activeSection);
+          currentContent[activeSection] = [];
         }
+        
+        // Add the new item to local state
+        const newItemWithId = {
+          ...newItem,
+          id: `${activeSection}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        currentContent[activeSection].push(newItemWithId);
+        console.log('📦 Updated local content:', {
+          section: activeSection,
+          isArray: Array.isArray(currentContent[activeSection]),
+          length: currentContent[activeSection].length,
+          newItem: newItemWithId.id
+        });
+        
+        // Update state
+        setContent(currentContent);
+        setSelectedItem(newItemWithId);
+        
+        setSaveStatus('Created!');
+        setTimeout(() => setSaveStatus(''), 2000);
+        
+        console.log('🎉 handleAddNew completed successfully');
       } else {
         console.log('❌ ContentManager.addContent returned false');
         setSaveStatus('Error creating item');
