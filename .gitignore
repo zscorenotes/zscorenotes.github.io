@@ -35,3 +35,7 @@ public/images/*-*.png
 .next/
 .DS_Store
 *.DS_Store
+
+# Environment variables (contains secrets)
+.env.local
+.env

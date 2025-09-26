@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { put, list } from '@vercel/blob';
+import { getAllContentFromGitHub, saveContentToGitHub } from '@/lib/github-storage';
 
 /**
  * Clean Content API - Simple, consistent data handling
@@ -12,17 +12,7 @@ const CONTENT_FILES = ['news', 'services', 'portfolio', 'about', 'settings', 'ca
  */
 export async function GET() {
   try {
-    const allContent = {};
-    
-    for (const contentType of CONTENT_FILES) {
-      try {
-        const data = await fetchContentFile(contentType);
-        allContent[contentType] = data;
-      } catch (error) {
-        console.warn(`No data found for ${contentType}:`, error.message);
-        allContent[contentType] = getDefaultData(contentType);
-      }
-    }
+    const allContent = await getAllContentFromGitHub();
     
     return NextResponse.json({
       success: true,
@@ -59,7 +49,11 @@ export async function POST(request) {
       );
     }
     
-    await saveContentFile(type, data);
+    const success = await saveContentToGitHub(type, data);
+    
+    if (!success) {
+      throw new Error('Failed to save to GitHub');
+    }
     
     return NextResponse.json({
       success: true,
@@ -75,64 +69,4 @@ export async function POST(request) {
   }
 }
 
-/**
- * Fetch content file from blob storage
- */
-async function fetchContentFile(contentType) {
-  const filename = `clean-data/${contentType}.json`;
-  
-  const blobs = await list({ prefix: filename });
-  if (blobs.blobs.length === 0) {
-    throw new Error(`No file found: ${filename}`);
-  }
-  
-  const response = await fetch(blobs.blobs[0].url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-  
-  return await response.json();
-}
-
-/**
- * Save content file to blob storage
- */
-async function saveContentFile(contentType, data) {
-  const filename = `clean-data/${contentType}.json`;
-  const jsonString = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  
-  await put(filename, blob, {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
-    allowOverwrite: true
-  });
-}
-
-/**
- * Get default data for content type
- */
-function getDefaultData(contentType) {
-  switch (contentType) {
-    case 'news':
-    case 'services':
-    case 'portfolio':
-      return [];
-    
-    case 'about':
-    case 'settings':
-      return { updated_at: new Date().toISOString() };
-    
-    case 'categories':
-      return {
-        services: [],
-        portfolio: [],
-        news: [],
-        updated_at: new Date().toISOString()
-      };
-    
-    default:
-      return {};
-  }
-}
+// GitHub storage functions are now in @/lib/github-storage
