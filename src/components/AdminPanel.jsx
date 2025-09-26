@@ -190,9 +190,14 @@ export default function AdminPanel() {
           setTimeout(() => setSaveStatus(''), 2000);
           
           console.log('🔍 Looking for newly created item...');
+          console.log('📊 Available content keys:', Object.keys(updatedContent));
+          console.log('🎯 Looking in section:', activeSection);
+          console.log('📝 Section content:', updatedContent[activeSection]);
+          
           // Select the newly created item
           const newItems = updatedContent[activeSection];
           if (Array.isArray(newItems) && newItems.length > 0) {
+            console.log('📋 Found items array with length:', newItems.length);
             // Find the item that was just created (latest item)
             const createdItem = newItems[newItems.length - 1]; // Get the last item (most recent)
             if (createdItem) {
@@ -201,6 +206,13 @@ export default function AdminPanel() {
             } else {
               console.log('⚠️ Could not find newly created item');
             }
+          } else {
+            console.log('❌ No items found or not an array:', { 
+              isArray: Array.isArray(newItems), 
+              length: newItems?.length,
+              type: typeof newItems,
+              content: newItems 
+            });
           }
           console.log('🎉 handleAddNew completed successfully');
         } catch (error) {
