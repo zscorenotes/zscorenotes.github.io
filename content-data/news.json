@@ -2,9 +2,8 @@
   {
     "title": "New Item22222",
     "category": "announcement",
-    "excerpt": "",
-    "content": "",
-    "content_html": "<div class=\"prose prose-lg max-w-none\">\n  <div class=\"bg-gradient-to-r from-blue-50 to-purple-50 p-8 rounded-lg mb-8\">\n    <h2 class=\"text-3xl font-bold mb-6 text-gray-800\">Article Title</h2>\n    <p class=\"text-lg mb-6\">Engaging introduction paragraph that hooks the reader and summarizes the main points.</p>\n  </div>\n  \n  <div class=\"grid md:grid-cols-2 gap-8 mb-8\">\n    <div class=\"bg-white p-6 rounded-lg shadow-sm border\">\n      <h3 class=\"text-xl font-semibold mb-4 text-blue-800\">Key Points</h3>\n      <ul class=\"space-y-3\">\n        <li class=\"flex items-start\">\n          <span class=\"bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5\">1</span>\n          <div>First important point</div>\n        </li>\n        <li class=\"flex items-start\">\n          <span class=\"bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5\">2</span>\n          <div>Second important point</div>\n        </li>\n      </ul>\n    </div>\n    <div class=\"bg-white p-6 rounded-lg shadow-sm border\">\n      <h3 class=\"text-xl font-semibold mb-4 text-purple-800\">Details</h3>\n      <p class=\"text-gray-600\">Additional details and supporting information.</p>\n    </div>\n  </div>\n  \n  <blockquote class=\"border-l-4 border-blue-500 bg-blue-50 p-6 mb-6\">\n    <p class=\"text-lg italic mb-3\">\"Inspiring quote or testimonial that adds credibility.\"</p>\n    <cite class=\"text-blue-700 font-semibold\">— Source Name</cite>\n  </blockquote>\n  \n  <div class=\"text-center mt-8\">\n    <a href=\"#contact\" class=\"inline-block bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition-colors font-semibold\">Call to Action</a>\n  </div>\n</div>",
+    "excerpt": "Engaging introduction paragraph that hooks the reader and summarizes the main points.",
+    "content_file": "content-html/news_1758922660877_9rltzmftc.html",
     "tags": [],
     "featured": false,
     "publication_date": "2025-09-26",

@@ -65,6 +65,8 @@ export async function saveContent(contentType, data) {
  * Add new item to array-type content
  */
 export async function addItem(contentType, item) {
+  console.log(`🔄 Adding new ${contentType} item...`, { hasContent: !!item.content, contentLength: item.content?.length });
+  
   const config = CONTENT_TYPES[contentType];
   if (!config?.isArray) throw new Error(`${contentType} is not an array type`);
   

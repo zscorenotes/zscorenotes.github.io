@@ -218,9 +218,9 @@ export default function ServiceDetail({ service, onClose }) {
                     </div>
                   ))
                 ) : (
-                  // Use HTML detailed_description if available, otherwise fallback to markdown description
-                  service.detailed_description ? (
-                    <div dangerouslySetInnerHTML={{ __html: service.detailed_description }} />
+                  // Use HTML content if available, otherwise fallback to markdown description
+                  service.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: service.content }} />
                   ) : (
                     <ReactMarkdown>{service.description}</ReactMarkdown>
                   )

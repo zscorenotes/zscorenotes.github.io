@@ -120,7 +120,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
       return;
     }
     try {
-      // Load all content from ContentManager
+      // Load all content from ContentManager for finding the item
       const contentData = await ContentManager.getAllContent();
       const allNewsData = contentData.news || [];
       setAllNews(allNewsData);
@@ -134,7 +134,9 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
       }
       
       if (foundItem) {
-        setNewsItem(foundItem);
+        // Load the item with HTML content for display
+        const itemWithHTML = await ContentManager.getContentWithHTML('news', foundItem.id);
+        setNewsItem(itemWithHTML);
       } else {
         setError('News item not found.');
       }
@@ -465,7 +467,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
                 return (
                   <div 
                     key={index} 
-                    dangerouslySetInnerHTML={{ __html: block.content_html || block.content }} 
+                    dangerouslySetInnerHTML={{ __html: block.content }} 
                     className="rich-content"
                   />
                 );
@@ -507,10 +509,10 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
               }
               return null; // Don't render unrecognized block types
             })
-          ) : (newsItem.content_html || newsItem.content) ? (
-            // Fallback to rendering rich HTML content or plain content
+          ) : newsItem.content ? (
+            // Fallback to rendering rich HTML content
             <div 
-              dangerouslySetInnerHTML={{ __html: newsItem.content_html || newsItem.content }} 
+              dangerouslySetInnerHTML={{ __html: newsItem.content }} 
               className="rich-content prose prose-lg max-w-none"
             />
           ) : null}

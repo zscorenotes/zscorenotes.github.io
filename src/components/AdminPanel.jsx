@@ -276,7 +276,6 @@ export default function AdminPanel() {
           category: 'announcement',
           excerpt: '',
           content: '',
-          content_html: '',
           tags: [],
           featured: false,
           publication_date: new Date().toISOString().split('T')[0],
@@ -285,7 +284,7 @@ export default function AdminPanel() {
       case 'services':
         return {
           description: '',
-          detailed_description: '',
+          content: '',
           features: [],
           category: 'service',
           icon: '',
@@ -294,7 +293,7 @@ export default function AdminPanel() {
       case 'portfolio':
         return {
           description: '',
-          detailed_description: '',
+          content: '',
           technologies: [],
           year: new Date().getFullYear(),
           category: 'project',
@@ -1231,11 +1230,8 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                 </div>
                 <div className="p-6">
                   <RichEditor
-                    value={item.content_html || item.detailed_description || ''}
-                    onChange={(value) => handleFieldChange(
-                      section === 'portfolio' || section === 'services' ? 'detailed_description' : 'content_html', 
-                      value
-                    )}
+                    value={item.content || ''}
+                    onChange={(value) => handleFieldChange('content', value)}
                     sectionType={section}
                     height="500px"
                     showPreview={true}

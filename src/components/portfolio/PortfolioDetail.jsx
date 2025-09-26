@@ -205,8 +205,8 @@ export default function PortfolioDetail({ item, onClose }) {
               <div className="md:col-span-2 space-y-6">
                 <h3 className="text-xl font-bold border-b pb-2">About this Project</h3>
                 <div className="prose max-w-none text-gray-700">
-                  {item.detailed_description ? (
-                    <div dangerouslySetInnerHTML={{ __html: item.detailed_description }} />
+                  {item.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: item.content }} />
                   ) : (
                     <ReactMarkdown>
                       {item.description || 'No description available.'}
