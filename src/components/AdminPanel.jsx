@@ -184,41 +184,10 @@ export default function AdminPanel() {
       console.log('✅ ContentManager.addContent completed:', success);
       
       if (success) {
-        console.log('🔄 Updating local state immediately...');
-        
-        // Update local state directly instead of waiting for blob storage
-        const currentContent = { ...content };
-        
-        // Ensure the section exists as an array
-        if (!Array.isArray(currentContent[activeSection])) {
-          console.log('🔧 Converting local content to array for:', activeSection);
-          currentContent[activeSection] = [];
-        }
-        
-        // Add the new item to local state
-        const newItemWithId = {
-          ...newItem,
-          id: `${activeSection}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        currentContent[activeSection].push(newItemWithId);
-        console.log('📦 Updated local content:', {
-          section: activeSection,
-          isArray: Array.isArray(currentContent[activeSection]),
-          length: currentContent[activeSection].length,
-          newItem: newItemWithId.id
-        });
-        
-        // Update state
-        setContent(currentContent);
-        setSelectedItem(newItemWithId);
-        
+        console.log('🔄 Reloading content...');
+        await loadAllContent();
         setSaveStatus('Created!');
         setTimeout(() => setSaveStatus(''), 2000);
-        
-        console.log('🎉 handleAddNew completed successfully');
       } else {
         console.log('❌ ContentManager.addContent returned false');
         setSaveStatus('Error creating item');

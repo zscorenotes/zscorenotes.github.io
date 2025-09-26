@@ -125,12 +125,22 @@ export async function POST(request) {
       );
     }
 
-    // Add metadata
-    const enrichedData = {
-      ...data,
-      lastUpdated: new Date().toISOString(),
-      version: (data.version || 0) + 1,
-    };
+    // Add metadata - handle arrays vs objects differently
+    let enrichedData;
+    if (Array.isArray(data)) {
+      // For arrays, don't spread - preserve array structure
+      enrichedData = [...data]; // Copy the array
+      // Add metadata as properties on the array object (arrays are objects in JS)
+      enrichedData.lastUpdated = new Date().toISOString();
+      enrichedData.version = (data.version || 0) + 1;
+    } else {
+      // For objects, spread normally
+      enrichedData = {
+        ...data,
+        lastUpdated: new Date().toISOString(),
+        version: (data.version || 0) + 1,
+      };
+    }
 
     console.log('Saving to blob storage:', { 
       dataKey, 
