@@ -239,7 +239,7 @@ export default function ModernAbout() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-16 items-center mb-16">
+          <div className="grid lg:grid-cols-12 gap-16 items-top mb-16">
             <div className="lg:col-span-4 fade-in-left stagger-3">
               <div className="relative mb-6">
                 {/* <div className="w-32 h-32 bg-gray-300 border border-black/10">
@@ -249,7 +249,7 @@ export default function ModernAbout() {
               <h4 className="text-xl font-bold mb-2">Parham Behzad</h4>
               <p className="text-sm text-gray-500 uppercase tracking-wider mb-4">Founder & Lead Engraver/Developer</p>
               <p className="text-gray-700 text-sm leading-relaxed">
-                Composer and developer with extensive experience in high-level score production environments, specializing in workflow automation and custom music software for contemporary compositions.
+                Composer and developer, he studied composition, piano, and computer science. He designs advanced score production environments, with a focus on workflow automation and custom tools for engraving and composing.
               </p>
             </div>
 
@@ -262,7 +262,7 @@ export default function ModernAbout() {
               <h4 className="text-xl font-bold mb-2">Lena Michajłów</h4>
               <p className="text-sm text-gray-500 uppercase tracking-wider mb-4">Editor & Quality Specialist</p>
               <p className="text-gray-700 text-sm leading-relaxed">
-                Composer, pianist, and editor with master's degrees from Mozarteum University and Chopin University. Brings performer's perspective to ensure scores are both accurate and intuitively readable.
+                Composer, pianist, and editor, she studied composition with a specialization in electronic, film, and theatre music. She brings a performer's perspective to ensure scores are both accurate and intuitively readable.
               </p>
             </div>
 

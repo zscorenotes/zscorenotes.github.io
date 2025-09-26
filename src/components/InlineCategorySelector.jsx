@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Plus, X, Trash2 } from 'lucide-react';
-import ContentManager from '@/entities/ContentManager';
 
 const PREDEFINED_COLORS = [
   { name: 'Blue', bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
@@ -10,7 +9,7 @@ const PREDEFINED_COLORS = [
   { name: 'Purple', bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200' },
   { name: 'Pink', bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-200' },
   { name: 'Indigo', bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200' },
-  { name: 'Gray', bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200' },
+  { name: 'Gray', bg: 'bg-gray-300', text: 'text-gray-900', border: 'border-gray-500' },
   { name: 'Orange', bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200' },
   { name: 'Teal', bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200' },
   { name: 'Cyan', bg: 'bg-cyan-100', text: 'text-cyan-800', border: 'border-cyan-200' },

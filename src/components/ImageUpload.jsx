@@ -38,10 +38,11 @@ export default function ImageUpload({
 
       // Create form data
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('files', file);
+      formData.append('folder', 'images');
 
-      // Upload to our API endpoint
-      const response = await fetch('/api/upload-image', {
+      // Upload to blob storage via our API endpoint
+      const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });

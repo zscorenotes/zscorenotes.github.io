@@ -5,6 +5,9 @@ import { SiteSettings } from '@/assets/entries/SiteSettings';
 import { ServicesContent } from '@/assets/entries/ServicesContent';
 import { PortfolioContent } from '@/assets/entries/PortfolioContent';
 
+// Import new blob storage system
+import * as ContentManagerV2 from '@/lib/content-manager-v2';
+
 // Import fallback data files
 import servicesDefaultData from '@/assets/entries/Services.default.json';
 import portfolioDefaultData from '@/assets/entries/PortfolioItem.default.json';
@@ -227,6 +230,17 @@ export class ContentManager {
    * @returns {Promise<Object>} Object with all content types and their data
    */
   static async getAllContent() {
+    // Check if we should use the new blob storage system
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      // Production: Use blob storage
+      try {
+        return await ContentManagerV2.getAllContent();
+      } catch (error) {
+        console.warn('Blob storage unavailable, falling back to legacy system:', error);
+      }
+    }
+
+    // Development or fallback: Use legacy localStorage system
     // For SSR/SSG, always return mock data immediately
     if (typeof window === 'undefined') {
       return this.getMockData();
@@ -610,12 +624,25 @@ export class ContentManager {
   }
 
   /**
-   * Save content to localStorage
+   * Save content to storage (blob storage in production, localStorage in development)
    * @param {string} contentType - The content type key
    * @param {Object|Array} data - The content data to save
    * @returns {Promise<boolean>} Success status
    */
   static async saveContent(contentType, data) {
+    // Check if we should use the new blob storage system
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      // Production: Use blob storage
+      try {
+        await ContentManagerV2.saveContent(contentType, data);
+        return true;
+      } catch (error) {
+        console.warn('Blob storage save failed, falling back to localStorage:', error);
+        // Fall through to localStorage as backup
+      }
+    }
+
+    // Development or fallback: Use localStorage
     const STORAGE_KEY = 'zscore_cms_content';
     
     try {
@@ -738,7 +765,7 @@ export class ContentManager {
     try {
       // Generate ID if not provided
       if (!newItem.id) {
-        newItem.id = `${contentType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        newItem.id = `${contentType}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       }
       
       // Generate slug for news items
