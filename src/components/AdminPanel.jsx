@@ -48,22 +48,28 @@ export default function AdminPanel() {
   }, [activeSection]);
 
   const loadAllContent = async () => {
+    console.log('🔄 loadAllContent started');
     setIsLoading(true);
     try {
       const allContent = await ContentManager.getAllContent();
+      console.log('📦 Content loaded, setting state...');
       setContent(allContent);
       
       // Auto-select content based on active section type
       if (activeSection === 'about') {
         // For object-type content, select the entire object
+        console.log('🎯 Auto-selecting about content');
         setSelectedItem(allContent[activeSection] || {});
       } else if (allContent[activeSection] && Array.isArray(allContent[activeSection]) && allContent[activeSection].length > 0) {
         // For array-type content, select first item
+        console.log('🎯 Auto-selecting first item');
         setSelectedItem(allContent[activeSection][0]);
       }
+      console.log('✅ loadAllContent state updates completed');
     } catch (error) {
-      console.error('Error loading content:', error);
+      console.error('❌ Error loading content:', error);
     } finally {
+      console.log('🏁 loadAllContent finally block - setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -173,29 +179,35 @@ export default function AdminPanel() {
       console.log('✅ ContentManager.addContent completed:', success);
       
       if (success) {
-        console.log('🔄 Reloading all content...');
-        // Reload content to get the new item with generated ID
-        await loadAllContent();
-        console.log('✅ loadAllContent completed');
-        
-        setSaveStatus('Created!');
-        setTimeout(() => setSaveStatus(''), 2000);
-        
-        console.log('🔍 Looking for newly created item...');
-        // Select the newly created item
-        const updatedContent = await ContentManager.getAllContent();
-        const newItems = updatedContent[activeSection];
-        if (Array.isArray(newItems) && newItems.length > 0) {
-          // Find the item that was just created
-          const createdItem = newItems.find(item => item.title === 'New Item' && item.created_at);
-          if (createdItem) {
-            console.log('✅ Setting selected item:', createdItem.id);
-            setSelectedItem(createdItem);
-          } else {
-            console.log('⚠️ Could not find newly created item');
+        console.log('🔄 Refreshing content without loading screen...');
+        // Reload content WITHOUT setting isLoading to avoid page refresh
+        try {
+          const updatedContent = await ContentManager.getAllContent();
+          console.log('📦 Fresh content loaded, updating state...');
+          setContent(updatedContent);
+          
+          setSaveStatus('Created!');
+          setTimeout(() => setSaveStatus(''), 2000);
+          
+          console.log('🔍 Looking for newly created item...');
+          // Select the newly created item
+          const newItems = updatedContent[activeSection];
+          if (Array.isArray(newItems) && newItems.length > 0) {
+            // Find the item that was just created (latest item)
+            const createdItem = newItems[newItems.length - 1]; // Get the last item (most recent)
+            if (createdItem) {
+              console.log('✅ Setting selected item:', createdItem.id);
+              setSelectedItem(createdItem);
+            } else {
+              console.log('⚠️ Could not find newly created item');
+            }
           }
+          console.log('🎉 handleAddNew completed successfully');
+        } catch (error) {
+          console.error('❌ Error refreshing content:', error);
+          setSaveStatus('Error refreshing content');
+          setTimeout(() => setSaveStatus(''), 3000);
         }
-        console.log('🎉 handleAddNew completed successfully');
       } else {
         console.log('❌ ContentManager.addContent returned false');
         setSaveStatus('Error creating item');
