@@ -400,20 +400,21 @@ function getFallbackContent() {
       technologies: [],
     },
     site_settings: {
-      site_title: "ZSCORE Studio",
-      site_description: "Professional music engraving and audio programming services",
-      site_keywords: "music engraving, score notation, audio programming, orchestration",
+      lastUpdated: new Date().toISOString(),
+      version: 1,
     },
     about_content: {
-      section_title: "About ZSCORE",
-      section_subtitle: "Professional music engraving services",
-      philosophy_paragraphs: [],
+      lastUpdated: new Date().toISOString(),
+      version: 1,
     },
     hero_content: {
-      title: "ZSCORE Studio", 
-      subtitle: "Professional Music Engraving",
+      lastUpdated: new Date().toISOString(),
+      version: 1,
     },
-    contact_content: {},
+    contact_content: {
+      lastUpdated: new Date().toISOString(),
+      version: 1,
+    },
   };
 }
 

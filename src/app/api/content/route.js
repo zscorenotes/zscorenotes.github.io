@@ -187,26 +187,18 @@ function getDefaultData(type) {
     
     case 'site_settings':
       return {
-        site_title: "ZSCORE Studio",
-        site_description: "Professional music engraving and audio programming services",
-        site_keywords: "music engraving, score notation, audio programming, orchestration",
         lastUpdated: new Date().toISOString(),
         version: 1,
       };
     
     case 'about_content':
       return {
-        section_title: "About ZSCORE",
-        section_subtitle: "Professional music engraving services",
-        philosophy_paragraphs: [],
         lastUpdated: new Date().toISOString(),
         version: 1,
       };
     
     case 'hero_content':
       return {
-        title: "ZSCORE Studio", 
-        subtitle: "Professional Music Engraving",
         lastUpdated: new Date().toISOString(),
         version: 1,
       };
