@@ -10,15 +10,15 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
 
-    console.log('🔍 API Content GET - Requested type:', type);
+    console.log('API Content GET - Requested type:', type);
 
     if (type && DATA_KEYS[type.toUpperCase()]) {
       // Fetch specific content type
       const dataKey = DATA_KEYS[type.toUpperCase()];
-      console.log('📥 Fetching from blob storage:', { type, dataKey });
+      console.log('Fetching from blob storage:', { type, dataKey });
       
       const data = await fetchData(dataKey);
-      console.log('📦 Fetched data result:', { type, hasData: !!data, dataKeys: data ? Object.keys(data) : null });
+      console.log('Fetched data result:', { type, hasData: !!data, dataKeys: data ? Object.keys(data) : null });
       
       return NextResponse.json({
         success: true,
