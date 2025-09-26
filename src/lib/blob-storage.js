@@ -49,6 +49,7 @@ export async function uploadImage(file, folder = 'images') {
     const blob = await put(filename, file, {
       ...BLOB_CONFIG,
       contentType: CONTENT_TYPES[extension] || 'image/jpeg',
+      allowOverwrite: true, // Allow overwriting existing images
     });
 
     return {
@@ -69,21 +70,42 @@ export async function uploadImage(file, folder = 'images') {
  */
 export async function uploadData(dataKey, data) {
   try {
-    console.log('🔍 uploadData called:', { dataKey, dataSize: JSON.stringify(data).length });
+    console.log('uploadData called:', { 
+      dataKey, 
+      dataSize: JSON.stringify(data).length,
+      tokenPresent: !!process.env.BLOB_READ_WRITE_TOKEN
+    });
     
     const filename = `data/${dataKey}.json`;
+    
+    // Check for data size limits (Vercel blob has size limits)
     const jsonString = JSON.stringify(data, null, 2);
+    const sizeInMB = jsonString.length / (1024 * 1024);
+    
+    if (sizeInMB > 4.5) { // Conservative limit, Vercel has 5MB limit
+      throw new Error(`Data too large: ${sizeInMB.toFixed(2)}MB (limit: 4.5MB)`);
+    }
+    
     const jsonBlob = new Blob([jsonString], { type: 'application/json' });
 
-    console.log('📤 Uploading to blob storage:', { filename, size: jsonBlob.size });
+    console.log('Uploading to blob storage:', { 
+      filename, 
+      size: jsonBlob.size,
+      sizeInMB: sizeInMB.toFixed(2)
+    });
 
     const blob = await put(filename, jsonBlob, {
       access: 'public',
       addRandomSuffix: false, // Keep consistent filename for data
       contentType: 'application/json',
+      allowOverwrite: true, // Allow overwriting existing files
     });
 
-    console.log('✅ Blob upload successful:', { url: blob.url, pathname: blob.pathname });
+    console.log('Blob upload successful:', { 
+      url: blob.url, 
+      pathname: blob.pathname,
+      finalSize: blob.size 
+    });
 
     return {
       success: true,
@@ -92,7 +114,12 @@ export async function uploadData(dataKey, data) {
       dataKey,
     };
   } catch (error) {
-    console.error('❌ Data upload error:', error);
+    console.error('Data upload error details:', {
+      message: error.message,
+      stack: error.stack,
+      dataKey,
+      errorType: error.constructor.name
+    });
     throw new Error(`Data upload failed: ${error.message}`);
   }
 }

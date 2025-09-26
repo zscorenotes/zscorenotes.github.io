@@ -95,7 +95,12 @@ export async function POST(request) {
     const body = await request.json();
     const { type, data } = body;
 
-    console.log('🔍 API Content POST - Received:', { type, dataKeys: Object.keys(data || {}) });
+    console.log('API Content POST - Received:', { 
+      type, 
+      dataKeys: Object.keys(data || {}),
+      dataSize: JSON.stringify(data).length,
+      hasCircular: checkForCircularReferences(data)
+    });
 
     if (!type || !data) {
       return NextResponse.json(
@@ -106,7 +111,7 @@ export async function POST(request) {
 
     const dataKey = DATA_KEYS[type.toUpperCase()];
     if (!dataKey) {
-      console.log('❌ Invalid content type:', type, 'Available keys:', Object.keys(DATA_KEYS));
+      console.log('Invalid content type:', type, 'Available keys:', Object.keys(DATA_KEYS));
       return NextResponse.json(
         { error: 'Invalid content type' },
         { status: 400 }
@@ -120,12 +125,17 @@ export async function POST(request) {
       version: (data.version || 0) + 1,
     };
 
-    console.log('💾 Saving to blob storage:', { dataKey, type, dataSize: JSON.stringify(enrichedData).length });
+    console.log('Saving to blob storage:', { 
+      dataKey, 
+      type, 
+      dataSize: JSON.stringify(enrichedData).length,
+      token: process.env.BLOB_READ_WRITE_TOKEN ? 'present' : 'missing'
+    });
 
     // Upload to blob storage
     const result = await uploadData(dataKey, enrichedData);
 
-    console.log('✅ Blob storage save result:', result);
+    console.log('Blob storage save result:', result);
 
     return NextResponse.json({
       success: true,
@@ -134,15 +144,37 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('❌ Content save error:', error);
+    console.error('Content save error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return NextResponse.json(
       { 
         error: 'Failed to save content',
-        details: error.message 
+        details: error.message,
+        type: error.name
       },
       { status: 500 }
     );
   }
+}
+
+// Helper function to check for circular references
+function checkForCircularReferences(obj, seen = new WeakSet()) {
+  if (obj !== null && typeof obj === 'object') {
+    if (seen.has(obj)) {
+      return true;
+    }
+    seen.add(obj);
+    for (let key in obj) {
+      if (checkForCircularReferences(obj[key], seen)) {
+        return true;
+      }
+    }
+    seen.delete(obj);
+  }
+  return false;
 }
 
 /**
