@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getTagColor } from '@/utils/tagColors';
+import { getTagColorSync } from '@/utils/tagColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -239,13 +239,38 @@ export default function PortfolioDetail({ item, onClose }) {
                     <div className="flex flex-wrap gap-2">
                       {Array.isArray(item.project_type) ? (
                         item.project_type.map((type) => (
-                          <span key={type} className={`px-2 py-1 text-xs uppercase rounded ${getTagColor(type, 'portfolio')}`}>{getProjectTypeLabel(type)}</span>
+                          <span key={type} className={`px-2 py-1 text-xs uppercase rounded ${getTagColorSync(type, 'portfolio')}`}>{getProjectTypeLabel(type)}</span>
                         ))
                       ) : (
-                        <span className={`px-2 py-1 text-xs uppercase rounded ${getTagColor(item.project_type, 'portfolio')}`}>{getProjectTypeLabel(item.project_type)}</span>
+                        <span className={`px-2 py-1 text-xs uppercase rounded ${getTagColorSync(item.project_type, 'portfolio')}`}>{getProjectTypeLabel(item.project_type)}</span>
                       )}
                     </div>
                   </div>
+
+                  {/* Technologies Section */}
+                  {item.technologies && item.technologies.length > 0 && (
+                    <div className="pt-4 mt-4 border-t">
+                      <h5 className="font-bold mb-2">Technologies</h5>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.isArray(item.technologies) ? (
+                          item.technologies.map((tech, index) => (
+                            <span 
+                              key={index} 
+                              className={`px-2 py-1 text-xs rounded border ${getTagColorSync(tech, 'portfolio_technologies')}`}
+                            >
+                              {tech}
+                            </span>
+                          ))
+                        ) : (
+                          <span 
+                            className={`px-2 py-1 text-xs rounded border ${getTagColorSync(item.technologies, 'portfolio_technologies')}`}
+                          >
+                            {item.technologies}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {item.external_link && (
                     <div className="pt-4 mt-4 border-t">

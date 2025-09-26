@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ServiceDetail from "./services/ServiceDetail";
 import ContentManager from '@/entities/ContentManager';
+import { getTagColorSync } from '@/utils/tagColors';
 
 export default function ModernServices() {
   const [services, setServices] = useState([]);
@@ -139,9 +140,16 @@ export default function ModernServices() {
     setSelectedService(null);
   };
 
+  /**
+   * Gets the color class for a service category
+   */
+  const getCategoryColor = (category) => {
+    return getTagColorSync(category, 'services');
+  };
+
   return (
     <>
-      <section id="services" ref={sectionRef} className="relative z-20 py-20 md:py-32 bg-gray-100">
+      <section id="services" ref={sectionRef} className="py-20 md:py-32 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 md:px-12 mb-20">
           <div className="fade-in-up stagger-1">
             <h2 className="text-5xl md:text-7xl font-black mb-6">
@@ -167,54 +175,66 @@ export default function ModernServices() {
                 key={service.id} 
                 ref={el => serviceItemRefs.current[index] = el}
                 onClick={() => openServiceDetail(service)}
-                className={`fade-in-up stagger-${(index % 4) + 1} border-y border-gray-300 group w-full text-left hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:bg-gray-50`}
+                className={`fade-in-up stagger-${(index % 4) + 1} border-y border-gray-300 group w-full text-left hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:bg-gray-50 relative overflow-hidden`}
                 aria-label={`Learn more about ${service.title}`}
               >
-                <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20 grid md:grid-cols-12 gap-8 items-center">
-                  <div className="md:col-span-1 flex items-center justify-center">
-                    <div className="relative w-12 h-12 flex items-center justify-center">
-                      {/* The note stem, animated via JS */}
-                      <div 
-                        className="note-stem absolute bottom-[24px] left-[39px] w-px bg-black group-hover:bg-gray-700 transition-colors duration-300"
-                        style={{ height: '0px', transition: 'height 0.3s ease-out' }}
-                      ></div>
-                      
-                      {/* Initial State SVG (whole note), fades out on hover */}
-                      <svg 
-                        className="w-8 h-7 text-black group-hover:text-gray-700 transition-all duration-300 opacity-100 group-hover:opacity-0" 
-                        viewBox="0 0 29.57 24.15" 
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path 
-                          d="M19.25,0c6.57,0,10.32,3.32,10.32,8.57,0,10.32-13.47,15.57-18.98,15.57-6.3,0-10.59-3.24-10.59-8.57C0,7.7,9.62,0,19.25,0ZM22.31,3.94c-1.06,0-18.72,10.22-18.72,12.16,0,1.77,1.92,4.11,3.5,4.11,1.15,0,18.98-10.4,18.98-12.16,0-1.24-2.01-4.11-3.76-4.11Z" 
-                          fill="currentColor"
-                        />
-                      </svg>
-
-                      {/* Hover State SVG (filled note), fades in on hover */}
-                      <svg 
-                        className="absolute w-8 h-7 text-black transition-all duration-300 opacity-0 group-hover:opacity-100" 
-                        viewBox="0 0 28.61 23.47" 
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M28.61,8.26c0,9.04-11.13,15.21-18.87,15.21-4.96,0-9.74-3.3-9.74-8.26C0,6.26,11.12,0,18.87,0c5.57,0,9.74,3.22,9.74,8.26Z" fill="currentColor"/>
-                      </svg>
+                <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-12 relative">
+                  {/* Service Image - Positioned absolutely within the card container */}
+                  {service.image_urls && service.image_urls.length > 0 && (
+                    <div className="hidden md:block absolute top-0 right-0 w-80 lg:w-96 h-full">
+                      <img 
+                        src={service.image_urls[0]} 
+                        alt={service.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
                     </div>
-                  </div>
-                  <div className="md:col-span-5">
-                    <h3 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-                      {service.title}
-                    </h3>
-                    <span className="inline-block bg-black/5 px-3 py-1 text-xs tracking-wider text-gray-600 uppercase">
-                      {service.category}
-                    </span>
-                  </div>
-                  <div className="md:col-span-6">
-                    <p className="text-gray-700 leading-relaxed text-lg">
-                      {service.description}
-                    </p>
-                    <div className="mt-4 text-sm text-gray-500">
-                      Click to learn more →
+                  )}
+                  <div className="flex items-center gap-8 md:pr-80 lg:pr-96">
+                    <div className="flex items-center justify-center flex-shrink-0">
+                      <div className="relative w-12 h-12 flex items-center justify-center">
+                        {/* The note stem, animated via JS */}
+                        <div 
+                          className="note-stem absolute bottom-[24px] left-[39px] w-px bg-black group-hover:bg-gray-700 transition-colors duration-300"
+                          style={{ height: '0px', transition: 'height 0.3s ease-out' }}
+                        ></div>
+                        
+                        {/* Initial State SVG (whole note), fades out on hover */}
+                        <svg 
+                          className="w-8 h-7 text-black group-hover:text-gray-700 transition-all duration-300 opacity-100 group-hover:opacity-0" 
+                          viewBox="0 0 29.57 24.15" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path 
+                            d="M19.25,0c6.57,0,10.32,3.32,10.32,8.57,0,10.32-13.47,15.57-18.98,15.57-6.3,0-10.59-3.24-10.59-8.57C0,7.7,9.62,0,19.25,0ZM22.31,3.94c-1.06,0-18.72,10.22-18.72,12.16,0,1.77,1.92,4.11,3.5,4.11,1.15,0,18.98-10.4,18.98-12.16,0-1.24-2.01-4.11-3.76-4.11Z" 
+                            fill="currentColor"
+                          />
+                        </svg>
+
+                        {/* Hover State SVG (filled note), fades in on hover */}
+                        <svg 
+                          className="absolute w-8 h-7 text-black transition-all duration-300 opacity-0 group-hover:opacity-100" 
+                          viewBox="0 0 28.61 23.47" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M28.61,8.26c0,9.04-11.13,15.21-18.87,15.21-4.96,0-9.74-3.3-9.74-8.26C0,6.26,11.12,0,18.87,0c5.57,0,9.74,3.22,9.74,8.26Z" fill="currentColor"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="mb-4">
+                        <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(service.category)}`}>
+                          {service.category}
+                        </span>
+                      </div>
+                      <h3 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                        {service.title}
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed text-lg mb-4">
+                        {service.description}
+                      </p>
+                      <div className="text-sm text-gray-500">
+                        Click to learn more →
+                      </div>
                     </div>
                   </div>
                 </div>

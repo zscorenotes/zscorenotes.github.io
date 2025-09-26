@@ -99,10 +99,10 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
   return (
     <>
       {/* Full-screen Hero Header Section */}
-      <header className="relative z-20 bg-white min-h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden">
+      <header className="relative bg-white min-h-screen flex flex-col justify-center items-center text-center px-4 overflow-hidden">
         {/* Animated Sheet Music Background */}
         <div 
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full z-0"
           style={{
             transform: `rotate(${scrollProgress * 360}deg) scale(1.2)`,
             transformOrigin: 'center center',
@@ -138,25 +138,25 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
         </div>
 
         {/* Hero Content */}
-        <div className="fade-in-up relative z-10">
+        <div className="fade-in-up relative z-20">
           <h1 className="text-[5.5rem] sm:text-[8rem] md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-black leading-none mb-0 glitch">
             ZSCORE
           </h1>
         </div>
         
-        <div className="fade-in-up stagger-2 relative z-10">
+        <div className="fade-in-up stagger-2 relative z-20">
           <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-[0.3em] mb-8">
             THE ART OF MUSIC NOTATION
           </h2>
         </div>
         
-        <div className="fade-in-up stagger-3 flex items-center mb-16 relative z-10">
+        <div className="fade-in-up stagger-3 flex items-center mb-16 relative z-20">
           <div className="w-9 h-9 bg-black rounded-full"></div>
           <div className="w-9 h-9 border border-black rounded-full"></div>
         </div>
         
         {/* Scroll Down Indicator */}
-        <div className="fade-in-up stagger-4 absolute bottom-20 inset-x-0 flex justify-center z-10">
+        <div className="fade-in-up stagger-4 absolute bottom-20 inset-x-0 flex justify-center z-20">
           <div className="flex flex-col items-center space-y-4">
             <span className="text-sm tracking-wider">SCROLL TO EXPLORE</span>
             <svg 
@@ -175,11 +175,14 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
       </header>
 
       {/* Sticky Navigation Bar */}
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        isScrolled 
-          ? "bg-white/95 backdrop-blur-md border-b border-black/10 shadow-lg" 
-          : "bg-transparent"
-      }`}>
+      <nav 
+        className={`fixed top-0 left-0 right-0 w-full transition-all duration-500 ${
+          isScrolled 
+            ? "bg-white border-b border-black/10 shadow-lg" 
+            : "bg-transparent"
+        }`}
+        style={{ zIndex: 9999 }}
+      >
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo appears on scroll */}
@@ -212,7 +215,8 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
             
             {/* Mobile Menu "Hamburger" Button */}
             <button
-              className="md:hidden p-2 z-[101]"
+              className="md:hidden p-2"
+              style={{ zIndex: 10000 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -238,9 +242,10 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
 
       {/* Full-screen Mobile Menu Panel */}
       <div
-        className={`fixed inset-0 bg-white z-[99] transform transition-transform duration-500 ease-in-out md:hidden ${
+        className={`fixed inset-0 bg-white transform transition-transform duration-500 ease-in-out md:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ zIndex: 9998 }}
       >
         <div className="flex flex-col items-center justify-center h-full">
           <ul className="flex flex-col items-center space-y-8">

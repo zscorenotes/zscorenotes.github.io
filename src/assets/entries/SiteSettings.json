@@ -17,5 +17,25 @@
     "meta_description": "You need professional music engraving. ZSCORE provides precise, score solutions for composers and publishers.",
     "canonical_url": "https://zscore.studio",
     "og_image": "/images/og-image.jpg"
+  },
+  "categories": {
+    "project_types": [
+      { "id": "score_engraving", "label": "Score Engraving", "color": "blue" },
+      { "id": "audio_programming", "label": "Audio Programming", "color": "green" },
+      { "id": "orchestration", "label": "Orchestration", "color": "yellow" },
+      { "id": "consultation", "label": "Consultation", "color": "purple" }
+    ],
+    "service_categories": [
+      "music_engraving",
+      "composing",
+      "audio_production",
+      "arrangement"
+    ],
+    "news_categories": [
+      { "id": "project_update", "label": "Projects" },
+      { "id": "technology", "label": "Technology" },
+      { "id": "industry_news", "label": "Industry" },
+      { "id": "announcement", "label": "Announcements" }
+    ]
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getTagColor } from '@/utils/tagColors';
+import { getTagColorSync } from '@/utils/tagColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -159,7 +159,7 @@ export default function ServiceDetail({ service, onClose }) {
   };
 
   const getCategoryColor = (category) => {
-    return getTagColor(category, 'services');
+    return getTagColorSync(category, 'services');
   };
 
   return (

@@ -7,7 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { format } from "date-fns";
-import { getTagColor } from '@/utils/tagColors';
+import { getTagColorSync } from '@/utils/tagColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -296,7 +296,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
 
 
   const getCategoryColor = (category) => {
-    return getTagColor(category, 'news');
+    return getTagColorSync(category, 'news');
   };
 
   const openLightbox = useCallback((startIndex = 0) => {

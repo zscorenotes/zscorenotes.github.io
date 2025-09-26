@@ -234,7 +234,6 @@ button:focus-visible {
     transform: translateY(20px) translateZ(0);
     will-change: transform, opacity;
     backface-visibility: hidden;
-    contain: layout;
   }
   
   .fade-in-left {
@@ -243,7 +242,6 @@ button:focus-visible {
     transform: translateX(-20px) translateZ(0);
     will-change: transform, opacity;
     backface-visibility: hidden;
-    contain: layout;
   }
   
   .fade-in-right {
@@ -252,7 +250,6 @@ button:focus-visible {
     transform: translateX(20px) translateZ(0);
     will-change: transform, opacity;
     backface-visibility: hidden;
-    contain: layout;
   }
   
   .animate-in.fade-in-left,
@@ -321,8 +318,18 @@ button:focus-visible {
     width: 0%;
     height: 2px;
     background: linear-gradient(90deg, #000, #333, #000);
-    z-index: 9999;
+    z-index: 99997;
     transition: width 0.3s ease;
+  }
+  
+  /* Ensure sections don't create stacking contexts that interfere with navbar */
+  section {
+    isolation: auto;
+  }
+  
+  /* Force navbar and related elements to be on top */
+  nav[style*="zIndex"] {
+    position: fixed !important;
   }
   
   .magnetic-hover {

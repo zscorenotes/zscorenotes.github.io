@@ -248,7 +248,7 @@ export default function HomePage() {
       <SectionIndicator activeSection={activeSection} sections={sections} />
       
       {/* The main header, including the hero section and the sticky navigation bar */}
-      <div style={{ position: 'relative', zIndex: 20 }}>
+      <div className="relative z-50">
         <ModernHeader activeSection={activeSection} onSectionChange={setActiveSection} />
         
         {/* The first content section after the header */}
@@ -261,7 +261,7 @@ export default function HomePage() {
       <div ref={animationTriggerRef} className="h-[250vh]" />
 
       {/* All subsequent content sections of the page */}
-      <div style={{ position: 'relative', zIndex: 20 }}>
+      <div className="relative z-10">
         <ModernServices key={`services-${contentRefreshKey}`} />
         <ModernPortfolio key={`portfolio-${contentRefreshKey}`} />
         <ModernNews key={`news-${contentRefreshKey}`} />
@@ -270,7 +270,7 @@ export default function HomePage() {
       </div>
       
       {/* Footer section at the bottom of the page */}
-      <footer className="py-16 border-t border-black/10 text-center" style={{ position: 'relative', zIndex: 20 }}>
+      <footer className="py-16 border-t border-black/10 text-center relative">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-8">
             <h3 className="text-2xl font-black mb-2">

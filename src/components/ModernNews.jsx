@@ -6,7 +6,7 @@ import ContentManager from '@/entities/ContentManager';
 import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { getTagColor } from '@/utils/tagColors';
+import { getTagColorSync } from '@/utils/tagColors';
 
 /**
  * Displays the "Feed" section.
@@ -28,6 +28,8 @@ function ModernNews() {
   const itemsPerPage = 4;
   // Ref to prevent scrolling on initial mount
   const isInitialMount = useRef(true);
+  // State for dynamic categories from site settings
+  const [categories, setCategories] = useState([{ id: "all", label: "All Updates" }]);
 
   // Effect to load news data on mount
   useEffect(() => {
@@ -67,6 +69,16 @@ function ModernNews() {
         return dateB - dateA;
       });
       setNews(sortedNews);
+
+      // Load dynamic categories from site settings
+      const siteSettings = contentData.settings || {};
+      if (siteSettings.categories?.news_categories) {
+        const dynamicCategories = [
+          { id: "all", label: "All Updates" },
+          ...siteSettings.categories.news_categories
+        ];
+        setCategories(dynamicCategories);
+      }
     } catch (error) {
       console.error("Error loading news:", error);
     } finally {
@@ -149,20 +161,12 @@ function ModernNews() {
     setCurrentPage(1); // Reset page on filter change
   };
 
-  const categories = [
-    { id: "all", label: "All Updates" },
-    { id: "project_update", label: "Projects" },
-    { id: "technology", label: "Technology" },
-    { id: "industry_news", label: "Industry" },
-    { id: "announcement", label: "Announcements" }
-  ];
-
   const getCategoryColor = (category) => {
-    return getTagColor(category, 'news');
+    return getTagColorSync(category, 'news');
   };
 
   return (
-    <section id="news" ref={sectionRef} className="py-20 md:py-32 relative bg-gray-100">
+    <section id="news" ref={sectionRef} className="py-20 md:py-32 bg-gray-100">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="mb-16">
           <div className="fade-in-up stagger-1">

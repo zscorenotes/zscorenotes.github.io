@@ -578,11 +578,12 @@ export class ContentManager {
           updated_at: new Date(Date.now() - 86400000).toISOString()
         }
       ],
-      settings: {
+      settings: [{
+        id: "main-settings",
         site_title: "ZSCORE",
         site_description: "Professional music engraving and audio programming services",
         site_keywords: "music engraving, score notation, audio programming, orchestration"
-      },
+      }],
       brands: {
         section_title: "Trusted By",
         section_subtitle: "Prestigious institutions and organizations worldwide rely on ZSCORE for their most demanding projects",

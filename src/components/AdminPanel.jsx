@@ -7,8 +7,8 @@ import RichEditor from './RichEditor';
 import { getStoredInquiries, updateInquiryStatus, deleteInquiry } from '@/api.js';
 import ImageUpload from './ImageUpload';
 import DragDropList from './DragDropList';
-import TagManager from './TagManager';
-import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive, Palette } from 'lucide-react';
+import InlineCategorySelector from './InlineCategorySelector';
+import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive } from 'lucide-react';
 
 /**
  * Main Admin Panel for Content Management
@@ -24,7 +24,6 @@ export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [inquiries, setInquiries] = useState([]);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
-  const [showTagManager, setShowTagManager] = useState(false);
 
   // Content sections configuration with enhanced features
   const sections = [
@@ -33,7 +32,6 @@ export default function AdminPanel() {
     { key: 'services', label: 'Services', icon: Briefcase, color: 'bg-green-500', description: 'Edit service offerings' },
     { key: 'portfolio', label: 'Portfolio', icon: Edit, color: 'bg-purple-500', description: 'Showcase project work' },
     { key: 'about', label: 'About', icon: User, color: 'bg-orange-500', description: 'Personal information' },
-    { key: 'settings', label: 'Settings', icon: Settings, color: 'bg-gray-500', description: 'Site configuration' },
   ];
 
   // Load all content on mount
@@ -56,7 +54,7 @@ export default function AdminPanel() {
       setContent(allContent);
       
       // Auto-select content based on active section type
-      if (activeSection === 'about' || activeSection === 'settings') {
+      if (activeSection === 'about') {
         // For object-type content, select the entire object
         setSelectedItem(allContent[activeSection] || {});
       } else if (allContent[activeSection] && Array.isArray(allContent[activeSection]) && allContent[activeSection].length > 0) {
@@ -812,16 +810,6 @@ export default function AdminPanel() {
                 </span>
               </div>
               <div className="flex items-center gap-4">
-                {/* Tag Manager Button - only show for content sections */}
-                {['services', 'portfolio', 'news'].includes(activeSection) && (
-                  <button
-                    onClick={() => setShowTagManager(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200 transition-colors"
-                  >
-                    <Palette size={16} />
-                    Manage Tags
-                  </button>
-                )}
                 <button
                   onClick={() => setPreviewMode(!previewMode)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -910,13 +898,6 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* Tag Manager Modal */}
-      {showTagManager && (
-        <TagManager
-          sectionType={activeSection}
-          onClose={() => setShowTagManager(false)}
-        />
-      )}
     </AuthGuard>
   );
 }
@@ -926,6 +907,20 @@ export default function AdminPanel() {
  */
 function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
   const [activeTab, setActiveTab] = useState('basic');
+  const [siteSettings, setSiteSettings] = useState({});
+
+  // Load site settings on mount
+  useEffect(() => {
+    const loadSiteSettings = async () => {
+      try {
+        const allContent = await ContentManager.getAllContent();
+        setSiteSettings(allContent.settings || {});
+      } catch (error) {
+        console.error('Error loading site settings:', error);
+      }
+    };
+    loadSiteSettings();
+  }, []);
 
   const handleFieldChange = (field, value) => {
     const updatedItem = { ...item, [field]: value, updated_at: new Date().toISOString() };
@@ -1004,16 +999,12 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white p-6 rounded-lg shadow-sm border">
                     <label className="block text-sm font-bold text-gray-700 mb-3">Category</label>
-                    <select
-                      value={item.category || 'announcement'}
-                      onChange={(e) => handleFieldChange('category', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="announcement">📢 Announcement</option>
-                      <option value="project_update">🚀 Project Update</option>
-                      <option value="technology">💻 Technology</option>
-                      <option value="industry_news">📰 Industry News</option>
-                    </select>
+                    <InlineCategorySelector
+                      value={item.category || ''}
+                      onChange={(value) => handleFieldChange('category', value)}
+                      section="news"
+                      placeholder="Select or create category..."
+                    />
                   </div>
                   
                   <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -1090,6 +1081,55 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                 </div>
               )}
 
+              {/* Images for Services */}
+              {section === 'services' && (
+                <div className="bg-white p-6 rounded-lg shadow-sm border">
+                  <label className="block text-sm font-bold text-gray-700 mb-3">
+                    Service Images
+                  </label>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Upload images to showcase your service offerings. The first image will be displayed on the service card.
+                  </p>
+                  
+                  {/* Current Images */}
+                  <div className="space-y-4 mb-4">
+                    {(item.image_urls || []).map((url, index) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-medium">
+                            {index === 0 ? "Featured Service Image" : `Service Image ${index + 1}`}
+                          </span>
+                          <button
+                            onClick={() => removeArrayItem('image_urls', index)}
+                            className="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors text-sm flex items-center gap-1"
+                          >
+                            <Trash2 size={14} />
+                            Remove
+                          </button>
+                        </div>
+                        <ImageUpload
+                          currentImage={url}
+                          onImageUploaded={(newUrl) => handleArrayFieldChange('image_urls', index, newUrl)}
+                          label=""
+                        />
+                        {index === 0 && (
+                          <p className="text-xs text-gray-500 mt-2">This image will appear on the service card alongside the service details.</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Add New Image */}
+                  <button
+                    onClick={() => addArrayItem('image_urls')}
+                    className="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-3 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                  >
+                    <Plus size={16} />
+                    Add Service Image
+                  </button>
+                </div>
+              )}
+
               {/* Images for Portfolio */}
               {section === 'portfolio' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -1139,61 +1179,6 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                 </div>
               )}
 
-              {/* Portfolio-specific fields */}
-              {section === 'portfolio' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Composer</label>
-                    <input
-                      type="text"
-                      value={item.composer || ''}
-                      onChange={(e) => handleFieldChange('composer', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="Enter composer name..."
-                    />
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Publisher</label>
-                    <input
-                      type="text"
-                      value={item.publisher || ''}
-                      onChange={(e) => handleFieldChange('publisher', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="Enter publisher name..."
-                    />
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Instrumentation</label>
-                    <input
-                      type="text"
-                      value={item.instrumentation || ''}
-                      onChange={(e) => handleFieldChange('instrumentation', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="e.g., Orchestra, String Quartet, Piano Solo..."
-                    />
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Project Type</label>
-                    <select
-                      value={item.project_type || ''}
-                      onChange={(e) => handleFieldChange('project_type', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    >
-                      <option value="">Select project type...</option>
-                      <option value="Engraving">🎼 Engraving</option>
-                      <option value="Composition">🎵 Composition</option>
-                      <option value="Arrangement">🎶 Arrangement</option>
-                      <option value="Transcription">📝 Transcription</option>
-                      <option value="Orchestration">🎺 Orchestration</option>
-                      <option value="Music Production">🎙️ Music Production</option>
-                      <option value="Audio Editing">🎧 Audio Editing</option>
-                    </select>
-                  </div>
-                </div>
-              )}
 
               {/* Feature toggle */}
               {section === 'news' && (
@@ -1250,63 +1235,90 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                   <label className="block text-sm font-bold text-gray-700 mb-3">
                     {section === 'news' ? 'Tags' : 'Technologies'}
                   </label>
-                  <div className="space-y-3">
-                    {(item.tags || item.technologies || []).map((tag, index) => (
-                      <div key={index} className="flex gap-3">
-                        <input
-                          type="text"
-                          value={tag}
-                          onChange={(e) => handleArrayFieldChange(
-                            item.tags ? 'tags' : 'technologies', 
-                            index, 
-                            e.target.value
-                          )}
-                          className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={`Enter ${section === 'news' ? 'tag' : 'technology'}...`}
-                        />
-                        <button
-                          onClick={() => removeArrayItem(item.tags ? 'tags' : 'technologies', index)}
-                          className="px-4 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => addArrayItem(item.tags ? 'tags' : 'technologies')}
-                      className="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-3 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
-                    >
-                      <Plus size={16} />
-                      Add {item.tags ? 'Tag' : 'Technology'}
-                    </button>
-                  </div>
+                  <InlineCategorySelector
+                    value={item.tags || item.technologies || []}
+                    onChange={(value) => handleFieldChange(section === 'news' ? 'tags' : 'technologies', value)}
+                    section={section === 'news' ? 'news_tags' : 'portfolio_technologies'}
+                    placeholder={`Select or create ${section === 'news' ? 'tags' : 'technologies'}...`}
+                    allowMultiple={true}
+                  />
                 </div>
               )}
 
               {/* Portfolio-specific fields */}
               {section === 'portfolio' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Client</label>
-                    <input
-                      type="text"
-                      value={item.client || ''}
-                      onChange={(e) => handleFieldChange('client', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Client or company name..."
-                    />
+                <div className="space-y-6">
+                  {/* First row: Project Type, Client, Year */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Project Type</label>
+                      <InlineCategorySelector
+                        value={item.project_type || ''}
+                        onChange={(value) => handleFieldChange('project_type', value)}
+                        section="portfolio"
+                        placeholder="Select or create project type..."
+                        allowMultiple={true}
+                      />
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Client</label>
+                      <input
+                        type="text"
+                        value={item.client || ''}
+                        onChange={(e) => handleFieldChange('client', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Client or company name..."
+                      />
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Completion Year</label>
+                      <input
+                        type="number"
+                        value={item.completion_year || item.year || new Date().getFullYear()}
+                        onChange={(e) => handleFieldChange('completion_year', parseInt(e.target.value))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="2000"
+                        max={new Date().getFullYear() + 5}
+                      />
+                    </div>
                   </div>
-                  
-                  <div className="bg-white p-6 rounded-lg shadow-sm border">
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Year</label>
-                    <input
-                      type="number"
-                      value={item.year || new Date().getFullYear()}
-                      onChange={(e) => handleFieldChange('year', parseInt(e.target.value))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      min="2000"
-                      max={new Date().getFullYear() + 5}
-                    />
+
+                  {/* Second row: Composer, Publisher, Instrumentation */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Composer</label>
+                      <input
+                        type="text"
+                        value={item.composer || ''}
+                        onChange={(e) => handleFieldChange('composer', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter composer name..."
+                      />
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Publisher</label>
+                      <input
+                        type="text"
+                        value={item.publisher || ''}
+                        onChange={(e) => handleFieldChange('publisher', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter publisher name..."
+                      />
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-lg shadow-sm border">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">Instrumentation</label>
+                      <input
+                        type="text"
+                        value={item.instrumentation || ''}
+                        onChange={(e) => handleFieldChange('instrumentation', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="e.g., Orchestra, String Quartet, Piano Solo..."
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -1315,15 +1327,15 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
               {section === 'services' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <label className="block text-sm font-bold text-gray-700 mb-3">Service Category</label>
-                  <input
-                    type="text"
+                  <InlineCategorySelector
                     value={item.category || ''}
-                    onChange={(e) => handleFieldChange('category', e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g., Music Engraving, Composing, Audio Production..."
+                    onChange={(value) => handleFieldChange('category', value)}
+                    section="services"
+                    placeholder="Select or create category..."
                   />
                 </div>
               )}
+
             </div>
           )}
         </div>
