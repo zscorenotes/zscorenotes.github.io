@@ -27,39 +27,16 @@ export async function GET(request) {
       });
     }
 
-    // Fetch all content
-    console.log('📥 Fetching all content from blob storage...');
-    
-    // First try to get unified site content
-    let allContent = await fetchData(DATA_KEYS.SITE_CONTENT);
-    
-    if (allContent && typeof allContent === 'object') {
-      console.log('✅ Found unified site content blob');
-      // Make sure we have the expected structure
-      const expectedKeys = Object.keys(DATA_KEYS).map(k => k.toLowerCase());
-      const hasExpectedStructure = expectedKeys.some(key => allContent.hasOwnProperty(key));
-      
-      if (hasExpectedStructure) {
-        console.log('📦 Unified content has expected structure');
-        return NextResponse.json({
-          success: true,
-          data: allContent,
-          timestamp: new Date().toISOString(),
-          source: 'unified_blob'
-        });
-      }
-    }
-    
-    // Fallback: fetch individual content types
-    console.log('🔄 Falling back to individual content type fetching...');
-    allContent = {};
+    // Fetch all content as individual files
+    console.log('Fetching all content from individual blob files...');
+    let allContent = {};
     
     for (const [key, dataKey] of Object.entries(DATA_KEYS)) {
       try {
         console.log(`📥 Fetching ${key} from ${dataKey}...`);
         const data = await fetchData(dataKey);
         allContent[key.toLowerCase()] = data || getDefaultData(key.toLowerCase());
-        console.log(`${data ? '✅' : '🔄'} ${key}: ${data ? 'found in blob' : 'using default'}`);
+        console.log(`${data ? 'FOUND' : 'DEFAULT'} ${key}: ${data ? 'found in blob' : 'using default'}`);
       } catch (error) {
         console.warn(`Failed to fetch ${key}:`, error.message);
         allContent[key.toLowerCase()] = getDefaultData(key.toLowerCase());

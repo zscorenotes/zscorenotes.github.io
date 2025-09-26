@@ -234,12 +234,31 @@ export class ContentManager {
     if (typeof window !== 'undefined') {
       // Try blob storage (both development and production)
       try {
-        console.log('🔍 Trying blob storage for content...');
+        console.log('Trying blob storage for content...');
         const content = await ContentManagerV2.getAllContent();
-        console.log('✅ Blob storage content loaded:', Object.keys(content));
+        console.log('Blob storage content loaded:', Object.keys(content));
+        
+        // Fix any nested structure issues from old data format
+        if (content.site_content && typeof content.site_content === 'object') {
+          // Merge nested data with root level data, preferring nested data if it has more content
+          Object.keys(content.site_content).forEach(key => {
+            if (Array.isArray(content.site_content[key]) && content.site_content[key].length > 0) {
+              // If nested array has data and root array is empty, use nested data
+              if (!content[key] || (Array.isArray(content[key]) && content[key].length === 0)) {
+                content[key] = content.site_content[key];
+              }
+            } else if (typeof content.site_content[key] === 'object' && content.site_content[key] !== null) {
+              // For object types, merge if root object is empty
+              if (!content[key] || Object.keys(content[key]).length <= 3) { // 3 for version, lastUpdated, etc.
+                content[key] = { ...content[key], ...content.site_content[key] };
+              }
+            }
+          });
+        }
+        
         return content;
       } catch (error) {
-        console.warn('🔄 Blob storage unavailable, falling back to legacy system:', error);
+        console.warn('Blob storage unavailable, falling back to legacy system:', error);
       }
     }
 
@@ -637,9 +656,9 @@ export class ContentManager {
     if (typeof window !== 'undefined') {
       // Try blob storage (both development and production)
       try {
-        console.log('💾 Trying to save to blob storage:', { contentType, dataKeys: Object.keys(data) });
+        console.log('Trying to save to blob storage:', { contentType, dataType: Array.isArray(data) ? 'array' : typeof data, itemCount: Array.isArray(data) ? data.length : Object.keys(data).length });
         await ContentManagerV2.saveContent(contentType, data);
-        console.log('✅ Blob storage save successful');
+        console.log('Blob storage save successful');
         return true;
       } catch (error) {
         console.warn('🔄 Blob storage save failed, falling back to localStorage:', error);
@@ -729,8 +748,8 @@ export class ContentManager {
         allContent[contentType] = { ...allContent[contentType], ...updatedItem };
       }
       
-      // Save back to storage (blob storage or localStorage)
-      const success = await this.saveContent('site_content', allContent);
+      // Save individual content type instead of entire site content
+      const success = await this.saveContent(contentType, allContent[contentType]);
       
       if (success) {
         // Dispatch update event
@@ -822,8 +841,8 @@ export class ContentManager {
         if (itemIndex !== -1) {
           allContent[contentType].splice(itemIndex, 1);
           
-          // Save back to storage (blob storage or localStorage)
-          const success = await this.saveContent('site_content', allContent);
+          // Save individual content type instead of entire site content
+          const success = await this.saveContent(contentType, allContent[contentType]);
           
           if (success) {
             // Dispatch update event
