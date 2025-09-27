@@ -48,27 +48,6 @@
       "displayName": "SAMPLE",
       "color": "gray",
       "description": "Custom services category"
-    },
-    {
-      "id": "asdasd",
-      "label": "asdasd",
-      "displayName": "asdasd",
-      "color": "green",
-      "description": "Custom services category"
-    },
-    {
-      "id": "asdasd",
-      "label": "asdasd",
-      "displayName": "asdasd",
-      "color": "yellow",
-      "description": "Custom services category"
-    },
-    {
-      "id": "asdasd",
-      "label": "asdasd",
-      "displayName": "asdasd",
-      "color": "red",
-      "description": "Custom services category"
     }
   ],
   "news": [
@@ -175,5 +154,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:53:16.619Z"
+  "updated_at": "2025-09-27T18:53:22.908Z"
 }
