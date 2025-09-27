@@ -187,15 +187,15 @@ export default function ModernServices() {
                 <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-12 relative">
                   {/* Service Image - Positioned absolutely within the card container */}
                   {service.image_urls && service.image_urls.length > 0 && (
-                    <div className="hidden md:block absolute top-0 right-0 w-80 lg:w-96 h-full">
+                    <div className="absolute top-0 right-0 w-full md:w-80 lg:w-96 h-full">
                       <img 
                         src={service.image_urls[0]} 
                         alt={service.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-20 md:opacity-100"
                       />
                     </div>
                   )}
-                  <div className="flex items-center gap-8 md:pr-80 lg:pr-96">
+                  <div className="flex items-center gap-8 md:pr-80 lg:pr-96 relative z-10">
                     <div className="flex items-center justify-center flex-shrink-0">
                       <div className="relative w-12 h-12 flex items-center justify-center">
                         {/* The note stem, animated via JS */}
