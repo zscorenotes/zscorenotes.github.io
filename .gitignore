@@ -25,17 +25,22 @@ test2.py
 2400ppi/4Asset 2.png
 node_modules
 
-# Protect content data from accidental deletion
-# Allow essential files for deployment but protect user uploads
-# content-data/ - REMOVED: Need this for GitHub storage in production
-# public/images/ - REMOVED: Need this for GitHub storage in production
+# Protect content data from ongoing changes while allowing initial structure
+# Track essential files for production but ignore user content changes
 
-# Instead, ignore specific temporary/cache files if needed
+# Ignore content changes after initial setup (use --assume-unchanged for tracked files)
+content-data/*.json
+public/images/*
+
+# But allow specific essential structure files (committed once)
+!content-data/categories.json
+!content-data/about.json  
+!content-data/settings.json
+
+# Ignore temporary/cache files
 content-data/temp/
 content-data/cache/
 content-data/.DS_Store
-
-# Allow images but ignore temporary files
 public/images/.DS_Store
 public/images/temp/
 
