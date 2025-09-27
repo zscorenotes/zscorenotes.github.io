@@ -191,7 +191,7 @@ export default function ModernServices() {
                       <img 
                         src={service.image_urls[0]} 
                         alt={service.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-20 md:opacity-100"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-10 md:opacity-100"
                       />
                     </div>
                   )}
