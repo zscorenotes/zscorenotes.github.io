@@ -61,7 +61,7 @@ export async function POST(request) {
       const { contentType, itemId } = body;
       console.log(`🔄 API: Deleting ${contentType} item ${itemId}`);
       
-      const result = await ContentManager.deleteItem(contentType, itemId);
+      const result = await ContentManager.deleteItemInternal(contentType, itemId);
       
       return NextResponse.json({
         success: result

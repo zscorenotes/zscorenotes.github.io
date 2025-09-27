@@ -27,9 +27,9 @@ export async function uploadImage(file, folder = 'images') {
       throw new Error('File must be an image');
     }
 
-    // Validate file size (25MB limit - GitHub's file size limit)
-    if (file.size > 25 * 1024 * 1024) {
-      throw new Error('File size must be less than 25MB');
+    // Validate file size (50MB limit - GitHub's file size limit)
+    if (file.size > 50 * 1024 * 1024) {
+      throw new Error('File size must be less than 50MB');
     }
 
     const token = getGitHubToken();

@@ -31,9 +31,12 @@ export default function ImageUpload({
         throw new Error('Please select an image file');
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Image must be smaller than 5MB');
+      // Validate file size (max 50MB for production, 5MB for local)
+      const maxSize = process.env.NODE_ENV === 'development' ? 5 * 1024 * 1024 : 50 * 1024 * 1024;
+      const maxSizeText = process.env.NODE_ENV === 'development' ? '5MB' : '50MB';
+      
+      if (file.size > maxSize) {
+        throw new Error(`Image must be smaller than ${maxSizeText}`);
       }
 
       // Create form data
@@ -48,8 +51,14 @@ export default function ImageUpload({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        let errorMessage = 'Upload failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.details || errorData.message || `Upload failed (${response.status})`;
+        } catch {
+          errorMessage = `Upload failed (${response.status}: ${response.statusText})`;
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -156,7 +165,7 @@ export default function ImageUpload({
               Drag and drop an image here, or click to select
             </p>
             <p className="text-xs text-gray-400">
-              Supports: JPG, PNG, GIF, WebP (max 5MB)
+              Supports: JPG, PNG, GIF, WebP (max {process.env.NODE_ENV === 'development' ? '5MB' : '50MB'})
             </p>
           </div>
         )}
@@ -173,8 +182,16 @@ export default function ImageUpload({
 
       {/* Error message */}
       {error && (
-        <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
-          {error}
+        <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <X className="h-5 w-5 text-red-400" />
+            </div>
+            <div className="ml-2">
+              <h3 className="text-sm font-medium text-red-800">Upload Failed</h3>
+              <p className="text-sm text-red-700 mt-1">{error}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

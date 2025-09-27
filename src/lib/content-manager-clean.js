@@ -244,6 +244,46 @@ export async function updateItem(contentType, itemId, updatedItem) {
  * Delete item from array-type content and associated images
  */
 export async function deleteItem(contentType, itemId) {
+  try {
+    const response = await fetch('/api/content-clean', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        operation: 'deleteItem',
+        contentType,
+        itemId
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (result.success) {
+      // Emit event for UI updates
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('zscore-content-updated', {
+          detail: { contentType, action: 'delete', itemId }
+        }));
+      }
+      return true;
+    } else {
+      throw new Error('Delete operation failed');
+    }
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    return false;
+  }
+}
+
+/**
+ * Internal function to delete an item (used by API route)
+ */
+export async function deleteItemInternal(contentType, itemId) {
   const config = CONTENT_TYPES[contentType];
   if (!config?.isArray) throw new Error(`${contentType} is not an array type`);
   
