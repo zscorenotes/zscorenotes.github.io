@@ -30,12 +30,10 @@ node_modules
 
 # Ignore content changes after initial setup (use --assume-unchanged for tracked files)
 content-data/*.json
+content-data/content/news/*.html
+content-data/content/portfolio/*.html
+content-data/content/services/*.html
 public/images/*
-
-# But allow specific essential structure files (committed once)
-!content-data/categories.json
-!content-data/about.json  
-!content-data/settings.json
 
 # Ignore temporary/cache files
 content-data/temp/
