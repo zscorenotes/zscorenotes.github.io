@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllContentFromGitHub, saveContentToGitHub } from '@/lib/github-storage';
+import * as ContentManager from '@/lib/content-manager-clean';
 
 /**
  * Clean Content API - Simple, consistent data handling
@@ -12,7 +12,8 @@ const CONTENT_FILES = ['news', 'services', 'portfolio', 'about', 'settings', 'ca
  */
 export async function GET() {
   try {
-    const allContent = await getAllContentFromGitHub();
+    // Use content manager which handles local vs GitHub storage automatically
+    const allContent = await ContentManager.getAllContent();
     
     return NextResponse.json({
       success: true,
@@ -33,37 +34,73 @@ export async function GET() {
  */
 export async function POST(request) {
   try {
-    const { type, data } = await request.json();
+    const body = await request.json();
     
-    if (!type || data === undefined) {
-      return NextResponse.json(
-        { success: false, error: 'Type and data are required' },
-        { status: 400 }
-      );
+    // Handle different types of operations
+    if (body.operation === 'updateItem') {
+      const { contentType, itemId, item } = body;
+      console.log(`🔄 API: Updating ${contentType} item ${itemId}`);
+      
+      const result = await ContentManager.updateItem(contentType, itemId, item);
+      
+      return NextResponse.json({
+        success: !!result,
+        data: result
+      });
+    } else if (body.operation === 'addItem') {
+      const { contentType, item } = body;
+      console.log(`🔄 API: Adding ${contentType} item`);
+      
+      const result = await ContentManager.addItem(contentType, item);
+      
+      return NextResponse.json({
+        success: !!result,
+        data: result
+      });
+    } else if (body.operation === 'deleteItem') {
+      const { contentType, itemId } = body;
+      console.log(`🔄 API: Deleting ${contentType} item ${itemId}`);
+      
+      const result = await ContentManager.deleteItem(contentType, itemId);
+      
+      return NextResponse.json({
+        success: result
+      });
+    } else {
+      // Legacy bulk save operation
+      const { type, data } = body;
+      
+      if (!type || data === undefined) {
+        return NextResponse.json(
+          { success: false, error: 'Type and data are required' },
+          { status: 400 }
+        );
+      }
+      
+      if (!CONTENT_FILES.includes(type)) {
+        return NextResponse.json(
+          { success: false, error: `Invalid content type: ${type}` },
+          { status: 400 }
+        );
+      }
+      
+      // Use content manager which handles local vs GitHub storage automatically
+      const success = await ContentManager.saveContent(type, data);
+      
+      if (!success) {
+        throw new Error('Failed to save content');
+      }
+      
+      return NextResponse.json({
+        success: true,
+        message: `${type} saved successfully`
+      });
     }
-    
-    if (!CONTENT_FILES.includes(type)) {
-      return NextResponse.json(
-        { success: false, error: `Invalid content type: ${type}` },
-        { status: 400 }
-      );
-    }
-    
-    const success = await saveContentToGitHub(type, data);
-    
-    if (!success) {
-      throw new Error('Failed to save to GitHub');
-    }
-    
-    return NextResponse.json({
-      success: true,
-      message: `${type} saved successfully`
-    });
     
   } catch (error) {
-    console.error('Content save error:', error);
+    console.error('Content operation error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to save content' },
+      { success: false, error: error.message || 'Operation failed' },
       { status: 500 }
     );
   }

@@ -160,7 +160,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
       const imageUrl = newsItem.image_urls && newsItem.image_urls.length > 0 
         ? (newsItem.image_urls[0].startsWith('http') ? newsItem.image_urls[0] : `${baseUrl}${newsItem.image_urls[0]}`)
         : `${baseUrl}/images/feeds/cover01.png`;
-      const description = newsItem.excerpt || (newsItem.content ? newsItem.content.substring(0, 160) : '');
+      const description = newsItem.excerpt || '';
 
       // Update basic meta tags
       document.title = `${newsItem.title} | ZSCORE Feed`;
@@ -569,7 +569,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
                       {previousItem.title}
                     </h3>
                     <p className="text-sm text-gray-600 line-clamp-3">
-                      {previousItem.excerpt || previousItem.content?.substring(0, 120) + "..."}
+                      {previousItem.excerpt || ""}
                     </p>
                     {previousItem.publication_date && (
                       <time className="text-xs text-gray-400 mt-3 block">
@@ -599,7 +599,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
                       {nextItem.title}
                     </h3>
                     <p className="text-sm text-gray-600 line-clamp-3">
-                      {nextItem.excerpt || nextItem.content?.substring(0, 120) + "..."}
+                      {nextItem.excerpt || ""}
                     </p>
                     {nextItem.publication_date && (
                       <time className="text-xs text-gray-400 mt-3 block">
@@ -662,7 +662,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
                       {relatedPost.title}
                     </h4>
                     <p className="text-xs text-gray-600 line-clamp-2">
-                      {relatedPost.excerpt || relatedPost.content?.substring(0, 80) + "..."}
+                      {relatedPost.excerpt || ""}
                     </p>
                   </div>
                 </Link>

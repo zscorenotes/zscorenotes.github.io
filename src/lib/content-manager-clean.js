@@ -21,17 +21,25 @@ const CONTENT_TYPES = {
 };
 
 /**
- * Get all content from API
+ * Get all content (API or direct storage)
  */
 export async function getAllContent() {
   try {
-    const response = await fetch('/api/content-clean');
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const result = await response.json();
-    if (!result.success) throw new Error(result.error);
-    
-    return result.data;
+    // Check if we're running on server side (in API routes)
+    if (typeof window === 'undefined') {
+      // Import storage adapter dynamically to avoid client-side issues
+      const { getAllContent: getAllContentDirect } = await import('./storage-adapter.js');
+      return await getAllContentDirect();
+    } else {
+      // On client side, use API call
+      const response = await fetch('/api/content-clean');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      
+      return result.data;
+    }
   } catch (error) {
     console.error('Failed to load content:', error);
     return getEmptyContent();
@@ -39,22 +47,30 @@ export async function getAllContent() {
 }
 
 /**
- * Save content type to API
+ * Save content type (API or direct storage)
  */
 export async function saveContent(contentType, data) {
   try {
-    const response = await fetch('/api/content-clean', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: contentType, data })
-    });
-    
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    
-    const result = await response.json();
-    if (!result.success) throw new Error(result.error);
-    
-    return true;
+    // Check if we're running on server side (in API routes)
+    if (typeof window === 'undefined') {
+      // Import storage adapter dynamically to avoid client-side issues
+      const { saveContent: saveContentDirect } = await import('./storage-adapter.js');
+      return await saveContentDirect(contentType, data);
+    } else {
+      // On client side, use API call
+      const response = await fetch('/api/content-clean', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: contentType, data })
+      });
+      
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      
+      return true;
+    }
   } catch (error) {
     console.error('Failed to save content:', error);
     return false;
@@ -98,13 +114,8 @@ export async function addItem(contentType, item) {
       const htmlResult = await saveHTMLContent(contentType, itemId, item.content);
       
       if (htmlResult.success) {
-        // Add content_file reference and create excerpt
+        // Add content_file reference
         newItem.content_file = htmlResult.content_file;
-        
-        // Create excerpt if not provided
-        if (!newItem.excerpt) {
-          newItem.excerpt = createExcerptFromHTML(item.content);
-        }
         
         // Remove the content field from the item (it's now in a separate file)
         delete newItem.content;
@@ -112,9 +123,23 @@ export async function addItem(contentType, item) {
         throw new Error('Failed to save HTML content');
       }
     } catch (error) {
-      console.error('Error saving HTML content for new item:', error);
-      // Fallback: keep content in JSON for now
-      // This ensures the item is still created even if HTML file saving fails
+      console.error('❌ CRITICAL: Failed to save HTML content for new item:', error);
+      console.error('❌ HTML content separation system is not working properly');
+      console.error('❌ This should be investigated and fixed');
+      
+      // Check if we're in production or client side
+      const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV;
+      const isClientSide = typeof window !== 'undefined';
+      
+      if (isProduction || isClientSide) {
+        console.error('⚠️ FALLBACK: Keeping content in JSON due to HTML saving failure');
+        console.error('⚠️ This is a temporary fallback - the HTML separation system needs to be fixed');
+        console.error('⚠️ Error details:', error.message);
+        // Keep content in JSON as fallback in production or client side
+      } else {
+        // In development server-side, fail fast to force fixing the issue
+        throw new Error(`HTML content separation failed: ${error.message}`);
+      }
     }
   }
   
@@ -131,55 +156,88 @@ export async function updateItem(contentType, itemId, updatedItem) {
   const config = CONTENT_TYPES[contentType];
   if (!config?.isArray) throw new Error(`${contentType} is not an array type`);
   
-  const allContent = await getAllContent();
-  const items = allContent[contentType] || [];
-  
-  const index = items.findIndex(item => item.id === itemId);
-  if (index === -1) throw new Error(`Item ${itemId} not found`);
-  
-  const existingItem = items[index];
-  
-  // Prepare updated item
-  const itemToUpdate = {
-    ...updatedItem,
-    id: itemId,
-    updated_at: new Date().toISOString()
-  };
-  
-  // Handle HTML content separation
-  if (updatedItem.content && typeof updatedItem.content === 'string') {
-    console.log(`🔄 Found HTML content for updated ${contentType} item, saving to separate file...`);
-    try {
-      // Save HTML content to separate file
-      const htmlResult = await saveHTMLContent(contentType, itemId, updatedItem.content);
-      
-      if (htmlResult.success) {
-        // Add content_file reference and create/update excerpt
-        itemToUpdate.content_file = htmlResult.content_file;
+  // Check if we're running on server side (direct operation) or client side (API call)
+  if (typeof window === 'undefined') {
+    // Server-side: perform operation directly with HTML content separation
+    const allContent = await getAllContent();
+    const items = allContent[contentType] || [];
+    
+    const index = items.findIndex(item => item.id === itemId);
+    if (index === -1) throw new Error(`Item ${itemId} not found`);
+    
+    const existingItem = items[index];
+    
+    // Prepare updated item
+    const itemToUpdate = {
+      ...updatedItem,
+      id: itemId,
+      updated_at: new Date().toISOString()
+    };
+    
+    // Handle HTML content separation
+    if (updatedItem.content && typeof updatedItem.content === 'string') {
+      console.log(`🔄 Found HTML content for updated ${contentType} item, saving to separate file...`);
+      try {
+        // Save HTML content to separate file
+        const htmlResult = await saveHTMLContent(contentType, itemId, updatedItem.content);
+        console.log(`📝 HTML save result:`, htmlResult);
         
-        // Create excerpt if not provided
-        if (!itemToUpdate.excerpt) {
-          itemToUpdate.excerpt = createExcerptFromHTML(updatedItem.content);
+        if (htmlResult.success) {
+          // Add content_file reference
+          itemToUpdate.content_file = htmlResult.content_file;
+          
+          // Remove the content field from the item (it's now in a separate file)
+          delete itemToUpdate.content;
+        } else {
+          throw new Error('Failed to save HTML content');
         }
+      } catch (error) {
+        console.error('❌ CRITICAL: Failed to save HTML content for updated item:', error);
+        console.error('❌ HTML content separation system is not working properly');
+        console.error('❌ This should be investigated and fixed');
         
-        // Remove the content field from the item (it's now in a separate file)
-        delete itemToUpdate.content;
-      } else {
-        throw new Error('Failed to save HTML content');
+        // Check if we're in production or client side
+        const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV;
+        const isClientSide = typeof window !== 'undefined';
+        
+        if (isProduction || isClientSide) {
+          console.error('⚠️ FALLBACK: Keeping content in JSON due to HTML saving failure');
+          console.error('⚠️ This is a temporary fallback - the HTML separation system needs to be fixed');
+          console.error('⚠️ Error details:', error.message);
+          // Keep content in JSON as fallback in production or client side
+        } else {
+          // In development server-side, fail fast to force fixing the issue
+          throw new Error(`HTML content separation failed: ${error.message}`);
+        }
       }
-    } catch (error) {
-      console.error('Error saving HTML content for updated item:', error);
-      // Fallback: keep content in JSON for now
-      // This ensures the update still works even if HTML file saving fails
+    } else if (existingItem.content_file && !updatedItem.content) {
+      // Preserve existing content_file if no new content provided
+      itemToUpdate.content_file = existingItem.content_file;
     }
-  } else if (existingItem.content_file && !updatedItem.content) {
-    // Preserve existing content_file if no new content provided
-    itemToUpdate.content_file = existingItem.content_file;
+    
+    items[index] = itemToUpdate;
+    
+    return await saveContent(contentType, items);
+  } else {
+    // Client-side: use API call
+    const response = await fetch('/api/content-clean', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        operation: 'updateItem',
+        contentType,
+        itemId,
+        item: updatedItem
+      })
+    });
+    
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const result = await response.json();
+    if (!result.success) throw new Error(result.error);
+    
+    return result.data;
   }
-  
-  items[index] = itemToUpdate;
-  
-  return await saveContent(contentType, items);
 }
 
 /**
@@ -334,24 +392,37 @@ export async function updateObject(contentType, data) {
  */
 export async function getContentWithHTML(contentType, itemId) {
   try {
-    const allContent = await getAllContent();
-    const items = allContent[contentType] || [];
-    
-    const item = items.find(i => i.id === itemId);
-    if (!item) {
-      throw new Error(`Item ${itemId} not found in ${contentType}`);
+    // Check if we're running on server side or client side
+    if (typeof window === 'undefined') {
+      // Server side - direct file operations
+      const allContent = await getAllContent();
+      const items = allContent[contentType] || [];
+      
+      const item = items.find(i => i.id === itemId);
+      if (!item) {
+        throw new Error(`Item ${itemId} not found in ${contentType}`);
+      }
+      
+      // If item has a content_file, load the HTML content
+      if (item.content_file) {
+        const htmlContent = await loadHTMLContent(item.content_file);
+        return {
+          ...item,
+          content: htmlContent
+        };
+      }
+      
+      return item;
+    } else {
+      // Client side - use API
+      const response = await fetch(`/api/content-html?type=${contentType}&id=${itemId}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      
+      return result.data;
     }
-    
-    // If item has a content_file, load the HTML content
-    if (item.content_file) {
-      const htmlContent = await loadHTMLContent(item.content_file);
-      return {
-        ...item,
-        content: htmlContent // Add the HTML content for editing
-      };
-    }
-    
-    return item;
   } catch (error) {
     console.error('Error loading content with HTML:', error);
     throw error;
@@ -363,6 +434,12 @@ export async function getContentWithHTML(contentType, itemId) {
  */
 export async function migrateAllContentToHTML() {
   try {
+    // Skip migration on client side
+    if (typeof window !== 'undefined') {
+      console.log('Skipping migration on client side');
+      return false;
+    }
+    
     console.log('Starting migration to HTML file structure...');
     
     const allContent = await getAllContent();

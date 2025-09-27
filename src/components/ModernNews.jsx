@@ -268,7 +268,7 @@ function ModernNews() {
                         {item.title}
                       </h3>
                       <p className="text-gray-600 leading-relaxed mb-4">
-                        {item.excerpt || item.content.substring(0, 150) + "..."}
+                        {item.excerpt || ""}
                       </p>
                       {item.tags && item.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">

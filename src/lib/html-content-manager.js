@@ -7,6 +7,13 @@
  * - Each content item has a content_file field pointing to its HTML file
  */
 
+// Server-side only: fs and path imports (these will be tree-shaken on client side)
+let fs, path;
+if (typeof window === 'undefined') {
+  fs = require('fs').promises;
+  path = require('path');
+}
+
 const GITHUB_REPO = 'zscorenotes.github.io';
 const GITHUB_OWNER = 'zscorenotes';
 const CONTENT_BRANCH = 'main';
@@ -19,16 +26,109 @@ function getGitHubToken() {
 }
 
 /**
+ * Save HTML content to local file system (server-side only)
+ */
+async function saveHTMLFileLocallyDirect(contentType, itemId, htmlContent) {
+  if (!fs || !path) {
+    throw new Error('File system operations only available on server side');
+  }
+  
+  const filename = `${itemId}.html`;
+  const dirPath = path.join(process.cwd(), 'content-data', 'content', contentType);
+  const filePath = path.join(dirPath, filename);
+  
+  // Ensure directory exists
+  await fs.mkdir(dirPath, { recursive: true });
+  
+  // Write HTML content to file
+  await fs.writeFile(filePath, htmlContent, 'utf8')
+  
+  console.log(`✅ HTML content saved locally: ${filePath}`);
+  
+  return {
+    success: true,
+    content_file: `/content-data/content/${contentType}/${filename}`,
+  };
+}
+
+/**
+ * Load HTML content from local file system (server-side only)
+ */
+async function loadHTMLFileLocallyDirect(contentFilePath) {
+  if (!fs || !path) {
+    throw new Error('File system operations only available on server side');
+  }
+  
+  // Remove leading slash and convert to local path
+  const relativePath = contentFilePath.startsWith('/') ? contentFilePath.slice(1) : contentFilePath;
+  const filePath = path.join(process.cwd(), relativePath);
+  
+  try {
+    const content = await fs.readFile(filePath, 'utf8');
+    return content;
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.warn(`HTML content file not found locally: ${contentFilePath}`);
+      return '';
+    }
+    throw error;
+  }
+}
+
+/**
+ * Delete HTML content from local file system (server-side only)
+ */
+async function deleteHTMLFileLocallyDirect(contentFilePath) {
+  if (!fs || !path) {
+    throw new Error('File system operations only available on server side');
+  }
+  
+  // Remove leading slash and convert to local path
+  const relativePath = contentFilePath.startsWith('/') ? contentFilePath.slice(1) : contentFilePath;
+  const filePath = path.join(process.cwd(), relativePath);
+  
+  try {
+    await fs.unlink(filePath);
+    console.log(`✅ HTML content deleted locally: ${filePath}`);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      console.warn(`HTML content file not found for deletion: ${contentFilePath}`);
+      return;
+    }
+    throw error;
+  }
+}
+
+/**
  * Save HTML content to a separate file
  */
 export async function saveHTMLContent(contentType, itemId, htmlContent) {
   try {
     console.log(`🔄 Saving HTML content for ${contentType}/${itemId}`);
     
+    // Check if we're on client side - if so, return failure to let content manager handle fallback
+    if (typeof window !== 'undefined') {
+      console.warn('⚠️ Cannot save HTML content: Running on client side');
+      return {
+        success: false,
+        error: 'HTML content saving only available on server side'
+      };
+    }
+    
+    // We're on server side - check environment
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      console.log('📁 Using local file system (development mode)');
+      // Use local file operations directly (only on server side)
+      return await saveHTMLFileLocallyDirect(contentType, itemId, htmlContent);
+    }
+    
+    // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.error('❌ No GitHub token found for HTML content saving');
-      throw new Error('GitHub token required for saving HTML content');
+      console.warn('⚠️ No GitHub token found, falling back to local file system');
+      return await saveHTMLFileLocallyDirect(contentType, itemId, htmlContent);
     }
 
     // Create filename for HTML content
@@ -89,6 +189,14 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
       } catch {
         errorData = { message: errorText };
       }
+      
+      // Enhanced error logging for debugging
+      console.error('🚨 GitHub API Error Details:');
+      console.error('  Status:', response.status);
+      console.error('  URL:', url);
+      console.error('  Path:', path);
+      console.error('  Response:', errorData);
+      
       throw new Error(`GitHub API error: ${response.status} - ${errorData.message || 'Unknown error'}`);
     }
 
@@ -113,10 +221,25 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
  */
 export async function loadHTMLContent(contentFilePath) {
   try {
+    // Check if we're on client side - if so, return empty
+    if (typeof window !== 'undefined') {
+      console.warn('⚠️ Cannot load HTML content: Running on client side');
+      return '';
+    }
+    
+    // We're on server side - check environment
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      console.log('📁 Loading from local file system (development mode)');
+      return await loadHTMLFileLocallyDirect(contentFilePath);
+    }
+    
+    // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.warn('No GitHub token found for loading HTML content');
-      return '';
+      console.warn('⚠️ No GitHub token found, falling back to local file system');
+      return await loadHTMLFileLocallyDirect(contentFilePath);
     }
 
     // Remove leading slash if present
@@ -156,10 +279,27 @@ export async function loadHTMLContent(contentFilePath) {
  */
 export async function deleteHTMLContent(contentFilePath) {
   try {
+    // Check if we're on client side - if so, return false
+    if (typeof window !== 'undefined') {
+      console.warn('⚠️ Cannot delete HTML content: Running on client side');
+      return false;
+    }
+    
+    // We're on server side - check environment
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
+    if (isDevelopment) {
+      console.log('📁 Deleting from local file system (development mode)');
+      await deleteHTMLFileLocallyDirect(contentFilePath);
+      return true;
+    }
+    
+    // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.warn('No GitHub token found for deleting HTML content');
-      return false;
+      console.warn('⚠️ No GitHub token found, falling back to local file system');
+      await deleteHTMLFileLocallyDirect(contentFilePath);
+      return true;
     }
 
     // Remove leading slash if present
@@ -294,3 +434,6 @@ export function createExcerptFromHTML(htmlContent, maxLength = 150) {
     return '';
   }
 }
+
+// Local file system functions are now in ./server-file-operations.js
+// and are imported dynamically only when running on server side
