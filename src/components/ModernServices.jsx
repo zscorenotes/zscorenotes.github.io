@@ -26,10 +26,18 @@ export default function ModernServices() {
       }
     };
 
+    const handleCategoriesLoaded = () => {
+      console.log('Categories loaded, forcing re-render...');
+      // Force a re-render by updating state
+      setServices(prevServices => [...prevServices]);
+    };
+
     window.addEventListener('zscore-content-updated', handleContentUpdate);
+    window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
+      window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     };
   }, []);
 

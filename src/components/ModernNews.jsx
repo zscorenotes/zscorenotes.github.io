@@ -48,10 +48,17 @@ function ModernNews() {
       }
     };
 
+    const handleCategoriesLoaded = () => {
+      console.log('Categories loaded, forcing news re-render...');
+      setNews(prevNews => [...prevNews]);
+    };
+
     window.addEventListener('zscore-content-updated', handleContentUpdate);
+    window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
+      window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     };
   }, []);
 

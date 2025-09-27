@@ -29,6 +29,15 @@ let categoriesCache = null;
 let cacheTimestamp = null;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+// Initialize cache on module load for client-side
+if (typeof window !== 'undefined') {
+  // Pre-load categories from the database on client-side initialization
+  loadCategories().catch(console.error);
+}
+
+// For SSR and immediate access, try to load categories synchronously
+let isLoadingCategories = false;
+
 /**
  * Load categories from the centralized database
  * Uses caching to avoid repeated loads
@@ -104,13 +113,42 @@ export async function getCategoryColor(tagName, sectionType) {
 }
 
 /**
- * Synchronous version for immediate use (when categories are already cached)
- * Falls back to default colors if categories not cached
+ * Synchronous version for immediate use
+ * Loads categories synchronously if not cached, then returns color
  */
 export function getCategoryColorSync(tagName, sectionType) {
   // Special handling for # tags - always gray
   if (tagName && tagName.startsWith('#')) {
     return COLOR_CLASSES.gray;
+  }
+
+  // Debug logging (development only)
+  const isDev = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost'));
+  
+  if (isDev) {
+    console.log(`🎨 getCategoryColorSync: "${tagName}" in "${sectionType}"`);
+    console.log('🎨 Cache status:', !!categoriesCache);
+    if (categoriesCache) {
+      console.log(`🎨 Section categories:`, categoriesCache[sectionType]);
+    }
+  }
+
+  // If not cached and not already loading, trigger async load
+  if (!categoriesCache && !isLoadingCategories && typeof window !== 'undefined') {
+    isLoadingCategories = true;
+    loadCategories()
+      .then(() => {
+        isLoadingCategories = false;
+        // Trigger a re-render to pick up the new colors
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('zscore-categories-loaded'));
+        }
+      })
+      .catch(error => {
+        console.error('Error loading categories:', error);
+        isLoadingCategories = false;
+      });
   }
 
   // Use cached categories if available
@@ -121,20 +159,30 @@ export function getCategoryColorSync(tagName, sectionType) {
       if (!cat) return false;
       
       const normalizedTag = tagName?.toLowerCase?.() || '';
-      return (
+      const matches = (
         cat.label?.toLowerCase() === normalizedTag ||
         cat.displayName?.toLowerCase() === normalizedTag ||
         cat.id?.toLowerCase() === normalizedTag
       );
+      
+      if (isDev) {
+        console.log(`🎨 Checking category:`, cat, `matches: ${matches}`);
+      }
+      
+      return matches;
     });
     
     if (category && category.color && COLOR_CLASSES[category.color]) {
-      return COLOR_CLASSES[category.color];
+      const colorClass = COLOR_CLASSES[category.color];
+      if (isDev) console.log(`🎨 Found color for "${tagName}":`, colorClass);
+      return colorClass;
     }
   }
   
   // Fallback to defaults
-  return getDefaultCategoryColor(tagName, sectionType);
+  const defaultColor = getDefaultCategoryColor(tagName, sectionType);
+  if (isDev) console.log(`🎨 Using default color for "${tagName}":`, defaultColor);
+  return defaultColor;
 }
 
 /**

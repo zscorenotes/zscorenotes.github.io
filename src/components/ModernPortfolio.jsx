@@ -44,10 +44,17 @@ export default function ModernPortfolio() {
       }
     };
 
+    const handleCategoriesLoaded = () => {
+      console.log('Categories loaded, forcing portfolio re-render...');
+      setPortfolio(prevPortfolio => [...prevPortfolio]);
+    };
+
     window.addEventListener('zscore-content-updated', handleContentUpdate);
+    window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
+      window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
     };
   }, []);
 
