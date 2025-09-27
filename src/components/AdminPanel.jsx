@@ -595,7 +595,7 @@ export default function AdminPanel() {
               itemType={activeSection.slice(0, -1)} // Remove 's' from end
               renderItem={(item, index) => (
                 <div 
-                  className={`flex items-start justify-between p-3 bg-white rounded border cursor-pointer hover:bg-gray-50 transition-colors ${
+                  className={`group flex items-start justify-between p-3 bg-white rounded border cursor-pointer hover:bg-gray-50 transition-colors ${
                     selectedItem?.id === item.id ? 'border-blue-500 bg-blue-50' : ''
                   }`}
                   onClick={() => handleItemSelect(item)}
@@ -625,11 +625,21 @@ export default function AdminPanel() {
                       )}
                     </div>
                   </div>
-                  {selectedItem?.id === item.id && (
-                    <div className="ml-2">
+                  <div className="flex items-center gap-2 ml-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleItemDelete(item);
+                      }}
+                      className="p-2 text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete item"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    {selectedItem?.id === item.id && (
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
             />
