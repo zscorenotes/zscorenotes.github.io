@@ -32,9 +32,9 @@ done <<< "$CHANGED_FILES"
 # If no non-content files changed, skip the build
 if [ $NON_CONTENT_CHANGES -eq 0 ]; then
   echo "⏭️  Only content files changed. Skipping build to save resources."
-  exit 0
+  exit 1
 else
   echo "🚀 Code files changed. Proceeding with build."
-  exit 1
+  exit 0
 fi
 
