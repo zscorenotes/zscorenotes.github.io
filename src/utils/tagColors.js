@@ -22,40 +22,60 @@ const COLOR_CLASSES = {
 
 export const getTagColor = async (tagName, sectionType) => {
   try {
+    // First try localStorage (same as sync version)
+    const storageKey = `categories_${sectionType}`;
+    const categoriesJson = localStorage.getItem(storageKey);
+    
+    if (categoriesJson) {
+      const categories = JSON.parse(categoriesJson);
+      if (Array.isArray(categories)) {
+        // Find the category by label or id (case-insensitive)
+        const category = categories.find(cat => {
+          if (typeof cat === 'string') return cat.toLowerCase() === tagName.toLowerCase();
+          return (cat.label && cat.label.toLowerCase() === tagName.toLowerCase()) || 
+                 (cat.id && cat.id.toLowerCase() === tagName.toLowerCase());
+        });
+
+        if (category && typeof category === 'object' && category.color) {
+          return COLOR_CLASSES[category.color.toLowerCase()] || getDefaultTagColor(tagName, sectionType);
+        }
+      }
+    }
+
+    // Fallback to ContentManager (for server-side or if localStorage fails)
     const content = await ContentManager.getAllContent();
     const settings = content.settings?.[0];
     
-    if (!settings?.categories) {
-      return getDefaultTagColor(tagName, sectionType);
-    }
+    if (settings?.categories) {
+      let categories = [];
+      switch (sectionType) {
+        case 'services':
+          categories = settings.categories.service_categories || [];
+          break;
+        case 'portfolio':
+          categories = settings.categories.project_types || [];
+          break;
+        case 'news':
+          categories = settings.categories.news_categories || [];
+          break;
+        case 'technologies':
+        case 'portfolio_technologies':
+          categories = settings.categories.technologies || [];
+          break;
+        default:
+          categories = [];
+      }
 
-    let categories = [];
-    switch (sectionType) {
-      case 'services':
-        categories = settings.categories.service_categories || [];
-        break;
-      case 'portfolio':
-        categories = settings.categories.project_types || [];
-        break;
-      case 'news':
-        categories = settings.categories.news_categories || [];
-        break;
-      case 'technologies':
-      case 'portfolio_technologies':
-        categories = settings.categories.technologies || [];
-        break;
-      default:
-        categories = [];
-    }
+      // Find the category by label
+      const category = categories.find(cat => {
+        if (typeof cat === 'string') return cat.toLowerCase() === tagName.toLowerCase();
+        return (cat.label && cat.label.toLowerCase() === tagName.toLowerCase()) || 
+               (cat.id && cat.id.toLowerCase() === tagName.toLowerCase());
+      });
 
-    // Find the category by label
-    const category = categories.find(cat => {
-      if (typeof cat === 'string') return cat === tagName;
-      return cat.label === tagName || cat.id === tagName;
-    });
-
-    if (category && typeof category === 'object' && category.color) {
-      return COLOR_CLASSES[category.color] || getDefaultTagColor(tagName, sectionType);
+      if (category && typeof category === 'object' && category.color) {
+        return COLOR_CLASSES[category.color.toLowerCase()] || getDefaultTagColor(tagName, sectionType);
+      }
     }
 
     return getDefaultTagColor(tagName, sectionType);
@@ -68,25 +88,8 @@ export const getTagColor = async (tagName, sectionType) => {
 // Synchronous version for immediate use
 export const getTagColorSync = (tagName, sectionType) => {
   try {
-    // Map section types to localStorage keys used by InlineCategorySelector
-    let storageKey = '';
-    switch (sectionType) {
-      case 'services':
-        storageKey = 'categories_services';
-        break;
-      case 'portfolio':
-        storageKey = 'categories_portfolio';
-        break;
-      case 'news':
-        storageKey = 'categories_news';
-        break;
-      case 'technologies':
-      case 'portfolio_technologies':
-        storageKey = 'categories_portfolio_technologies';
-        break;
-      default:
-        return getDefaultTagColor(tagName, sectionType);
-    }
+    // Use the same storage key pattern as InlineCategorySelector
+    const storageKey = `categories_${sectionType}`;
 
     const categoriesJson = localStorage.getItem(storageKey);
     if (!categoriesJson) {
@@ -98,14 +101,15 @@ export const getTagColorSync = (tagName, sectionType) => {
       return getDefaultTagColor(tagName, sectionType);
     }
 
-    // Find the category by label or id
+    // Find the category by label or id (case-insensitive)
     const category = categories.find(cat => {
-      if (typeof cat === 'string') return cat === tagName;
-      return cat.label === tagName || cat.id === tagName;
+      if (typeof cat === 'string') return cat.toLowerCase() === tagName.toLowerCase();
+      return (cat.label && cat.label.toLowerCase() === tagName.toLowerCase()) || 
+             (cat.id && cat.id.toLowerCase() === tagName.toLowerCase());
     });
 
     if (category && typeof category === 'object' && category.color) {
-      return COLOR_CLASSES[category.color] || getDefaultTagColor(tagName, sectionType);
+      return COLOR_CLASSES[category.color.toLowerCase()] || getDefaultTagColor(tagName, sectionType);
     }
 
     return getDefaultTagColor(tagName, sectionType);
@@ -119,10 +123,16 @@ export const getDefaultTagColor = (tagName, sectionType) => {
   // Fallback colors for common tags
   const defaultColors = {
     services: {
+      // Lowercase versions
       music_engraving: "bg-blue-100 text-blue-800 border-blue-200",
       score_preparation: "bg-green-100 text-green-800 border-green-200",
       consultation: "bg-purple-100 text-purple-800 border-purple-200",
       digital_publishing: "bg-orange-100 text-orange-800 border-orange-200",
+      // Uppercase versions (matching actual content)
+      ENGRAVING: "bg-blue-100 text-blue-800 border-blue-200",
+      PREPARATION: "bg-green-100 text-green-800 border-green-200",
+      CONSULTATION: "bg-purple-100 text-purple-800 border-purple-200",
+      PUBLISHING: "bg-orange-100 text-orange-800 border-orange-200",
     },
     portfolio: {
       score_engraving: "bg-blue-100 text-blue-800 border-blue-200",
@@ -146,11 +156,21 @@ export const getDefaultTagColor = (tagName, sectionType) => {
       performance: "bg-green-100 text-green-800 border-green-200",
       collaboration: "bg-purple-100 text-purple-800 border-purple-200",
       update: "bg-orange-100 text-orange-800 border-orange-200",
+      // Uppercase versions
+      RELEASE: "bg-blue-100 text-blue-800 border-blue-200",
+      PERFORMANCE: "bg-green-100 text-green-800 border-green-200",
+      COLLABORATION: "bg-purple-100 text-purple-800 border-purple-200",
+      UPDATE: "bg-orange-100 text-orange-800 border-orange-200",
+      ANNOUNCEMENT: "bg-indigo-100 text-indigo-800 border-indigo-200",
     }
   };
 
   const sectionColors = defaultColors[sectionType] || {};
-  return sectionColors[tagName] || sectionColors[tagName?.toLowerCase()] || "bg-gray-100 text-gray-800 border-gray-200";
+  // Try exact match first, then lowercase, then uppercase
+  return sectionColors[tagName] || 
+         sectionColors[tagName?.toLowerCase()] || 
+         sectionColors[tagName?.toUpperCase()] || 
+         "bg-gray-100 text-gray-800 border-gray-200";
 };
 
 export const getAllTags = (sectionType) => {
