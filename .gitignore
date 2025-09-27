@@ -27,8 +27,17 @@ node_modules
 
 # Protect content data from accidental deletion
 # Allow essential files for deployment but protect user uploads
-content-data/
-public/images/
+# content-data/ - REMOVED: Need this for GitHub storage in production
+# public/images/ - REMOVED: Need this for GitHub storage in production
+
+# Instead, ignore specific temporary/cache files if needed
+content-data/temp/
+content-data/cache/
+content-data/.DS_Store
+
+# Allow images but ignore temporary files
+public/images/.DS_Store
+public/images/temp/
 
 # Next.js build artifacts
 .next/

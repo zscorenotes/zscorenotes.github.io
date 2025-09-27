@@ -1,0 +1,151 @@
+{
+  "services": [
+    {
+      "id": "engraving",
+      "label": "ENGRAVING",
+      "displayName": "Score Engraving",
+      "color": "blue",
+      "description": "Professional music score engraving and notation services"
+    },
+    {
+      "id": "editorial", 
+      "label": "EDITORIAL",
+      "displayName": "Editorial Services",
+      "color": "green",
+      "description": "Proofreading, editing, and manuscript preparation"
+    },
+    {
+      "id": "orchestration",
+      "label": "ORCHESTRATION", 
+      "displayName": "Orchestration",
+      "color": "purple",
+      "description": "Orchestration, arrangement, and piano reduction services"
+    },
+    {
+      "id": "design",
+      "label": "DESIGN",
+      "displayName": "Design & Typography", 
+      "color": "orange",
+      "description": "Custom typesetting and graphic design for musical publications"
+    },
+    {
+      "id": "printing",
+      "label": "PRINTING",
+      "displayName": "Printing & Distribution",
+      "color": "teal",
+      "description": "Professional printing and distribution services"
+    },
+    {
+      "id": "automations",
+      "label": "AUTOMATIONS",
+      "displayName": "Workflow Automation",
+      "color": "cyan", 
+      "description": "Custom automation tools and workflow optimization"
+    }
+  ],
+  "news": [
+    {
+      "id": "announcement",
+      "label": "Announcement", 
+      "displayName": "Announcement",
+      "color": "blue",
+      "description": "General announcements and updates"
+    },
+    {
+      "id": "performance",
+      "label": "Performance",
+      "displayName": "Performance", 
+      "color": "green",
+      "description": "Live performances and premieres"
+    },
+    {
+      "id": "collaboration",
+      "label": "Collaboration",
+      "displayName": "Collaboration",
+      "color": "purple", 
+      "description": "Collaborative projects and partnerships"
+    },
+    {
+      "id": "release",
+      "label": "Release",
+      "displayName": "Release",
+      "color": "orange",
+      "description": "New releases and publications"
+    }
+  ],
+  "portfolio": [
+    {
+      "id": "score_engraving",
+      "label": "Engraving", 
+      "displayName": "Score Engraving",
+      "color": "blue",
+      "description": "Professional score engraving projects"
+    },
+    {
+      "id": "orchestration",
+      "label": "Orchestration",
+      "displayName": "Orchestration", 
+      "color": "yellow",
+      "description": "Orchestration and arrangement projects"
+    },
+    {
+      "id": "consultation",
+      "label": "Consultation",
+      "displayName": "Consultation",
+      "color": "purple",
+      "description": "Consulting and advisory projects"
+    },
+    {
+      "id": "audio_programming", 
+      "label": "Audio Programming",
+      "displayName": "Audio Programming",
+      "color": "green",
+      "description": "Custom audio software and programming projects"
+    }
+  ],
+  "portfolio_technologies": [
+    {
+      "id": "sibelius",
+      "label": "Sibelius",
+      "displayName": "Sibelius",
+      "color": "blue",
+      "description": "Avid Sibelius notation software"
+    },
+    {
+      "id": "finale", 
+      "label": "Finale",
+      "displayName": "Finale",
+      "color": "green",
+      "description": "MakeMusic Finale notation software"
+    },
+    {
+      "id": "dorico",
+      "label": "Dorico", 
+      "displayName": "Dorico",
+      "color": "purple", 
+      "description": "Steinberg Dorico notation software"
+    },
+    {
+      "id": "musescore",
+      "label": "MuseScore",
+      "displayName": "MuseScore",
+      "color": "orange",
+      "description": "MuseScore open-source notation software"
+    },
+    {
+      "id": "lilypond",
+      "label": "Lilypond", 
+      "displayName": "LilyPond",
+      "color": "teal",
+      "description": "LilyPond text-based music engraving"
+    },
+    {
+      "id": "custom_software",
+      "label": "Custom Software",
+      "displayName": "Custom Software",
+      "color": "cyan",
+      "description": "Custom-built software solutions"
+    }
+  ],
+  "updated_at": "2025-09-27T20:15:00.000Z"
+}
