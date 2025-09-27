@@ -1,0 +1,79 @@
+[
+  {
+    "title": "IMPACT Opera - Amir Shpilman",
+    "description": "IMPACT premiered on February 18, 2023 at Tanzhalle Berlin, created by choreographer Shiran Eliaserov, composer Amir Shpilman, and dramaturg Louis Geisler.",
+    "technologies": [
+      "Sibelius",
+      "Computer-Assisted Engraving"
+    ],
+    "year": 2025,
+    "category": "project",
+    "client": "Amir Shpilman",
+    "image_urls": [
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758969354387-9spszs2mqem.png"
+    ],
+    "content_blocks": [],
+    "id": "portfolio_1758969170697_dygizetib",
+    "order": 10,
+    "created_at": "2025-09-27T10:32:50.697Z",
+    "updated_at": "2025-09-27T11:21:15.720Z",
+    "project_type": [
+      "orchestration",
+      "score_engraving",
+      "parts_engraving",
+      "custom_software"
+    ],
+    "composer": "Amir Shpilman",
+    "instrumentation": "Large Orchestra, Choir, Solo Soprano, 2 Stuntwomen ",
+    "content_file": "/content-data/content/portfolio/portfolio_1758969170697_dygizetib.html"
+  },
+  {
+    "title": "The deepest continuity is paradoxically that which continually restarts and renews itself.",
+    "description": "",
+    "technologies": [
+      "Sibelius"
+    ],
+    "year": 2025,
+    "category": "project",
+    "client": "SWR Symphonieorchester",
+    "image_urls": [
+      ""
+    ],
+    "content_blocks": [],
+    "id": "portfolio_1758970238402_gr6lx1qcq",
+    "order": 20,
+    "created_at": "2025-09-27T10:50:38.402Z",
+    "updated_at": "2025-09-27T11:21:18.773Z",
+    "composer": "Laure M. Hiendl",
+    "project_type": [
+      "score_engraving",
+      "parts_engraving",
+      "printing"
+    ],
+    "instrumentation": "Orchestra",
+    "content_file": "/content-data/content/portfolio/portfolio_1758970238402_gr6lx1qcq.html"
+  },
+  {
+    "title": "Kriat Shema",
+    "description": "",
+    "technologies": [],
+    "year": 2025,
+    "category": "project",
+    "client": "Amir Shpilman",
+    "image_urls": [],
+    "content_blocks": [],
+    "id": "portfolio_1758971769664_etxpyurtg",
+    "order": 30,
+    "created_at": "2025-09-27T11:16:09.664Z",
+    "updated_at": "2025-09-27T11:21:21.384Z",
+    "project_type": [
+      "orchestration",
+      "score_engraving",
+      "parts_engraving",
+      "editorial"
+    ],
+    "instrumentation": "Orchestra, Shofar",
+    "composer": "Amir Shpilman",
+    "content_file": "/content-data/content/portfolio/portfolio_1758971769664_etxpyurtg.html"
+  }
+]
