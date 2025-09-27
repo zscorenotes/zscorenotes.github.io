@@ -41,6 +41,13 @@
       "displayName": "Workflow Automation",
       "color": "cyan",
       "description": "Custom automation tools and workflow optimization"
+    },
+    {
+      "id": "sample",
+      "label": "SAMPLE",
+      "displayName": "SAMPLE",
+      "color": "gray",
+      "description": "Custom services category"
     }
   ],
   "news": [
@@ -147,5 +154,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:52:11.724Z"
+  "updated_at": "2025-09-27T18:52:22.386Z"
 }
