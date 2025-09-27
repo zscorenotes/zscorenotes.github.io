@@ -35,6 +35,7 @@ if [ $NON_CONTENT_CHANGES -eq 0 ]; then
   exit 1
 else
   echo "🚀 Code files changed. Proceeding with build."
+  echo next build
   exit 0
 fi
 
