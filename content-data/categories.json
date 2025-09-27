@@ -48,6 +48,13 @@
       "displayName": "SAMPLE",
       "color": "gray",
       "description": "Custom services category"
+    },
+    {
+      "id": "afaf",
+      "label": "afaf",
+      "displayName": "afaf",
+      "color": "yellow",
+      "description": "Custom services category"
     }
   ],
   "news": [
@@ -154,5 +161,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:53:22.908Z"
+  "updated_at": "2025-09-27T18:53:28.329Z"
 }
