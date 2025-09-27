@@ -7,9 +7,17 @@ import { uploadImage, uploadImages } from '@/lib/image-storage';
  */
 export async function POST(request) {
   try {
+    console.log('=== UPLOAD REQUEST START ===');
     const formData = await request.formData();
     const files = formData.getAll('files');
     const folder = formData.get('folder') || 'images';
+    
+    console.log('Upload request details:', {
+      fileCount: files.length,
+      files: files.map(f => ({ name: f.name, size: f.size, type: f.type })),
+      folder,
+      hasGitHubToken: !!process.env.GITHUB_TOKEN
+    });
 
     if (!files || files.length === 0) {
       return NextResponse.json(
@@ -55,11 +63,18 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('Upload error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      error: error
+    });
+    
     return NextResponse.json(
       { 
-        error: 'Upload failed',
-        details: error.message 
+        error: error.message || 'Upload failed',
+        details: error.stack || 'No additional details available',
+        type: error.name || 'UnknownError'
       },
       { status: 500 }
     );

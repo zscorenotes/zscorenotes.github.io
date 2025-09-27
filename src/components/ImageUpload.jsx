@@ -69,8 +69,13 @@ export default function ImageUpload({
       }
 
     } catch (err) {
-      setError(err.message);
-      console.error('Upload error:', err);
+      const errorMessage = err.message || 'Unknown upload error occurred';
+      setError(errorMessage);
+      console.error('Upload error details:', {
+        message: err.message,
+        stack: err.stack,
+        error: err
+      });
     } finally {
       setIsUploading(false);
     }

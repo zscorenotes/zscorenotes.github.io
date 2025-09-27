@@ -94,8 +94,16 @@ export async function uploadImage(file, folder = 'images') {
       sha: result.content.sha, // Store SHA for potential future operations
     };
   } catch (error) {
-    console.error('Image upload error:', error);
-    throw new Error(`Upload failed: ${error.message}`);
+    console.error('GitHub image upload error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      error: error
+    });
+    
+    // Preserve the original error message for better debugging
+    const errorMessage = error.message || 'Unknown upload error';
+    throw new Error(`GitHub upload failed: ${errorMessage}`);
   }
 }
 
