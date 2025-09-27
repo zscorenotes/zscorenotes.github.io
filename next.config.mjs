@@ -6,7 +6,8 @@ const __dirname = dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Remove static export for Vercel deployment
+  // Configure for Vercel deployment (not static export)
+  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },
