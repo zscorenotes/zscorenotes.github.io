@@ -127,8 +127,12 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
     // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.warn('⚠️ No GitHub token found, falling back to local file system');
-      return await saveHTMLFileLocallyDirect(contentType, itemId, htmlContent);
+      console.error('❌ No GitHub token found in production environment');
+      console.error('❌ HTML content separation requires GitHub token in production');
+      return {
+        success: false,
+        error: 'GitHub token required for HTML content storage in production'
+      };
     }
 
     // Create filename for HTML content
@@ -238,8 +242,9 @@ export async function loadHTMLContent(contentFilePath) {
     // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.warn('⚠️ No GitHub token found, falling back to local file system');
-      return await loadHTMLFileLocallyDirect(contentFilePath);
+      console.error('❌ No GitHub token found in production environment');
+      console.error('❌ HTML content loading requires GitHub token in production');
+      return ''; // Return empty content instead of failing
     }
 
     // Remove leading slash if present
@@ -297,9 +302,9 @@ export async function deleteHTMLContent(contentFilePath) {
     // For production, use GitHub API
     const token = getGitHubToken();
     if (!token) {
-      console.warn('⚠️ No GitHub token found, falling back to local file system');
-      await deleteHTMLFileLocallyDirect(contentFilePath);
-      return true;
+      console.error('❌ No GitHub token found in production environment');
+      console.error('❌ HTML content deletion requires GitHub token in production');
+      return false; // Cannot delete without GitHub access
     }
 
     // Remove leading slash if present

@@ -96,7 +96,7 @@ export default async function NewsArticlePage({ params }) {
         <header className="bg-white border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-6 py-6">
             <Link 
-              href="/#news" 
+              href="/#feed" 
               className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors mb-6"
             >
               <ArrowLeft size={16} />

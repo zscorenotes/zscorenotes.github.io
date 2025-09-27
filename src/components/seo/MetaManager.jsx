@@ -38,7 +38,7 @@ export default function MetaManager({ activeSection }) {
     news: {
         title: "News & Updates | ZSCORE Music Technology",
         description: "Stay updated with the latest news, project announcements, and insights into music notation technology and engraving from the ZSCORE team.",
-        path: '#news',
+        path: '#feed',
     },
     about: {
       title: "About ZSCORE | Composer-Led Engraving Studio",

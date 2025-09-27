@@ -186,8 +186,14 @@ export default function ModernPortfolio() {
    * Opens the detail modal for a given portfolio item.
    * @param {object} item The portfolio item to display.
    */
-  const openDetail = (item) => {
-    setSelectedItem(item);
+  const openDetail = async (item) => {
+    try {
+      const itemWithHTML = await ContentManager.getContentWithHTML('portfolio', item.id);
+      setSelectedItem(itemWithHTML);
+    } catch (error) {
+      console.error('Error loading portfolio content:', error);
+      setSelectedItem(item); // Fallback to metadata-only
+    }
   };
 
   /**

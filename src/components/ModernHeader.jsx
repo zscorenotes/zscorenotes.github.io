@@ -25,7 +25,7 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
     { id: "home", label: "Home" },
     { id: "services", label: "Services" },
     { id: "portfolio", label: "Portfolio" },
-    { id: "news", label: "Feed" },
+    { id: "feed", label: "Feed" },
     { id: "about", label: "About" },
     { id: "contact", label: "Contact" }
   ];

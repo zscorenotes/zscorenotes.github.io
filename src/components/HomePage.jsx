@@ -42,25 +42,25 @@ export default function HomePage() {
     { id: "home", label: "Home" },
     { id: "services", label: "Services" },
     { id: "portfolio", label: "Portfolio" },
-    { id: "news", label: "Feed" },
+    { id: "feed", label: "Feed" },
     { id: "about", label: "About" },
     { id: "contact", label: "Contact" }
   ];
 
 
-  // Effect to handle initial scroll position and navigation from news pages
+  // Effect to handle initial scroll position and navigation from feed pages
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    // Check if URL has a hash indicating where to scroll (e.g., from news back navigation)
+    // Check if URL has a hash indicating where to scroll (e.g., from feed back navigation)
     const hash = window.location.hash;
     
-    if (hash === '#news') {
-      // Navigate back to news section
+    if (hash === '#feed') {
+      // Navigate back to feed section
       setTimeout(() => {
-        const newsSection = document.getElementById('news');
-        if (newsSection) {
-          newsSection.scrollIntoView({ behavior: 'smooth' });
+        const feedSection = document.getElementById('feed');
+        if (feedSection) {
+          feedSection.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
       // Clean up the hash without affecting browser history

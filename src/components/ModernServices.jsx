@@ -129,8 +129,14 @@ export default function ModernServices() {
    * Opens the detail modal for a given service.
    * @param {object} service The service object to display.
    */
-  const openServiceDetail = (service) => {
-    setSelectedService(service);
+  const openServiceDetail = async (service) => {
+    try {
+      const serviceWithHTML = await ContentManager.getContentWithHTML('services', service.id);
+      setSelectedService(serviceWithHTML);
+    } catch (error) {
+      console.error('Error loading service content:', error);
+      setSelectedService(service); // Fallback to metadata-only
+    }
   };
 
   /**

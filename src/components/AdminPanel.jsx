@@ -28,7 +28,7 @@ export default function AdminPanel() {
   // Content sections configuration with enhanced features
   const sections = [
     { key: 'inquiries', label: 'Inquiries', icon: Mail, color: 'bg-red-500', description: 'Manage contact form submissions' },
-    { key: 'news', label: 'Feed', icon: FileText, color: 'bg-blue-500', description: 'Manage news articles and updates' },
+    { key: 'news', label: 'Feed', icon: FileText, color: 'bg-blue-500', description: 'Manage feed articles and updates' },
     { key: 'services', label: 'Services', icon: Briefcase, color: 'bg-green-500', description: 'Edit service offerings' },
     { key: 'portfolio', label: 'Portfolio', icon: Edit, color: 'bg-purple-500', description: 'Showcase project work' },
     { key: 'about', label: 'About', icon: User, color: 'bg-orange-500', description: 'Personal information' },
@@ -1053,14 +1053,14 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                 </div>
               </div>
 
-              {/* Images for News */}
+              {/* Images for Feed */}
               {section === 'news' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <label className="block text-sm font-bold text-gray-700 mb-3">
                     Featured Images
                   </label>
                   <p className="text-xs text-gray-500 mb-4">
-                    Upload images to display alongside your news articles. The first image will be shown as the featured image.
+                    Upload images to display alongside your feed articles. The first image will be shown as the featured image.
                   </p>
                   
                   {/* Current Images */}

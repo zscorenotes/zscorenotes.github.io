@@ -128,7 +128,12 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
       // Find the specific news item by slug first, then by ID for backward compatibility
       let foundItem;
       if (newsSlug) {
+        // Try to find by slug first
         foundItem = allNewsData.find(item => item.slug === newsSlug);
+        // If not found by slug, try by ID (in case the URL param is actually an ID)
+        if (!foundItem) {
+          foundItem = allNewsData.find(item => item.id === newsSlug);
+        }
       } else if (newsId) {
         foundItem = allNewsData.find(item => item.id === newsId);
       }
@@ -341,16 +346,23 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
   };
 
   // Find current item's position and get next/previous items
-  const currentIndex = allNews.findIndex(item => 
-    newsSlug ? item.slug === newsSlug : item.id === newsId
-  );
+  const currentIndex = allNews.findIndex(item => {
+    if (newsSlug) {
+      return item.slug === newsSlug || item.id === newsSlug;
+    } else if (newsId) {
+      return item.id === newsId;
+    }
+    return false;
+  });
   const previousItem = currentIndex > 0 ? allNews[currentIndex - 1] : null;
   const nextItem = currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
 
   // Get related posts (same category, excluding current post, limit to 3)
   const relatedPosts = allNews
     .filter(item => {
-      const isCurrentItem = newsSlug ? item.slug === newsSlug : item.id === newsId;
+      const isCurrentItem = newsSlug 
+        ? (item.slug === newsSlug || item.id === newsSlug)
+        : item.id === newsId;
       return !isCurrentItem && item.category === newsItem?.category;
     })
     .slice(0, 3);
@@ -373,7 +385,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
           <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
           <p className="text-gray-600 mb-6">{error || 'The requested article could not be found.'}</p>
           <Link
-            href="/#news"
+            href="/#feed"
             className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <ArrowLeft size={20} />
@@ -397,7 +409,7 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
               ZSCORE<span className="font-thin">.studio</span>
             </Link>
             <Link 
-              href="/#news"
+              href="/#feed"
               className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors tracking-wider"
             >
               <ArrowLeft size={16} />

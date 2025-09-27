@@ -166,7 +166,7 @@ function ModernNews() {
   };
 
   return (
-    <section id="news" ref={sectionRef} className="py-20 md:py-32 bg-gray-100">
+    <section id="feed" ref={sectionRef} className="py-20 md:py-32 bg-gray-100">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="mb-16">
           <div className="fade-in-up stagger-1">
