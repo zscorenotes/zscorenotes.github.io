@@ -1,0 +1,14 @@
+{
+  "services": [
+    {
+      "id": "engraving",
+      "label": "ENGRAVING",
+      "displayName": "ENGRAVING",
+      "color": "blue",
+      "description": "Custom services category"
+    }
+  ],
+  "portfolio": [],
+  "news": [],
+  "updated_at": "2025-09-27T18:35:28.171Z"
+}
