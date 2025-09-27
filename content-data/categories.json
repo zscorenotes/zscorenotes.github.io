@@ -8,7 +8,7 @@
       "description": "Professional music score engraving and notation services"
     },
     {
-      "id": "editorial", 
+      "id": "editorial",
       "label": "EDITORIAL",
       "displayName": "Editorial Services",
       "color": "green",
@@ -16,7 +16,7 @@
     },
     {
       "id": "orchestration",
-      "label": "ORCHESTRATION", 
+      "label": "ORCHESTRATION",
       "displayName": "Orchestration",
       "color": "purple",
       "description": "Orchestration, arrangement, and piano reduction services"
@@ -24,7 +24,7 @@
     {
       "id": "design",
       "label": "DESIGN",
-      "displayName": "Design & Typography", 
+      "displayName": "Design & Typography",
       "color": "orange",
       "description": "Custom typesetting and graphic design for musical publications"
     },
@@ -39,7 +39,7 @@
       "id": "automations",
       "label": "AUTOMATIONS",
       "displayName": "Workflow Automation",
-      "color": "cyan", 
+      "color": "cyan",
       "description": "Custom automation tools and workflow optimization"
     },
     {
@@ -53,7 +53,7 @@
   "news": [
     {
       "id": "announcement",
-      "label": "Announcement", 
+      "label": "Announcement",
       "displayName": "Announcement",
       "color": "blue",
       "description": "General announcements and updates"
@@ -61,7 +61,7 @@
     {
       "id": "performance",
       "label": "Performance",
-      "displayName": "Performance", 
+      "displayName": "Performance",
       "color": "green",
       "description": "Live performances and premieres"
     },
@@ -69,7 +69,7 @@
       "id": "collaboration",
       "label": "Collaboration",
       "displayName": "Collaboration",
-      "color": "purple", 
+      "color": "purple",
       "description": "Collaborative projects and partnerships"
     },
     {
@@ -83,7 +83,7 @@
   "portfolio": [
     {
       "id": "score_engraving",
-      "label": "Engraving", 
+      "label": "Engraving",
       "displayName": "Score Engraving",
       "color": "blue",
       "description": "Professional score engraving projects"
@@ -91,7 +91,7 @@
     {
       "id": "orchestration",
       "label": "Orchestration",
-      "displayName": "Orchestration", 
+      "displayName": "Orchestration",
       "color": "yellow",
       "description": "Orchestration and arrangement projects"
     },
@@ -103,7 +103,7 @@
       "description": "Consulting and advisory projects"
     },
     {
-      "id": "audio_programming", 
+      "id": "audio_programming",
       "label": "Audio Programming",
       "displayName": "Audio Programming",
       "color": "green",
@@ -119,7 +119,7 @@
       "description": "Avid Sibelius notation software"
     },
     {
-      "id": "finale", 
+      "id": "finale",
       "label": "Finale",
       "displayName": "Finale",
       "color": "green",
@@ -127,9 +127,9 @@
     },
     {
       "id": "dorico",
-      "label": "Dorico", 
+      "label": "Dorico",
       "displayName": "Dorico",
-      "color": "purple", 
+      "color": "purple",
       "description": "Steinberg Dorico notation software"
     },
     {
@@ -141,7 +141,7 @@
     },
     {
       "id": "lilypond",
-      "label": "Lilypond", 
+      "label": "Lilypond",
       "displayName": "LilyPond",
       "color": "teal",
       "description": "LilyPond text-based music engraving"
@@ -154,5 +154,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T20:45:00.000Z"
+  "updated_at": "2025-09-27T18:53:41.953Z"
 }
