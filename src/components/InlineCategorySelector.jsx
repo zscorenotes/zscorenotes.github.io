@@ -4,18 +4,18 @@ import { getCategoryColorSync } from '@/utils/categoryColors';
 import * as ContentManager from '@/lib/content-manager-clean';
 
 const PREDEFINED_COLORS = [
-  { name: 'Blue', value: 'blue' },
-  { name: 'Green', value: 'green' },
-  { name: 'Yellow', value: 'yellow' },
-  { name: 'Red', value: 'red' },
-  { name: 'Purple', value: 'purple' },
-  { name: 'Pink', value: 'pink' },
-  { name: 'Indigo', value: 'indigo' },
-  { name: 'Gray', value: 'gray' },
-  { name: 'Orange', value: 'orange' },
-  { name: 'Teal', value: 'teal' },
-  { name: 'Cyan', value: 'cyan' },
-  { name: 'Emerald', value: 'emerald' },
+  { name: 'Blue', value: 'blue', preview: 'bg-blue-100' },
+  { name: 'Green', value: 'green', preview: 'bg-green-100' },
+  { name: 'Yellow', value: 'yellow', preview: 'bg-yellow-100' },
+  { name: 'Red', value: 'red', preview: 'bg-red-100' },
+  { name: 'Purple', value: 'purple', preview: 'bg-purple-100' },
+  { name: 'Pink', value: 'pink', preview: 'bg-pink-100' },
+  { name: 'Indigo', value: 'indigo', preview: 'bg-indigo-100' },
+  { name: 'Gray', value: 'gray', preview: 'bg-gray-100' },
+  { name: 'Orange', value: 'orange', preview: 'bg-orange-100' },
+  { name: 'Teal', value: 'teal', preview: 'bg-teal-100' },
+  { name: 'Cyan', value: 'cyan', preview: 'bg-cyan-100' },
+  { name: 'Emerald', value: 'emerald', preview: 'bg-emerald-100' },
 ];
 
 /**
@@ -372,7 +372,7 @@ export default function InlineCategorySelector({
                         key={color.name}
                         type="button"
                         onClick={() => setSelectedColor(color)}
-                        className={`w-6 h-6 rounded-full bg-${color.value}-100 border-2 ${
+                        className={`w-6 h-6 rounded-full ${color.preview} border-2 ${
                           selectedColor.value === color.value 
                             ? 'border-gray-900 shadow-md' 
                             : 'border-gray-300 hover:border-gray-400'
