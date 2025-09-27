@@ -10,13 +10,17 @@
     "category": "project",
     "client": "Amir Shpilman",
     "image_urls": [
-      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758969354387-9spszs2mqem.png"
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993259124-aygwxnkwb2a.png",
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993268151-6z67k2dbzq.png",
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993279695-ejgtl67h0sj.png",
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993289412-dz23kr6skch.png",
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993298016-io1nndbt06c.png"
     ],
     "content_blocks": [],
     "id": "portfolio_1758969170697_dygizetib",
     "order": 10,
     "created_at": "2025-09-27T10:32:50.697Z",
-    "updated_at": "2025-09-27T11:33:22.387Z",
+    "updated_at": "2025-09-27T17:15:01.426Z",
     "project_type": [
       "orchestration",
       "score_engraving",
