@@ -1,6 +1,14 @@
 {
-  "services": [],
+  "services": [
+    {
+      "id": "sample",
+      "label": "SAMPLE",
+      "displayName": "SAMPLE",
+      "color": "gray",
+      "description": "Custom services category"
+    }
+  ],
   "portfolio": [],
   "news": [],
-  "updated_at": "2025-09-27T18:37:24.422Z"
+  "updated_at": "2025-09-27T18:37:34.534Z"
 }
