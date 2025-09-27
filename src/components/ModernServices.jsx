@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ServiceDetail from "./services/ServiceDetail";
 import * as ContentManager from '@/lib/content-manager-clean';
-import { getTagColorSync } from '@/utils/tagColors';
+import { getCategoryColorSync } from '@/utils/categoryColors';
 
 export default function ModernServices() {
   const [services, setServices] = useState([]);
@@ -150,7 +150,7 @@ export default function ModernServices() {
    * Gets the color class for a service category
    */
   const getCategoryColor = (category) => {
-    return getTagColorSync(category, 'services');
+    return getCategoryColorSync(category, 'services');
   };
 
   return (

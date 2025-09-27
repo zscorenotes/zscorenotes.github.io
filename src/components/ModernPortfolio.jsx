@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as ContentManager from '@/lib/content-manager-clean';
 import PortfolioDetail from "./portfolio/PortfolioDetail";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getTagColorSync } from '@/utils/tagColors';
+import { getCategoryColorSync } from '@/utils/categoryColors';
 
 /**
  * Displays the "Selected Works" portfolio section.
@@ -323,13 +323,13 @@ export default function ModernPortfolio() {
                             item.project_type.map((type, typeIndex) => (
                               <span
                                 key={typeIndex}
-                                className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getTagColorSync(type, 'portfolio')}`}
+                                className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSync(type, 'portfolio')}`}
                               >
                                 {getProjectTypeLabel(type)}
                               </span>
                             ))
                           ) : (
-                            <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getTagColorSync(item.project_type, 'portfolio')}`}>
+                            <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSync(item.project_type, 'portfolio')}`}>
                               {getProjectTypeLabel(item.project_type)}
                             </span>
                           )}

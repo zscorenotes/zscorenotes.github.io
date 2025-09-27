@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getTagColorSync } from '@/utils/tagColors';
+import { getCategoryColorSync } from '@/utils/categoryColors';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -239,10 +239,10 @@ export default function PortfolioDetail({ item, onClose }) {
                     <div className="flex flex-wrap gap-2">
                       {Array.isArray(item.project_type) ? (
                         item.project_type.map((type) => (
-                          <span key={type} className={`px-2 py-1 text-xs uppercase rounded ${getTagColorSync(type, 'portfolio')}`}>{getProjectTypeLabel(type)}</span>
+                          <span key={type} className={`px-2 py-1 text-xs uppercase rounded ${getCategoryColorSync(type, 'portfolio')}`}>{getProjectTypeLabel(type)}</span>
                         ))
                       ) : (
-                        <span className={`px-2 py-1 text-xs uppercase rounded ${getTagColorSync(item.project_type, 'portfolio')}`}>{getProjectTypeLabel(item.project_type)}</span>
+                        <span className={`px-2 py-1 text-xs uppercase rounded ${getCategoryColorSync(item.project_type, 'portfolio')}`}>{getProjectTypeLabel(item.project_type)}</span>
                       )}
                     </div>
                   </div>
@@ -256,14 +256,14 @@ export default function PortfolioDetail({ item, onClose }) {
                           item.technologies.map((tech, index) => (
                             <span 
                               key={index} 
-                              className={`px-2 py-1 text-xs rounded border ${getTagColorSync(tech, 'portfolio_technologies')}`}
+                              className={`px-2 py-1 text-xs rounded border ${getCategoryColorSync(tech, 'portfolio_technologies')}`}
                             >
                               {tech}
                             </span>
                           ))
                         ) : (
                           <span 
-                            className={`px-2 py-1 text-xs rounded border ${getTagColorSync(item.technologies, 'portfolio_technologies')}`}
+                            className={`px-2 py-1 text-xs rounded border ${getCategoryColorSync(item.technologies, 'portfolio_technologies')}`}
                           >
                             {item.technologies}
                           </span>

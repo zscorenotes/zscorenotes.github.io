@@ -6,7 +6,7 @@ import * as ContentManager from '@/lib/content-manager-clean';
 import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { getTagColorSync } from '@/utils/tagColors';
+import { getCategoryColorSync } from '@/utils/categoryColors';
 
 /**
  * Displays the "Feed" section.
@@ -162,7 +162,7 @@ function ModernNews() {
   };
 
   const getCategoryColor = (category) => {
-    return getTagColorSync(category, 'news');
+    return getCategoryColorSync(category, 'news');
   };
 
   return (

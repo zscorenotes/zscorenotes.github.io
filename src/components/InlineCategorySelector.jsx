@@ -1,19 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Plus, X, Trash2 } from 'lucide-react';
+import { getCategoryColorSync } from '@/utils/categoryColors';
+import * as ContentManager from '@/lib/content-manager-clean';
 
 const PREDEFINED_COLORS = [
-  { name: 'Blue', bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
-  { name: 'Green', bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
-  { name: 'Yellow', bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-200' },
-  { name: 'Red', bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200' },
-  { name: 'Purple', bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200' },
-  { name: 'Pink', bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-200' },
-  { name: 'Indigo', bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200' },
-  { name: 'Gray', bg: 'bg-gray-300', text: 'text-gray-900', border: 'border-gray-500' },
-  { name: 'Orange', bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200' },
-  { name: 'Teal', bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200' },
-  { name: 'Cyan', bg: 'bg-cyan-100', text: 'text-cyan-800', border: 'border-cyan-200' },
-  { name: 'Emerald', bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200' },
+  { name: 'Blue', value: 'blue' },
+  { name: 'Green', value: 'green' },
+  { name: 'Yellow', value: 'yellow' },
+  { name: 'Red', value: 'red' },
+  { name: 'Purple', value: 'purple' },
+  { name: 'Pink', value: 'pink' },
+  { name: 'Indigo', value: 'indigo' },
+  { name: 'Gray', value: 'gray' },
+  { name: 'Orange', value: 'orange' },
+  { name: 'Teal', value: 'teal' },
+  { name: 'Cyan', value: 'cyan' },
+  { name: 'Emerald', value: 'emerald' },
 ];
 
 /**
@@ -33,9 +35,9 @@ export default function InlineCategorySelector({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Initialize with default categories based on section
+  // Load categories from centralized database
   useEffect(() => {
-    initializeDefaultCategories();
+    loadCategoriesFromDatabase();
   }, [section]);
 
   useEffect(() => {
@@ -51,65 +53,23 @@ export default function InlineCategorySelector({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const initializeDefaultCategories = () => {
-    let defaultCategories = [];
-    
-    switch (section) {
-      case 'services':
-        defaultCategories = [
-          { id: 'music_engraving', label: 'Music Engraving', color: 'blue' },
-          { id: 'score_preparation', label: 'Score Preparation', color: 'green' },
-          { id: 'consultation', label: 'Consultation', color: 'purple' },
-          { id: 'digital_publishing', label: 'Digital Publishing', color: 'orange' }
-        ];
-        break;
-      case 'portfolio':
-        defaultCategories = [
-          { id: 'score_engraving', label: 'Score Engraving', color: 'blue' },
-          { id: 'audio_programming', label: 'Audio Programming', color: 'green' },
-          { id: 'orchestration', label: 'Orchestration', color: 'yellow' },
-          { id: 'consultation', label: 'Consultation', color: 'purple' }
-        ];
-        break;
-      case 'news':
-      case 'news_tags':
-        defaultCategories = [
-          { id: 'release', label: 'Release', color: 'blue' },
-          { id: 'performance', label: 'Performance', color: 'green' },
-          { id: 'collaboration', label: 'Collaboration', color: 'purple' },
-          { id: 'update', label: 'Update', color: 'orange' }
-        ];
-        break;
-      case 'portfolio_technologies':
-        defaultCategories = [
-          { id: 'sibelius', label: 'Sibelius', color: 'blue' },
-          { id: 'finale', label: 'Finale', color: 'green' },
-          { id: 'dorico', label: 'Dorico', color: 'purple' },
-          { id: 'musescore', label: 'MuseScore', color: 'orange' },
-          { id: 'lilypond', label: 'Lilypond', color: 'teal' },
-          { id: 'custom_software', label: 'Custom Software', color: 'cyan' }
-        ];
-        break;
-      default:
-        defaultCategories = [];
-    }
-    
-    // Load categories from localStorage, or use defaults if none exist
-    const storedCategories = localStorage.getItem(`categories_${section}`);
-    if (storedCategories) {
-      try {
-        const savedCategories = JSON.parse(storedCategories);
-        setAvailableCategories(savedCategories);
-      } catch (error) {
-        console.error('Error loading stored categories:', error);
-        setAvailableCategories(defaultCategories);
-        // Save defaults to localStorage
-        localStorage.setItem(`categories_${section}`, JSON.stringify(defaultCategories));
-      }
-    } else {
-      setAvailableCategories(defaultCategories);
-      // Save defaults to localStorage for future editing
-      localStorage.setItem(`categories_${section}`, JSON.stringify(defaultCategories));
+  const loadCategoriesFromDatabase = async () => {
+    try {
+      const allContent = await ContentManager.getAllContent();
+      const categories = allContent.categories || {};
+      const sectionCategories = categories[section] || [];
+      
+      // Convert database format to component format
+      const formattedCategories = sectionCategories.map(cat => ({
+        id: cat.id,
+        label: cat.label || cat.displayName,
+        color: cat.color
+      }));
+      
+      setAvailableCategories(formattedCategories);
+    } catch (error) {
+      console.error('Error loading categories from database:', error);
+      setAvailableCategories([]);
     }
   };
 
@@ -143,79 +103,100 @@ export default function InlineCategorySelector({
     }
   };
 
-  const handleCreateCategory = () => {
+  const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) return;
 
     const newCategory = {
       id: newCategoryName.trim().toLowerCase().replace(/\s+/g, '_'),
       label: newCategoryName.trim(),
-      color: selectedColor.name.toLowerCase()
+      displayName: newCategoryName.trim(),
+      color: selectedColor.value,
+      description: `Custom ${section} category`
     };
 
-    // Add to current categories
-    const updatedCategories = [...availableCategories, newCategory];
-    setAvailableCategories(updatedCategories);
-    
-    // Save custom categories to localStorage (excluding defaults)
-    saveCustomCategories(updatedCategories);
-    
-    // Select the new category and close the form
-    handleCategorySelect(newCategory);
-    setNewCategoryName('');
-    setShowColorPicker(false);
-    setSelectedColor(PREDEFINED_COLORS[0]);
+    try {
+      // Add to database
+      const allContent = await ContentManager.getAllContent();
+      const categories = allContent.categories || {};
+      const sectionCategories = categories[section] || [];
+      
+      // Add new category to section
+      const updatedSectionCategories = [...sectionCategories, newCategory];
+      categories[section] = updatedSectionCategories;
+      categories.updated_at = new Date().toISOString();
+      
+      // Save to database
+      await ContentManager.saveContent('categories', categories);
+      
+      // Update local state
+      const formattedCategory = {
+        id: newCategory.id,
+        label: newCategory.label,
+        color: newCategory.color
+      };
+      const updatedCategories = [...availableCategories, formattedCategory];
+      setAvailableCategories(updatedCategories);
+      
+      // Select the new category and close the form
+      handleCategorySelect(formattedCategory);
+      setNewCategoryName('');
+      setShowColorPicker(false);
+      setSelectedColor(PREDEFINED_COLORS[0]);
+    } catch (error) {
+      console.error('Error creating category:', error);
+    }
   };
 
-  const handleDeleteCategory = (categoryToDelete) => {
+  const handleDeleteCategory = async (categoryToDelete) => {
     const categoryId = typeof categoryToDelete === 'string' 
       ? categoryToDelete 
       : categoryToDelete.id;
     
-    // Remove from available categories
-    const updatedCategories = availableCategories.filter(cat => 
-      (typeof cat === 'string' ? cat : cat.id) !== categoryId
-    );
-    setAvailableCategories(updatedCategories);
-    
-    // Update localStorage
-    saveCustomCategories(updatedCategories);
-    
-    // Remove from current selection if selected
-    const categoryValue = typeof categoryToDelete === 'string' 
-      ? categoryToDelete 
-      : (section === 'portfolio' && categoryToDelete.id ? categoryToDelete.id : categoryToDelete.label || categoryToDelete);
+    try {
+      // Remove from database
+      const allContent = await ContentManager.getAllContent();
+      const categories = allContent.categories || {};
+      const sectionCategories = categories[section] || [];
       
-    if (allowMultiple) {
-      const currentValues = Array.isArray(value) ? value : [];
-      if (currentValues.includes(categoryValue)) {
-        onChange(currentValues.filter(val => val !== categoryValue));
+      // Filter out the deleted category
+      const updatedSectionCategories = sectionCategories.filter(cat => cat.id !== categoryId);
+      categories[section] = updatedSectionCategories;
+      categories.updated_at = new Date().toISOString();
+      
+      // Save to database
+      await ContentManager.saveContent('categories', categories);
+      
+      // Update local state
+      const updatedCategories = availableCategories.filter(cat => 
+        (typeof cat === 'string' ? cat : cat.id) !== categoryId
+      );
+      setAvailableCategories(updatedCategories);
+      
+      // Remove from current selection if selected
+      const categoryValue = typeof categoryToDelete === 'string' 
+        ? categoryToDelete 
+        : (section === 'portfolio' && categoryToDelete.id ? categoryToDelete.id : categoryToDelete.label || categoryToDelete);
+        
+      if (allowMultiple) {
+        const currentValues = Array.isArray(value) ? value : [];
+        if (currentValues.includes(categoryValue)) {
+          onChange(currentValues.filter(val => val !== categoryValue));
+        }
+      } else {
+        if (value === categoryValue) {
+          onChange('');
+        }
       }
-    } else {
-      if (value === categoryValue) {
-        onChange('');
-      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
     }
-  };
-
-  const saveCustomCategories = (categories) => {
-    // Save all categories (user can now edit the full list)
-    localStorage.setItem(`categories_${section}`, JSON.stringify(categories));
   };
 
 
   const getCategoryColor = (category) => {
-    if (typeof category === 'object' && category.color) {
-      const color = PREDEFINED_COLORS.find(c => c.name.toLowerCase() === category.color.toLowerCase());
-      return color || PREDEFINED_COLORS[0];
-    }
-    
-    // For simple string categories, use a deterministic color based on hash
     const categoryName = typeof category === 'string' ? category : (category.label || category.name || '');
-    const hash = categoryName.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return PREDEFINED_COLORS[Math.abs(hash) % PREDEFINED_COLORS.length];
+    const colorClasses = getCategoryColorSync(categoryName, section);
+    return colorClasses;
   };
 
   const renderCategoryTag = (categoryValue, canRemove = false, onRemove = null) => {
@@ -240,12 +221,12 @@ export default function InlineCategorySelector({
       label = categoryValue.label;
     }
     
-    const color = getCategoryColor(category);
+    const colorClasses = getCategoryColor(category);
     
     return (
       <span 
         key={typeof categoryValue === 'string' ? categoryValue : categoryValue.id || categoryValue.label}
-        className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border ${color.bg} ${color.text} ${color.border}`}
+        className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full border ${colorClasses}`}
       >
         {label}
         {canRemove && onRemove && (
@@ -391,8 +372,8 @@ export default function InlineCategorySelector({
                         key={color.name}
                         type="button"
                         onClick={() => setSelectedColor(color)}
-                        className={`w-6 h-6 rounded-full ${color.bg} border-2 ${
-                          selectedColor.name === color.name 
+                        className={`w-6 h-6 rounded-full bg-${color.value}-100 border-2 ${
+                          selectedColor.value === color.value 
                             ? 'border-gray-900 shadow-md' 
                             : 'border-gray-300 hover:border-gray-400'
                         }`}
