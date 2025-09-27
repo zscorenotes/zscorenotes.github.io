@@ -244,9 +244,20 @@ function ModernNews() {
                   {/* News Item Content Card */}
                   <Link 
                     href={`/news/${item.slug || item.id}`}
-                    className="flex-1 glass-card hover-lift bg-white border border-black/5 text-left w-full focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 flex overflow-hidden group"
+                    className="flex-1 glass-card hover-lift bg-white border border-black/5 text-left w-full focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block overflow-hidden group"
                   >
-                    <div className="flex-1 p-8">
+                    {/* Thumbnail Image */}
+                    {item.image_urls && item.image_urls.length > 0 && (
+                      <div className="w-full h-48 md:h-56 lg:h-64 overflow-hidden">
+                        <img 
+                          src={item.image_urls[0]} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="p-8">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-4">
                           <span className={`px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(item.category)}`}>
@@ -290,17 +301,6 @@ function ModernNews() {
                         <ExternalLink size={14} />
                       </div>
                     </div>
-                    
-                    {/* Optional Image */}
-                    {item.image_urls && item.image_urls.length > 0 && (
-                      <div className="hidden md:block w-48 lg:w-64 flex-shrink-0">
-                        <img 
-                          src={item.image_urls[0]} 
-                          alt={item.title} 
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-                    )}
                   </Link>
                 </article>
               ))}
