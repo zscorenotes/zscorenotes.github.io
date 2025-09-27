@@ -1,3 +1,16 @@
 [
-  
+  {
+    "title": "New Item",
+    "category": "announcement",
+    "excerpt": "",
+    "content": "",
+    "tags": [],
+    "featured": false,
+    "publication_date": "2025-09-27",
+    "image_urls": [],
+    "id": "news_1758994139842_p1uyspe7n",
+    "order": 10,
+    "created_at": "2025-09-27T17:28:59.842Z",
+    "updated_at": "2025-09-27T17:28:59.842Z"
+  }
 ]
