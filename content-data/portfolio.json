@@ -41,14 +41,13 @@
     "category": "project",
     "client": "SWR Symphonieorchester",
     "image_urls": [
-      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993730977-ow9k601oy8h.jpg",
-      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993746816-5imh6oyfko3.jpg"
+      "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/public/images/1758993818584-rr0lyfpnl8.jpeg"
     ],
     "content_blocks": [],
     "id": "portfolio_1758970238402_gr6lx1qcq",
     "order": 20,
     "created_at": "2025-09-27T10:50:38.402Z",
-    "updated_at": "2025-09-27T17:22:31.456Z",
+    "updated_at": "2025-09-27T17:23:42.013Z",
     "composer": "Laure M. Hiendl",
     "project_type": [
       "score_engraving",
