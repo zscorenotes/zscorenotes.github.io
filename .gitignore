@@ -27,7 +27,8 @@ node_modules
 
 # Protect content data from accidental deletion
 # Allow essential files for deployment but protect user uploads
-
+content-data/
+public/images/
 
 # Next.js build artifacts
 .next/
