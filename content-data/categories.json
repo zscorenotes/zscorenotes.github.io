@@ -48,6 +48,13 @@
       "displayName": "SAMPLE",
       "color": "gray",
       "description": "Custom services category"
+    },
+    {
+      "id": "23",
+      "label": "23",
+      "displayName": "23",
+      "color": "gray",
+      "description": "Custom services category"
     }
   ],
   "news": [
@@ -154,5 +161,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:52:35.186Z"
+  "updated_at": "2025-09-27T18:52:42.866Z"
 }
