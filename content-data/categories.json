@@ -48,13 +48,6 @@
       "displayName": "SAMPLE",
       "color": "gray",
       "description": "Custom services category"
-    },
-    {
-      "id": "adasf",
-      "label": "adasf",
-      "displayName": "adasf",
-      "color": "emerald",
-      "description": "Custom services category"
     }
   ],
   "news": [
@@ -161,5 +154,5 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:52:53.106Z"
+  "updated_at": "2025-09-27T18:52:58.431Z"
 }
