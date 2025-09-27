@@ -47,7 +47,15 @@ export async function uploadImage(file, folder = 'images') {
     // Convert file to base64 (required by GitHub API)
     const arrayBuffer = await file.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
-    const base64Content = btoa(String.fromCharCode.apply(null, uint8Array));
+    
+    // Convert to base64 in chunks to avoid stack overflow
+    let binaryString = '';
+    const chunkSize = 8192; // Process 8KB at a time
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      const chunk = uint8Array.slice(i, i + chunkSize);
+      binaryString += String.fromCharCode.apply(null, chunk);
+    }
+    const base64Content = btoa(binaryString);
 
     // Create the file in GitHub repository
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
