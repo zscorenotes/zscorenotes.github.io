@@ -154,5 +154,63 @@
       "description": "Custom-built software solutions"
     }
   ],
-  "updated_at": "2025-09-27T18:53:41.953Z"
+  "updated_at": "2025-09-28T10:25:40.636Z",
+  "news_tags": [
+    {
+      "id": "announcement",
+      "label": "Announcement",
+      "displayName": "Announcement",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "berlin_philharmonie",
+      "label": "Berlin Philharmonie",
+      "displayName": "Berlin Philharmonie",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "amir_shpilman",
+      "label": "Amir Shpilman",
+      "displayName": "Amir Shpilman",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "bar_zamach",
+      "label": "Bar Zamach",
+      "displayName": "Bar Zamach",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "shofar",
+      "label": "Shofar",
+      "displayName": "Shofar",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "donaueschinger_musiktage_2025",
+      "label": "Donaueschinger Musiktage 2025",
+      "displayName": "Donaueschinger Musiktage 2025",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "donaueschinger_musiktage_2025",
+      "label": "Donaueschinger Musiktage 2025",
+      "displayName": "Donaueschinger Musiktage 2025",
+      "color": "blue",
+      "description": "Custom news_tags category"
+    },
+    {
+      "id": "love",
+      "label": "love",
+      "displayName": "love",
+      "color": "emerald",
+      "description": "Custom news_tags category"
+    }
+  ]
 }
