@@ -371,7 +371,7 @@ export default function HomePage({ initialContent, initialCategories }) {
           </div>
           
           <div className="flex justify-center space-x-8 text-sm text-gray-600 font-sans">
-            <span>&copy; 2025 ZSCORE</span>
+            <span>&copy; 2025 ZSCORE.studio</span>
             <span>Professional Music Engraving</span>
             <span>Built with ♡ by a Composer</span>
           </div>

@@ -45,10 +45,17 @@ export default async function Page() {
       })
     );
     
+    // Sort news by publication_date descending (newest first)
+    const sortedNews = (allContent.news || []).sort((a, b) => {
+      const dateA = new Date(a.publication_date || a.created_at || 0);
+      const dateB = new Date(b.publication_date || b.created_at || 0);
+      return dateB - dateA; // Newest first
+    });
+
     initialContent = {
       services: servicesWithHTML,
       portfolio: portfolioWithHTML, 
-      news: allContent.news || [],
+      news: sortedNews,
       about: allContent.about || {},
       settings: allContent.settings || {}
     };
