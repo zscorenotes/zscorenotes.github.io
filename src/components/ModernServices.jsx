@@ -3,18 +3,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import ServiceDetail from "./services/ServiceDetail";
 import * as ContentManager from '@/lib/content-manager-clean';
-import { getCategoryColorSync } from '@/utils/categoryColors';
+import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
-export default function ModernServices() {
-  const [services, setServices] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function ModernServices({ initialServices = [], initialCategories = null }) {
+  const [services, setServices] = useState(initialServices);
+  const [isLoading, setIsLoading] = useState(initialServices.length === 0);
   const [selectedService, setSelectedService] = useState(null);
   const sectionRef = useRef(null);
   const serviceItemRefs = useRef([]);
 
+  // Generate a URL-safe slug from service (utility function)
+  const generateSlug = (service) => {
+    if (!service) {
+      console.warn('generateSlug called with invalid service:', service);
+      return 'service';
+    }
+    // Use existing stable ID from database
+    const slug = service.id || service.slug || service.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'service';
+    console.log('Generated slug:', slug, 'from service:', service.id || service.title);
+    return String(slug); // Ensure it's always a string
+  };
+
+
   useEffect(() => {
-    loadServices();
-  }, []);
+    // Only load services if we don't have initial data
+    if (initialServices.length === 0) {
+      loadServices();
+    } else {
+      setIsLoading(false);
+    }
+  }, [initialServices]);
 
   // Effect to listen for content updates from admin panel
   useEffect(() => {
@@ -32,12 +50,30 @@ export default function ModernServices() {
       setServices(prevServices => [...prevServices]);
     };
 
+    // Listen for individual service opening events
+    const handleOpenService = (event) => {
+      const { service } = event.detail;
+      console.log('🎯 ModernServices received open-service event:', service?.title || service?.id);
+      console.log('📋 Available services:', services?.length || 'none');
+      setSelectedService(service);
+      console.log('✅ Service modal should now be open with:', service?.title);
+      
+      // Update URL to preserve the hash
+      if (service) {
+        const slug = generateSlug(service);
+        console.log('🔗 Updating URL to:', `#services/${slug}`);
+        window.history.replaceState(null, null, `#services/${slug}`);
+      }
+    };
+
     window.addEventListener('zscore-content-updated', handleContentUpdate);
     window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
+    window.addEventListener('zscore-open-service', handleOpenService);
     
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
       window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
+      window.removeEventListener('zscore-open-service', handleOpenService);
     };
   }, []);
 
@@ -133,6 +169,7 @@ export default function ModernServices() {
     };
   }, []);
 
+
   /**
    * Opens the detail modal for a given service.
    * @param {object} service The service object to display.
@@ -141,9 +178,17 @@ export default function ModernServices() {
     try {
       const serviceWithHTML = await ContentManager.getContentWithHTML('services', service.id);
       setSelectedService(serviceWithHTML);
+      
+      // Update URL with service hash
+      const slug = generateSlug(service);
+      window.history.pushState(null, null, `#services/${slug}`);
     } catch (error) {
       console.error('Error loading service content:', error);
       setSelectedService(service); // Fallback to metadata-only
+      
+      // Update URL with service hash (fallback)
+      const slug = generateSlug(service);
+      window.history.pushState(null, null, `#services/${slug}`);
     }
   };
 
@@ -152,6 +197,8 @@ export default function ModernServices() {
    */
   const closeServiceDetail = () => {
     setSelectedService(null);
+    // Reset URL to services section
+    window.history.pushState(null, null, '#services');
   };
 
   /**
@@ -236,7 +283,7 @@ export default function ModernServices() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="mb-4">
-                        <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(service.category)}`}>
+                        <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSSR(service.category, 'services', initialCategories)}`}>
                           {service.category}
                         </span>
                       </div>

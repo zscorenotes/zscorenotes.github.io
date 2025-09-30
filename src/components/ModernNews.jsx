@@ -6,18 +6,18 @@ import * as ContentManager from '@/lib/content-manager-clean';
 import { format } from "date-fns";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { getCategoryColorSync } from '@/utils/categoryColors';
+import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
 /**
  * Displays the "Feed" section.
  * Fetches news items, provides category filtering, paginates results,
  * and displays them in a timeline format with links to dedicated article pages.
  */
-function ModernNews() {
+function ModernNews({ initialNews = [], initialCategories = null }) {
   // State for all news items
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState(initialNews);
   // State for loading indicator
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialNews.length === 0);
   // State for the active category filter
   const [activeCategory, setActiveCategory] = useState("all");
   // Ref for the main section element
@@ -33,8 +33,13 @@ function ModernNews() {
 
   // Effect to load news data on mount
   useEffect(() => {
-    loadNews();
-  }, []);
+    // Only load news if we don't have initial data
+    if (initialNews.length === 0) {
+      loadNews();
+    } else {
+      setIsLoading(false);
+    }
+  }, [initialNews]);
 
   // Effect to listen for content updates from admin panel
   useEffect(() => {
@@ -169,7 +174,7 @@ function ModernNews() {
   };
 
   const getCategoryColor = (category) => {
-    return getCategoryColorSync(category, 'news');
+    return getCategoryColorSSR(category, 'news', initialCategories);
   };
 
   return (

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
 import ScrollProgress from "./ScrollProgress";
 import SectionIndicator from "./SectionIndicator";
@@ -19,7 +21,7 @@ import { Settings, Eye, Edit } from "lucide-react";
  * This component orchestrates the entire single-page layout, manages section-based navigation,
  * and controls the visibility and progress of scroll-based animations.
  */
-export default function HomePage() {
+export default function HomePage({ initialContent, initialCategories }) {
   // State to track the currently active section for navigation highlighting
   const [activeSection, setActiveSection] = useState("home");
 
@@ -47,14 +49,89 @@ export default function HomePage() {
     { id: "contact", label: "Contact" }
   ];
 
+  // Simple hash navigation - just simulate user clicks
+  const handleItemHashNavigation = (hash) => {
+    console.log('🚀 Simple hash navigation for:', hash);
+    
+    // Remove the # and split by /
+    const cleanHash = hash.replace('#', '');
+    const parts = cleanHash.split('/');
+    const sectionId = parts[0]; // e.g., 'services'
+    const itemSlug = parts[1];  // e.g., 'services_1758953213743_jihndpy8e'
+    
+    console.log('🔍 Parsed:', { cleanHash, parts, sectionId, itemSlug });
+    console.log('🔍 Available content:', { 
+      services: initialContent?.services?.length || 0,
+      portfolio: initialContent?.portfolio?.length || 0 
+    });
+    
+    // Step 1: Simulate clicking on navbar section (scroll to section)
+    setTimeout(() => {
+      const sectionElement = document.getElementById(sectionId);
+      if (sectionElement) {
+        console.log('✅ Section found, scrolling to:', sectionId);
+        sectionElement.scrollIntoView({ behavior: 'smooth' });
+        setActiveSection(sectionId);
+      } else {
+        console.warn('❌ Section not found:', sectionId);
+      }
+    }, 100);
 
-  // Effect to handle initial scroll position and navigation from feed pages
+    // Step 2: If there's an item slug, simulate clicking on that specific item
+    if (itemSlug) {
+      console.log('🔍 Looking for item with slug/id:', itemSlug);
+      
+      // Find the item in initial content (SSR already loaded everything)
+      let targetItem = null;
+      
+      if (sectionId === 'services') {
+        targetItem = initialContent?.services?.find(s => {
+          console.log('🔍 Checking service:', s.id, s.title);
+          return s.id === itemSlug || s.slug === itemSlug;
+        });
+      } else if (sectionId === 'portfolio') {
+        targetItem = initialContent?.portfolio?.find(p => {
+          console.log('🔍 Checking portfolio:', p.id, p.title);
+          return p.id === itemSlug || p.slug === itemSlug;
+        });
+      }
+
+      console.log('🎯 Target item found:', targetItem?.title || 'NONE');
+
+      if (targetItem) {
+        // Simply dispatch the event - just like a user click
+        const eventName = sectionId === 'services' ? 'zscore-open-service' : 'zscore-open-portfolio';
+        const detail = sectionId === 'services' ? { service: targetItem } : { portfolioItem: targetItem };
+        
+        console.log('📡 Dispatching event:', eventName, 'with item:', targetItem.title);
+        
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent(eventName, { detail }));
+        }, 1000); // Wait for components to be ready
+      } else {
+        console.warn('❌ Item not found for slug:', itemSlug);
+      }
+    }
+  };
+
+  // Effect to handle initial URL hash navigation (critical for SEO and deep linking)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    // Check if URL has a hash indicating where to scroll (e.g., from feed back navigation)
+    // IMMEDIATE hash check for search engines and direct links
     const hash = window.location.hash;
     
+    if (!hash || hash === '#') {
+      // No hash - start at top
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+      });
+      return;
+    }
+
+    console.log('🔗 Initial hash detected:', hash);
+
+    // Handle different hash patterns
     if (hash === '#feed') {
       // Navigate back to feed section
       setTimeout(() => {
@@ -65,18 +142,31 @@ export default function HomePage() {
       }, 100);
       // Clean up the hash without affecting browser history
       window.history.replaceState(null, '', window.location.pathname);
+      
     } else if (hash === '#admin' && process.env.NODE_ENV === 'development') {
       // Show admin panel (development only)
       setShowAdmin(true);
       window.history.replaceState(null, '', window.location.pathname);
-    } else {
-      // For fresh loads or other navigation, start at top
-      // Use requestAnimationFrame to ensure DOM is ready
-      requestAnimationFrame(() => {
-        window.scrollTo(0, 0);
-      });
+      
+    } else if (hash.startsWith('#services/') || hash.startsWith('#portfolio/')) {
+      // CRITICAL: Handle individual item URLs for SEO
+      console.log('🎯 Deep link detected, handling item navigation:', hash);
+      handleItemHashNavigation(hash);
+      
+    } else if (hash.startsWith('#')) {
+      // Handle section navigation (#services, #portfolio, etc.)
+      const sectionId = hash.replace('#', '');
+      console.log('📍 Section navigation:', sectionId);
+      
+      setTimeout(() => {
+        const sectionElement = document.getElementById(sectionId);
+        if (sectionElement) {
+          sectionElement.scrollIntoView({ behavior: 'smooth' });
+          setActiveSection(sectionId);
+        }
+      }, 100);
     }
-  }, []);
+  }, []); // Empty dependency array = runs only once on mount
 
   // Effect to handle keyboard shortcuts for admin access (development only)
   useEffect(() => {
@@ -262,9 +352,9 @@ export default function HomePage() {
 
       {/* All subsequent content sections of the page */}
       <div className="relative z-10">
-        <ModernServices key={`services-${contentRefreshKey}`} />
-        <ModernPortfolio key={`portfolio-${contentRefreshKey}`} />
-        <ModernNews key={`news-${contentRefreshKey}`} />
+        <ModernServices key={`services-${contentRefreshKey}`} initialServices={initialContent?.services} initialCategories={initialCategories} />
+        <ModernPortfolio key={`portfolio-${contentRefreshKey}`} initialPortfolio={initialContent?.portfolio} initialCategories={initialCategories} />
+        <ModernNews key={`news-${contentRefreshKey}`} initialNews={initialContent?.news} initialCategories={initialCategories} />
         <ModernAbout key={`about-${contentRefreshKey}`} />
         <ModernContact key={`contact-${contentRefreshKey}`} />
       </div>

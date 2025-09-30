@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Main SPA page contains all content (services, portfolio, etc.)
+# Hash fragments (#services, #portfolio) are handled client-side
+# and cannot be controlled via robots.txt
+
+# Allow news section (has actual server routes)
+Allow: /news/
+
+# Block admin and API routes from crawling
+Disallow: /admin
+Disallow: /api/
+Disallow: /_next/
+Disallow: *.json$
+
+# Sitemap location
+Sitemap: https://zscore.studio/sitemap.xml
+
+# Crawl delay (optional - helps with server load)
+Crawl-delay: 1

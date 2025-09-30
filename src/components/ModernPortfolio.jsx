@@ -4,18 +4,31 @@ import React, { useState, useEffect, useRef } from "react";
 import * as ContentManager from '@/lib/content-manager-clean';
 import PortfolioDetail from "./portfolio/PortfolioDetail";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getCategoryColorSync } from '@/utils/categoryColors';
+import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
 /**
  * Displays the "Selected Works" portfolio section.
  * Fetches portfolio items, provides filtering by project type,
  * paginates the results, and opens a detail modal for each item.
  */
-export default function ModernPortfolio() {
+export default function ModernPortfolio({ initialPortfolio = [], initialCategories = null }) {
   // State to hold all portfolio items
-  const [portfolio, setPortfolio] = useState([]);
+  const [portfolio, setPortfolio] = useState(initialPortfolio);
   // State for loading indicator
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialPortfolio.length === 0);
+
+  // Generate a URL-safe slug from portfolio item (utility function)
+  const generateSlug = (item) => {
+    if (!item) {
+      console.warn('generateSlug called with invalid item:', item);
+      return 'portfolio-item';
+    }
+    // Use existing stable ID from database
+    const slug = item.id || item.slug || item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'portfolio-item';
+    console.log('Generated slug:', slug, 'from item:', item.id || item.title);
+    return String(slug); // Ensure it's always a string
+  };
+
   // State for the currently active category filter
   const [activeFilter, setActiveFilter] = useState("all");
   // Ref for the main section element for intersection observation
@@ -31,8 +44,13 @@ export default function ModernPortfolio() {
 
   // Effect to load portfolio data on component mount
   useEffect(() => {
-    loadPortfolio();
-  }, []);
+    // Only load portfolio if we don't have initial data
+    if (initialPortfolio.length === 0) {
+      loadPortfolio();
+    } else {
+      setIsLoading(false);
+    }
+  }, [initialPortfolio]);
 
   // Effect to listen for content updates from admin panel
   useEffect(() => {
@@ -49,12 +67,24 @@ export default function ModernPortfolio() {
       setPortfolio(prevPortfolio => [...prevPortfolio]);
     };
 
+    // Listen for individual portfolio opening events
+    const handleOpenPortfolio = (event) => {
+      const { portfolioItem } = event.detail;
+      setSelectedItem(portfolioItem);
+      
+      // Update URL with portfolio hash
+      const slug = generateSlug(portfolioItem);
+      window.history.pushState(null, null, `#portfolio/${slug}`);
+    };
+
     window.addEventListener('zscore-content-updated', handleContentUpdate);
     window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
+    window.addEventListener('zscore-open-portfolio', handleOpenPortfolio);
     
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
       window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
+      window.removeEventListener('zscore-open-portfolio', handleOpenPortfolio);
     };
   }, []);
 
@@ -188,6 +218,7 @@ export default function ModernPortfolio() {
     };
     return labels[type] || type;
   };
+
   
   /**
    * Opens the detail modal for a given portfolio item.
@@ -197,9 +228,17 @@ export default function ModernPortfolio() {
     try {
       const itemWithHTML = await ContentManager.getContentWithHTML('portfolio', item.id);
       setSelectedItem(itemWithHTML);
+      
+      // Update URL with portfolio hash
+      const slug = generateSlug(item);
+      window.history.pushState(null, null, `#portfolio/${slug}`);
     } catch (error) {
       console.error('Error loading portfolio content:', error);
       setSelectedItem(item); // Fallback to metadata-only
+      
+      // Update URL with portfolio hash (fallback)
+      const slug = generateSlug(item);
+      window.history.pushState(null, null, `#portfolio/${slug}`);
     }
   };
 
@@ -208,6 +247,8 @@ export default function ModernPortfolio() {
    */
   const closeDetail = () => {
     setSelectedItem(null);
+    // Reset URL to portfolio section
+    window.history.pushState(null, null, '#portfolio');
   };
 
   return (
@@ -330,13 +371,13 @@ export default function ModernPortfolio() {
                             item.project_type.map((type, typeIndex) => (
                               <span
                                 key={typeIndex}
-                                className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSync(type, 'portfolio')}`}
+                                className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSSR(type, 'portfolio', initialCategories)}`}
                               >
                                 {getProjectTypeLabel(type)}
                               </span>
                             ))
                           ) : (
-                            <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSync(item.project_type, 'portfolio')}`}>
+                            <span className={`inline-block px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColorSSR(item.project_type, 'portfolio', initialCategories)}`}>
                               {getProjectTypeLabel(item.project_type)}
                             </span>
                           )}

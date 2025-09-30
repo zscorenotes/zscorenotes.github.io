@@ -1,32 +1,72 @@
-'use client';
+import HomePage from '../components/HomePage';
+import * as ContentManager from '@/lib/content-manager-clean';
+import { loadHTMLContent } from '@/lib/html-content-manager';
+import { preloadCategories } from '@/utils/categoryColors';
 
-import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+// Force dynamic rendering (no static generation)
+export const dynamic = 'force-dynamic';
 
-// Import components with SSR disabled to prevent window errors
-const DynamicHome = dynamic(() => import('../components/HomePage'), { 
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="text-xl font-mono">Loading ZSCORE...</div>
-    </div>
-  )
-});
-
-export default function Page() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-xl font-mono">Loading ZSCORE...</div>
-      </div>
+export default async function Page() {
+  // Load all content server-side for SEO
+  let initialContent = null;
+  let initialCategories = null;
+  
+  try {
+    const allContent = await ContentManager.getAllContent();
+    
+    // Load HTML content for services and portfolio items during SSR
+    const servicesWithHTML = await Promise.all(
+      (allContent.services || []).map(async (service) => {
+        if (service.content_file) {
+          try {
+            const htmlContent = await loadHTMLContent(service.content_file);
+            return { ...service, content: htmlContent };
+          } catch (error) {
+            console.error(`Failed to load HTML for service ${service.id}:`, error);
+            return service;
+          }
+        }
+        return service;
+      })
     );
+    
+    const portfolioWithHTML = await Promise.all(
+      (allContent.portfolio || []).map(async (item) => {
+        if (item.content_file) {
+          try {
+            const htmlContent = await loadHTMLContent(item.content_file);
+            return { ...item, content: htmlContent };
+          } catch (error) {
+            console.error(`Failed to load HTML for portfolio ${item.id}:`, error);
+            return item;
+          }
+        }
+        return item;
+      })
+    );
+    
+    initialContent = {
+      services: servicesWithHTML,
+      portfolio: portfolioWithHTML, 
+      news: allContent.news || [],
+      about: allContent.about || {},
+      settings: allContent.settings || {}
+    };
+    
+    // Pre-load categories for consistent server/client rendering
+    initialCategories = allContent.categories || {};
+  } catch (error) {
+    console.error('Failed to load content for SSR:', error);
+    // Fallback to empty content
+    initialContent = {
+      services: [],
+      portfolio: [],
+      news: [],
+      about: {},
+      settings: {}
+    };
+    initialCategories = {};
   }
-
-  return <DynamicHome />;
+  
+  return <HomePage initialContent={initialContent} initialCategories={initialCategories} />;
 }

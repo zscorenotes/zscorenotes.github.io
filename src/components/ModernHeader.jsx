@@ -70,11 +70,17 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      // Update URL hash first
-      if (sectionId === 'home') {
-        window.history.pushState(null, null, window.location.pathname);
-      } else {
-        window.history.pushState(null, null, `#${sectionId}`);
+      // Don't update hash if we're in a deep link (like #services/item_id)
+      const currentHash = window.location.hash;
+      const isDeepLink = currentHash.includes('/');
+      
+      if (!isDeepLink) {
+        // Update URL hash only for section navigation
+        if (sectionId === 'home') {
+          window.history.pushState(null, null, window.location.pathname);
+        } else {
+          window.history.pushState(null, null, `#${sectionId}`);
+        }
       }
       
       element.scrollIntoView({ behavior: "smooth" });
@@ -94,7 +100,7 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
 
   // Calculate scroll progress (0 to 1) over the first viewport height
   // to drive the background rotation and line opacity animations.
-  const scrollProgress = Math.min(scrollY / window.innerHeight, 1);
+  const scrollProgress = Math.min(scrollY / (typeof window !== 'undefined' ? window.innerHeight : 1000), 1);
 
   return (
     <>
