@@ -29,18 +29,9 @@ node_modules
 # Track essential files for production but ignore user content changes
 
 # Ignore content changes after initial setup (use --assume-unchanged for tracked files)
-content-data/*.json
-content-data/content/news/*.html
-content-data/content/portfolio/*.html
-content-data/content/services/*.html
-public/images/*
+# content-data/
+# public/
 
-# Ignore temporary/cache files
-content-data/temp/
-content-data/cache/
-content-data/.DS_Store
-public/images/.DS_Store
-public/images/temp/
 
 # Next.js build artifacts
 .next/
