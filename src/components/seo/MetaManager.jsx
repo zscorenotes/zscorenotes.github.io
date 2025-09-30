@@ -11,8 +11,8 @@ import React, { useEffect } from 'react';
  */
 export default function MetaManager({ activeSection }) {
   // Default and site-wide metadata
-  const defaultTitle = "ZSCORE: Expert Music Engraving, Orchestration & Audio Programming";
-  const defaultDescription = "ZSCORE offers professional music engraving, audio programming, and custom notation solutions for composers and publishers. Elevate your scores with our expert team.";
+  const defaultTitle = "ZSCORE: Expert Music Engraving, Orchestration & Score production";
+  const defaultDescription = "ZSCORE offers professional music engraving, and custom notation solutions for composers and publishers. Elevate your scores with our expert team.";
   const siteName = "ZSCORE Music Engraving Hub";
   const baseUrl = "https://zscore.studio"; // Using a canonical base URL for consistency
   const mainImage = "https://raw.githubusercontent.com/zscorenotes/zscorenotes.github.io/main/assets/og.png?raw=true";
@@ -26,13 +26,13 @@ export default function MetaManager({ activeSection }) {
       path: '#home',
     },
     services: {
-      title: "Music Engraving & Audio Programming Services | ZSCORE Studio",
+      title: "Music Engraving & Score Production Services | ZSCORE Studio",
       description: "Discover ZSCORE's comprehensive music services, including score engraving, orchestral parts preparation, audio programming, and detailed consultation for complex projects.",
       path: '#services',
     },
     portfolio: {
       title: "Portfolio | Music Engraving & Notation Projects by ZSCORE",
-      description: "Explore a curated collection of our most impactful music engraving and audio programming projects for composers, publishers, and ensembles.",
+      description: "Explore a curated collection of our most impactful score production projects for composers, publishers, and ensembles.",
       path: '#portfolio',
     },
     news: {
@@ -47,7 +47,7 @@ export default function MetaManager({ activeSection }) {
     },
     contact: {
       title: "Contact ZSCORE | Start Your Music Notation Project",
-      description: "Reach out to the ZSCORE team to discuss your music engraving or audio programming project. We're ready to bring your vision to life.",
+      description: "Reach out to the ZSCORE team to discuss your score. We're ready to bring your piece to life.",
       path: '#contact',
     }
   };

@@ -98,20 +98,12 @@ function ModernNews({ initialNews = [], initialCategories = null }) {
     }
   };
 
-  // Effect to scroll to the top of the section on page change
+  // Track initial mount to prevent scroll on first load
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-    } else {
-      if (sectionRef.current) {
-        const headerOffset = 100; // Account for sticky header
-        const elementPosition = sectionRef.current.offsetTop - headerOffset;
-        window.scrollTo({
-          top: elementPosition,
-          behavior: 'smooth'
-        });
-      }
     }
+    // Removed auto-scroll on pagination to maintain user's scroll position
   }, [currentPage]);
 
   // Effect for the one-time fade-in animation of the section

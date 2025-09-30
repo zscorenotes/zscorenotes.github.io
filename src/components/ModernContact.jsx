@@ -139,8 +139,11 @@ export default function ModernContact() {
             </h2>
           </div>
           <div className="fade-in-up stagger-2">
-            <p className="text-xl font-light text-gray-400 max-w-3xl mx-auto">
-              Ready to bring your musical vision to life? Let's discuss your project requirements.
+            <p className="text-xl font-light text-gray-300 max-w-3xl mx-auto">
+              Ready to bring your piece to life? Let's discuss your project requirements.
+            </p>
+            <p className="pt-4 text-l font-light text-gray-400 max-w-3xl mx-auto">
+              Manuscript prepration → Engraving → Proofreading → Quality Checks → Post productions → Delivery
             </p>
           </div>
         </div>
@@ -156,7 +159,7 @@ export default function ModernContact() {
               <a href="mailto:info@zscore.studio" className="hover:text-gray-300 transition-colors">info@zscore.studio</a>
             </div>
             <div className="text-sm text-gray-500">
-              Response time: Within 24 hours, Mon-Fri, 9:00 AM - 6:00 PM EST
+              Response time: Within 24 hours, Mon-Fri, 9:00 AM - 6:00 PM CEST
             </div>
           </div>
         </div>
