@@ -29,8 +29,8 @@ node_modules
 # Track essential files for production but ignore user content changes
 
 # Ignore content changes after initial setup (use --assume-unchanged for tracked files)
-# content-data/
-# public/
+content-data/
+public/
 
 
 # Next.js build artifacts
