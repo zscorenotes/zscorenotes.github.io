@@ -5,9 +5,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import * as ContentManager from '@/lib/content-manager-clean';
 import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, ExternalLink, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { format } from "date-fns";
-import { getCategoryColorSync } from '@/utils/categoryColors';
+import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -102,6 +103,7 @@ const Lightbox = ({ images, startIndex, onClose }) => {
  * Dedicated page for displaying individual news articles with proper SEO
  */
 export default function NewsDetailPage({ newsId, newsSlug }) {
+  const router = useRouter();
   const [newsItem, setNewsItem] = useState(null);
   const [allNews, setAllNews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -111,6 +113,14 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
     images: [],
     startIndex: 0
   });
+
+  // Handler to navigate back to feed section
+  const handleBackToFeed = useCallback((e) => {
+    e.preventDefault();
+    
+    // Use window.location.href for reliable navigation to home with hash
+    window.location.href = '/#feed';
+  }, []);
 
   // Memoize loadNewsItem to prevent it from being recreated on every render
   const loadNewsItem = useCallback(async () => {
@@ -157,153 +167,24 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
     loadNewsItem();
   }, [loadNewsItem]);
 
-  // Update page title and meta tags for SEO
+  // Simple page title update only
   useEffect(() => {
-    if (newsItem) {
-      const baseUrl = 'https://zscore.studio';
-      const articleUrl = `${baseUrl}/news/${newsItem.slug || newsItem.id}`;
-      const imageUrl = newsItem.image_urls && newsItem.image_urls.length > 0 
-        ? (newsItem.image_urls[0].startsWith('http') ? newsItem.image_urls[0] : `${baseUrl}${newsItem.image_urls[0]}`)
-        : `${baseUrl}/images/feeds/cover01.png`;
-      const description = newsItem.excerpt || '';
+    if (!newsItem) return;
 
-      // Update basic meta tags
-      document.title = `${newsItem.title} | ZSCORE Feed`;
-      updateMetaTag('name', 'description', description);
-      
-      // Update canonical URL
-      updateLinkTag('canonical', articleUrl);
-      
-      // Update Open Graph meta tags
-      updateMetaTag('property', 'og:type', 'article');
-      updateMetaTag('property', 'og:url', articleUrl);
-      updateMetaTag('property', 'og:title', newsItem.title);
-      updateMetaTag('property', 'og:description', description);
-      updateMetaTag('property', 'og:image', imageUrl);
-      updateMetaTag('property', 'og:site_name', 'ZSCORE Studio');
-      updateMetaTag('property', 'article:published_time', newsItem.publication_date);
-      updateMetaTag('property', 'article:section', newsItem.category);
-      
-      // Update Twitter Card meta tags
-      updateMetaTag('name', 'twitter:card', 'summary_large_image');
-      updateMetaTag('name', 'twitter:url', articleUrl);
-      updateMetaTag('name', 'twitter:title', newsItem.title);
-      updateMetaTag('name', 'twitter:description', description);
-      updateMetaTag('name', 'twitter:image', imageUrl);
-      
-      // Add article tags
-      if (newsItem.tags && newsItem.tags.length > 0) {
-        newsItem.tags.forEach(tag => {
-          updateMetaTag('property', 'article:tag', tag);
-        });
-      }
+    // Update page title only
+    const originalTitle = document.title;
+    document.title = `${newsItem.title} | ZSCORE Studio`;
 
-      // Add structured data (JSON-LD)
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": newsItem.title,
-        "description": description,
-        "image": imageUrl,
-        "url": articleUrl,
-        "datePublished": newsItem.publication_date,
-        "dateModified": newsItem.updated_date || newsItem.publication_date,
-        "author": {
-          "@type": "Organization",
-          "name": "ZSCORE Studio",
-          "url": baseUrl
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "ZSCORE Studio",
-          "url": baseUrl,
-          "logo": {
-            "@type": "ImageObject",
-            "url": `${baseUrl}/images/logo.png`
-          }
-        },
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
-        },
-        "articleSection": newsItem.category,
-        "keywords": newsItem.tags ? newsItem.tags.join(', ') : '',
-        "articleBody": newsItem.content || newsItem.excerpt
-      };
-      
-      updateStructuredData(structuredData);
-    }
-
-    // Cleanup on unmount
+    // Simple cleanup - just restore original title
     return () => {
-      document.title = 'ZSCORE: Expert Music Engraving, Orchestration & Audio Programming';
-      updateMetaTag('name', 'description', 'ZSCORE Studio offers expert music engraving, orchestration, and audio programming services. Crafting precise and beautiful scores for composers, producers, and educators.');
-      
-      // Remove article-specific meta tags
-      removeMetaTags(['og:type', 'og:url', 'og:title', 'og:description', 'og:image', 'og:site_name', 'article:published_time', 'article:section', 'article:tag']);
-      removeMetaTags(['twitter:card', 'twitter:url', 'twitter:title', 'twitter:description', 'twitter:image']);
-      removeLinkTag('canonical');
-      removeStructuredData();
+      document.title = originalTitle;
     };
   }, [newsItem]);
 
-  // Helper function to update or create meta tags
-  const updateMetaTag = (attr, value, content) => {
-    let element = document.querySelector(`meta[${attr}="${value}"]`);
-    if (!element) {
-      element = document.createElement('meta');
-      element.setAttribute(attr, value);
-      document.head.appendChild(element);
-    }
-    element.setAttribute('content', content);
-  };
-
-  // Helper function to update or create link tags
-  const updateLinkTag = (rel, href) => {
-    let element = document.querySelector(`link[rel="${rel}"]`);
-    if (!element) {
-      element = document.createElement('link');
-      element.setAttribute('rel', rel);
-      document.head.appendChild(element);
-    }
-    element.setAttribute('href', href);
-  };
-
-  // Helper function to remove meta tags
-  const removeMetaTags = (values) => {
-    values.forEach(value => {
-      const elements = document.querySelectorAll(`meta[property="${value}"], meta[name="${value}"]`);
-      elements.forEach(element => element.remove());
-    });
-  };
-
-  // Helper function to remove link tags
-  const removeLinkTag = (rel) => {
-    const element = document.querySelector(`link[rel="${rel}"]`);
-    if (element) element.remove();
-  };
-
-  // Helper function to update structured data
-  const updateStructuredData = (data) => {
-    let element = document.querySelector('script[type="application/ld+json"][data-news-article]');
-    if (!element) {
-      element = document.createElement('script');
-      element.setAttribute('type', 'application/ld+json');
-      element.setAttribute('data-news-article', 'true');
-      document.head.appendChild(element);
-    }
-    element.textContent = JSON.stringify(data, null, 2);
-  };
-
-  // Helper function to remove structured data
-  const removeStructuredData = () => {
-    const element = document.querySelector('script[type="application/ld+json"][data-news-article]');
-    if (element) element.remove();
-  };
 
 
   const getCategoryColor = (category) => {
-    return getCategoryColorSync(category, 'news');
+    return getCategoryColorSSR(category, 'news', null);
   };
 
   const openLightbox = useCallback((startIndex = 0) => {
@@ -345,18 +226,6 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
     setLightboxState({ isOpen: false, images: [], startIndex: 0 });
   };
 
-  // Find current item's position and get next/previous items
-  const currentIndex = allNews.findIndex(item => {
-    if (newsSlug) {
-      return item.slug === newsSlug || item.id === newsSlug;
-    } else if (newsId) {
-      return item.id === newsId;
-    }
-    return false;
-  });
-  const previousItem = currentIndex > 0 ? allNews[currentIndex - 1] : null;
-  const nextItem = currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
-
   // Get related posts (same category, excluding current post, limit to 3)
   const relatedPosts = allNews
     .filter(item => {
@@ -384,308 +253,287 @@ export default function NewsDetailPage({ newsId, newsSlug }) {
         <div>
           <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
           <p className="text-gray-600 mb-6">{error || 'The requested article could not be found.'}</p>
-          <Link
-            href="/#feed"
+          <button
+            onClick={handleBackToFeed}
             className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 hover:bg-gray-800 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Feed
-          </Link>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link 
-              href="/" 
-              className="font-bold text-xl hover:text-gray-600 transition-colors"
-            >
-              ZSCORE<span className="font-thin">.studio</span>
-            </Link>
-            <Link 
-              href="/#feed"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors tracking-wider"
+    <div className="min-h-screen bg-white">
+      {/* Skip Links */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-black text-white px-4 py-2 z-50">
+        Skip to content
+      </a>
+
+      {/* Header */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
+        <div className="w-[85%] mx-auto px-6">
+          <div className="flex items-center justify-between h-16">
+            {/* Left: Back Button */}
+            <button 
+              onClick={handleBackToFeed}
+              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors font-medium"
             >
               <ArrowLeft size={16} />
-              Back to Feed
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* Article Content */}
-      <article className="max-w-4xl mx-auto px-6 py-12">
-        {/* Article Header */}
-        <header className="mb-12">
-          <div className="flex items-center space-x-4 mb-6">
-            <span className={`px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(newsItem.category)}`}>
-              {newsItem.category.replace('_', ' ')}
-            </span>
-            {newsItem.publication_date && (
-              <time className="text-sm text-gray-500" dateTime={newsItem.publication_date}>
-                {format(new Date(newsItem.publication_date), 'MMMM d, yyyy')}
-              </time>
-            )}
-            {newsItem.featured && (
-              <span className="px-2 py-1 bg-black text-white text-xs tracking-wider">
-                FEATURED
-              </span>
-            )}
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-            {newsItem.title}
-          </h1>
-
-          {newsItem.excerpt && (
-            <p className="text-xl text-gray-700 leading-relaxed">
-              {newsItem.excerpt}
-            </p>
-          )}
-        </header>
-
-        {/* Featured Image */}
-        {newsItem.image_urls && newsItem.image_urls.length > 0 && (
-          <div className="mb-12">
-            <button
-              onClick={() => openLightbox(0)} // Main image is always first in the collected unique image list
-              className="w-full block hover:opacity-90 transition-opacity"
-            >
-              <img
-                src={newsItem.image_urls[0]}
-                alt={newsItem.title}
-                className="w-full h-auto object-cover rounded-lg shadow-lg"
-              />
+              <span className="hidden sm:inline">Back to Feed</span>
+              <span className="sm:hidden">Back</span>
             </button>
-          </div>
-        )}
 
-        {/* Article Body */}
-        <div className="prose prose-lg max-w-none text-gray-800">
-          {newsItem.content_blocks && newsItem.content_blocks.length > 0 ? (
-            newsItem.content_blocks.map((block, index) => {
-              // Ensure all content block types are rendered
-              if (block.type === 'heading') {
-                return <h2 key={index} className="text-2xl font-bold mt-8 mb-4">{block.content}</h2>;
-              } else if (block.type === 'paragraph') {
-                return <p key={index} className="mb-6">{block.content}</p>;
-              } else if (block.type === 'markdown' && block.content) {
-                return (
-                  <div 
-                    key={index} 
-                    dangerouslySetInnerHTML={{ __html: block.content }} 
-                    className="rich-content"
-                  />
-                );
-              } else if (block.type === 'image') {
-                return (
-                  <figure key={index} className="my-8">
-                    <button
-                      onClick={() => {
-                        // Re-calculate the unique images list to find the correct index for this specific image
-                        // This logic is duplicated from openLightbox's internal collection but necessary to find the precise startIndex.
-                        const collectedImagesForIndex = [];
-                        if (newsItem.image_urls && newsItem.image_urls.length > 0) {
-                          collectedImagesForIndex.push({ src: newsItem.image_urls[0], caption: newsItem.title || '' });
-                        }
-                        if (newsItem.content_blocks) {
-                          newsItem.content_blocks.forEach(cb => {
-                            if (cb.type === 'image') {
-                              collectedImagesForIndex.push({ src: cb.src, caption: cb.caption || '' });
-                            }
-                          });
-                        }
-                        const uniqueImagesMapForIndex = new Map();
-                        collectedImagesForIndex.forEach(img => {
-                          if (!uniqueImagesMapForIndex.has(img.src)) {
-                            uniqueImagesMapForIndex.set(img.src, img);
-                          }
-                        });
-                        const uniqueImagesForIndex = Array.from(uniqueImagesMapForIndex.values());
-                        const currentImageIndex = uniqueImagesForIndex.findIndex(img => img.src === block.src);
-                        openLightbox(currentImageIndex !== -1 ? currentImageIndex : 0);
-                      }}
-                      className="block w-full hover:opacity-90 transition-opacity"
-                    >
-                      <img src={block.src} alt={block.caption || `Content image ${index}`} className="w-full h-auto rounded-lg" />
-                    </button>
-                    {block.caption && <figcaption className="text-center text-sm text-gray-500 mt-3">{block.caption}</figcaption>}
-                  </figure>
-                );
-              }
-              return null; // Don't render unrecognized block types
-            })
-          ) : newsItem.content ? (
-            // Fallback to rendering rich HTML content
-            <div 
-              dangerouslySetInnerHTML={{ __html: newsItem.content }} 
-              className="rich-content prose prose-lg max-w-none"
-            />
-          ) : null}
-        </div>
-
-        {/* Tags */}
-        {newsItem.tags && newsItem.tags.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <h3 className="font-bold mb-4 text-sm tracking-wider uppercase text-gray-500">Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {newsItem.tags.map((tag, tagIndex) => (
-                <span
-                  key={tagIndex}
-                  className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-full hover:bg-gray-300 transition-colors"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* External Link */}
-        {newsItem.external_link && (
-          <div className="mt-12 pt-8 border-t border-gray-200">
-            <a
-              href={newsItem.external_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-black text-white py-3 px-6 hover:bg-gray-800 transition-colors tracking-wider"
+            {/* Center: Logo */}
+            <Link 
+              href="/" 
+              className="absolute left-1/2 transform -translate-x-1/2 font-black text-lg hover:text-gray-600 transition-colors"
             >
-              <ExternalLink size={16} />
-              <span>{newsItem.external_link_text || "Read More"}</span>
-            </a>
+              ZSCORE<span className="font-extralight">.studio</span>
+            </Link>
+
+            {/* Right: Menu placeholder */}
+            <div className="w-16"></div>
           </div>
-        )}
+        </div>
+      </header>
 
-        {/* Next/Previous Navigation */}
-        {(previousItem || nextItem) && (
-          <div className="mt-16 pt-8 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Previous Article */}
-              <div className="order-2 md:order-1">
-                {previousItem ? (
-                  <Link
-                    href={`/news/${previousItem.slug || previousItem.id}`}
-                    className="group block p-6 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 h-full"
-                  >
-                    <div className="flex items-center gap-3 mb-3 text-gray-500 text-sm">
-                      <ChevronLeft size={16} />
-                      <span className="tracking-wider uppercase">Previous</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900  mb-2">
-                      {previousItem.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                      {previousItem.excerpt || ""}
-                    </p>
-                    {previousItem.publication_date && (
-                      <time className="text-xs text-gray-400 mt-3 block">
-                        {format(new Date(previousItem.publication_date), 'MMM d, yyyy')}
-                      </time>
-                    )}
-                  </Link>
-                ) : (
-                  <div className="p-6 text-center text-gray-400">
-                    <span className="text-sm">No previous articles</span>
-                  </div>
-                )}
-              </div>
+      {/* Breadcrumbs */}
+      <div className="w-[85%] mx-auto px-6 py-3 text-sm text-gray-500">
+        <nav className="flex items-center space-x-2">
+          <Link href="/" className="hover:text-black transition-colors">Home</Link>
+          <span>›</span>
+          <button onClick={handleBackToFeed} className="hover:text-black transition-colors">Feed</button>
+          <span>›</span>
+          <span className="text-gray-900 font-medium">{newsItem.title}</span>
+        </nav>
+      </div>
 
-              {/* Next Article */}
-              <div className="order-1 md:order-2">
-                {nextItem ? (
-                  <Link
-                    href={`/news/${nextItem.slug || nextItem.id}`}
-                    className="group block p-6 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 h-full text-right"
-                  >
-                    <div className="flex items-center justify-end gap-3 mb-3 text-gray-500 text-sm">
-                      <span className="tracking-wider uppercase">Next</span>
-                      <ChevronRight size={16} />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900  mb-2">
-                      {nextItem.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 line-clamp-3">
-                      {nextItem.excerpt || ""}
-                    </p>
-                    {nextItem.publication_date && (
-                      <time className="text-xs text-gray-400 mt-3 block">
-                        {format(new Date(nextItem.publication_date), 'MMM d, yyyy')}
-                      </time>
-                    )}
-                  </Link>
-                ) : (
-                  <div className="p-6 text-center text-gray-400">
-                    <span className="text-sm">No more articles</span>
-                  </div>
-                )}
+      {/* Hero Section */}
+      <section className="relative">
+        <div className="grid lg:grid-cols-12 gap-0 h-[60vh] lg:h-screen">
+          {/* Image Column */}
+          {newsItem.image_urls && newsItem.image_urls.length > 0 && (
+            <div className="lg:col-span-7 relative">
+              <div className="aspect-[4/3] lg:aspect-auto lg:h-full relative overflow-hidden">
+                <button
+                  onClick={() => openLightbox(0)}
+                  className="w-full h-full block group"
+                >
+                  <img
+                    src={newsItem.image_urls[0]}
+                    alt={newsItem.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </button>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Related Posts */}
-        {relatedPosts.length > 0 && (
-          <div className="mt-16 pt-8 border-t border-gray-200">
-            <h3 className="text-2xl font-bold mb-8 tracking-wider">Related Posts</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map((relatedPost) => (
-                <Link
-                  key={relatedPost.id}
-                  href={`/news/${relatedPost.slug || relatedPost.id}`}
-                  className="group block bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300"
-                  onClick={() => window.scrollTo(0,0)} // Scroll to top when navigating to related post
-                >
-                  <div className="aspect-video bg-gray-100 overflow-hidden">
-                    {relatedPost.image_urls && relatedPost.image_urls.length > 0 ? (
-                      <img
-                        src={relatedPost.image_urls[0]}
-                        alt={relatedPost.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          {/* Content Column */}
+          <div className={`${newsItem.image_urls && newsItem.image_urls.length > 0 ? 'lg:col-span-5' : 'lg:col-span-12'} flex items-center`}>
+            <div className="w-full px-6 lg:px-12 py-12 lg:py-16">
+              {/* Category & Meta */}
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <span className={`px-3 py-1 text-xs font-medium tracking-wider uppercase ${getCategoryColor(newsItem.category)}`}>
+                  {newsItem.category.replace('_', ' ')}
+                </span>
+                {newsItem.featured && (
+                  <span className="px-3 py-1 bg-black text-white text-xs font-medium tracking-wider uppercase">
+                    Featured
+                  </span>
+                )}
+              </div>
+
+              {/* Publication Date */}
+              {newsItem.publication_date && (
+                <p className="text-sm text-gray-600 mb-4 font-medium">
+                  {format(new Date(newsItem.publication_date), 'MMMM d, yyyy')}
+                </p>
+              )}
+
+              {/* Title */}
+              <h1 className="text-5xl lg:text-7xl xl:text-8xl font-black mb-6 leading-tight tracking-tight">
+                {newsItem.title}
+              </h1>
+
+              {/* Subtitle/Excerpt */}
+              {newsItem.excerpt && (
+                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed font-light">
+                  {newsItem.excerpt}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <main id="main-content" className="w-[85%] mx-auto px-6 py-16 lg:py-24 xl:py-32">
+        <div className="grid lg:grid-cols-12 gap-12">
+          {/* Article Content */}
+          <div className="lg:col-span-8">
+            <div className="prose prose-lg max-w-none">
+              {/* Content Blocks */}
+              {newsItem.content_blocks && newsItem.content_blocks.length > 0 ? (
+                newsItem.content_blocks.map((block, index) => {
+                  if (block.type === 'heading') {
+                    return <h2 key={index} className="text-2xl font-bold mt-12 mb-6 tracking-tight">{block.content}</h2>;
+                  } else if (block.type === 'paragraph') {
+                    return <p key={index} className="text-lg leading-relaxed mb-6 text-gray-800">{block.content}</p>;
+                  } else if (block.type === 'markdown' && block.content) {
+                    return (
+                      <div 
+                        key={index} 
+                        dangerouslySetInnerHTML={{ __html: block.content }} 
+                        className="prose-content text-lg leading-relaxed mb-6 text-gray-800"
                       />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <div className="text-center">
-                          <div className="text-2xl mb-1">♪</div>
-                          <div className="text-xs uppercase tracking-wider">
-                            {relatedPost.category.replace('_', ' ')}
+                    );
+                  } else if (block.type === 'image') {
+                    return (
+                      <figure key={index} className="my-12">
+                        <button
+                          onClick={() => openLightbox(0)}
+                          className="block w-full group"
+                        >
+                          <img 
+                            src={block.src} 
+                            alt={block.caption || `Content image ${index}`} 
+                            className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02]" 
+                          />
+                        </button>
+                        {block.caption && (
+                          <figcaption className="text-center text-sm text-gray-600 mt-4 font-medium">
+                            {block.caption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    );
+                  }
+                  return null;
+                })
+              ) : newsItem.content ? (
+                <div 
+                  dangerouslySetInnerHTML={{ __html: newsItem.content }} 
+                  className="prose-content text-lg leading-relaxed text-gray-800"
+                />
+              ) : null}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-24">
+              {/* Article Meta */}
+              <div className="bg-gray-50 p-6 mb-8">
+                <h3 className="font-bold text-sm tracking-wider uppercase text-gray-900 mb-4">
+                  Article Information
+                </h3>
+                <dl className="space-y-3">
+                  <div>
+                    <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Published</dt>
+                    <dd className="text-sm text-gray-900 font-medium">
+                      {newsItem.publication_date && format(new Date(newsItem.publication_date), 'MMMM d, yyyy')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Category</dt>
+                    <dd className="text-sm text-gray-900 font-medium">
+                      {newsItem.category?.replace('_', ' ')}
+                    </dd>
+                  </div>
+                  {newsItem.tags && newsItem.tags.length > 0 && (
+                    <div>
+                      <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</dt>
+                      <dd className="flex flex-wrap gap-1 mt-2">
+                        {newsItem.tags.slice(0, 5).map((tag, index) => (
+                          <span 
+                            key={index}
+                            className="inline-block px-2 py-1 text-xs bg-white text-gray-700 border border-gray-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              {/* Additional Images */}
+              {newsItem.image_urls && newsItem.image_urls.length > 1 && (
+                <div className="mb-8">
+                  <h3 className="font-bold text-sm tracking-wider uppercase text-gray-900 mb-4">
+                    Additional Images
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {newsItem.image_urls.slice(1, 5).map((imageUrl, index) => (
+                      <button
+                        key={index}
+                        onClick={() => openLightbox(index + 1)}
+                        className="group block"
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={`Additional image ${index + 1}`}
+                          className="w-full h-20 object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Related Articles */}
+              {relatedPosts.length > 0 && (
+                <div>
+                  <h3 className="font-bold text-sm tracking-wider uppercase text-gray-900 mb-4">
+                    Related Articles
+                  </h3>
+                  <div className="space-y-4">
+                    {relatedPosts.map((post, index) => (
+                      <Link 
+                        key={index}
+                        href={`/news/${post.slug || post.id}`}
+                        className="block group"
+                      >
+                        <div className="flex gap-3">
+                          {post.image_urls && post.image_urls[0] && (
+                            <img 
+                              src={post.image_urls[0]} 
+                              alt={post.title}
+                              className="w-16 h-16 object-cover flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-black transition-colors">
+                              {post.title}
+                            </h4>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {post.publication_date && format(new Date(post.publication_date), 'MMM d, yyyy')}
+                            </p>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      </Link>
+                    ))}
                   </div>
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`px-2 py-1 text-xs tracking-wider uppercase rounded ${getCategoryColor(relatedPost.category)}`}>
-                        {relatedPost.category.replace('_', ' ')}
-                      </span>
-                      {relatedPost.publication_date && (
-                        <time className="text-xs text-gray-400">
-                          {format(new Date(relatedPost.publication_date), 'MMM d')}
-                        </time>
-                      )}
-                    </div>
-                    <h4 className="text-sm font-bold text-gray-900  mb-2 line-clamp-2">
-                      {relatedPost.title}
-                    </h4>
-                    <p className="text-xs text-gray-600 line-clamp-2">
-                      {relatedPost.excerpt || ""}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </article>
+        </div>
+      </main>
 
       {/* Lightbox */}
-      {lightboxState.isOpen && <Lightbox {...lightboxState} onClose={closeLightbox} />}
+      {lightboxState.isOpen && (
+        <Lightbox
+          images={lightboxState.images}
+          startIndex={lightboxState.startIndex}
+          onClose={closeLightbox}
+        />
+      )}
     </div>
   );
 }

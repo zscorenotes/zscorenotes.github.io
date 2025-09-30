@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import * as ContentManager from '@/lib/content-manager-clean';
-import PortfolioDetail from "./portfolio/PortfolioDetail";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
@@ -33,8 +32,6 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
   const [activeFilter, setActiveFilter] = useState("all");
   // Ref for the main section element for intersection observation
   const sectionRef = useRef(null);
-  // State for the item selected to be shown in the detail modal
-  const [selectedItem, setSelectedItem] = useState(null);
   // State for the current page number in pagination
   const [currentPage, setCurrentPage] = useState(1);
   // Number of items to display per page
@@ -70,11 +67,10 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
     // Listen for individual portfolio opening events
     const handleOpenPortfolio = (event) => {
       const { portfolioItem } = event.detail;
-      setSelectedItem(portfolioItem);
       
-      // Update URL with portfolio hash
+      // Navigate to dedicated portfolio page
       const slug = generateSlug(portfolioItem);
-      window.history.pushState(null, null, `#portfolio/${slug}`);
+      window.location.href = `/portfolio/${slug}`;
     };
 
     window.addEventListener('zscore-content-updated', handleContentUpdate);
@@ -221,35 +217,14 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
 
   
   /**
-   * Opens the detail modal for a given portfolio item.
+   * Navigate to the dedicated portfolio page for a given item.
    * @param {object} item The portfolio item to display.
    */
-  const openDetail = async (item) => {
-    try {
-      const itemWithHTML = await ContentManager.getContentWithHTML('portfolio', item.id);
-      setSelectedItem(itemWithHTML);
-      
-      // Update URL with portfolio hash
-      const slug = generateSlug(item);
-      window.history.pushState(null, null, `#portfolio/${slug}`);
-    } catch (error) {
-      console.error('Error loading portfolio content:', error);
-      setSelectedItem(item); // Fallback to metadata-only
-      
-      // Update URL with portfolio hash (fallback)
-      const slug = generateSlug(item);
-      window.history.pushState(null, null, `#portfolio/${slug}`);
-    }
+  const openDetail = (item) => {
+    const slug = generateSlug(item);
+    window.location.href = `/portfolio/${slug}`;
   };
 
-  /**
-   * Closes the portfolio item detail modal.
-   */
-  const closeDetail = () => {
-    setSelectedItem(null);
-    // Reset URL to portfolio section
-    window.history.pushState(null, null, '#portfolio');
-  };
 
   return (
     <>
@@ -416,11 +391,6 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
           )}
         </div>
       </section>
-
-      {/* Detail Modal */}
-      {selectedItem && (
-        <PortfolioDetail item={selectedItem} onClose={closeDetail} />
-      )}
     </>
   );
 }

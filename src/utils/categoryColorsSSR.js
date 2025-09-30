@@ -87,8 +87,13 @@ function getDefaultCategoryColorSSR(tagName, sectionType) {
     
     // Portfolio
     'score_engraving': COLOR_CLASSES.blue,
+    'parts_engraving': COLOR_CLASSES.cyan,
     'audio_programming': COLOR_CLASSES.green,
+    'orchestration': COLOR_CLASSES.yellow,
     'consultation': COLOR_CLASSES.purple,
+    'printing': COLOR_CLASSES.orange,
+    'editorial': COLOR_CLASSES.pink,
+    'custom_software': COLOR_CLASSES.indigo,
     
     // Technologies
     'sibelius': COLOR_CLASSES.blue,
