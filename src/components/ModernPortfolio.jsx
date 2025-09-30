@@ -215,6 +215,40 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
     return labels[type] || type;
   };
 
+  // Function to determine card height based on content richness
+  const getCardHeight = (item, index) => {
+    const hasImages = item.image_urls && item.image_urls.length > 0;
+    const hasDescription = item.description && item.description.length > 100;
+    const hasMultipleTypes = Array.isArray(item.project_type) && item.project_type.length > 2;
+    const hasDetailedInfo = item.composer && item.instrumentation;
+    
+    // Create variety based on content and position for musical rhythm
+    const contentScore = 
+      (hasImages ? 2 : 0) + 
+      (hasDescription ? 1 : 0) + 
+      (hasMultipleTypes ? 1 : 0) + 
+      (hasDetailedInfo ? 1 : 0);
+    
+    // Add positional variety for musical positioning
+    const positionVariant = (index % 5);
+    
+    if (contentScore >= 4) return 'tall'; // Rich content cards
+    if (contentScore >= 2 && positionVariant === 0) return 'medium-tall'; // Featured positioning
+    if (positionVariant === 2 || positionVariant === 4) return 'medium'; // Rhythm variation
+    return 'standard'; // Default height
+  };
+
+  // Get CSS classes for card height
+  const getCardHeightClass = (height) => {
+    const heights = {
+      'tall': 'aspect-[4/6]',        // Taller cards for rich content
+      'medium-tall': 'aspect-[4/5.2]', // Slightly taller
+      'medium': 'aspect-[4/4.8]',    // Slightly shorter  
+      'standard': 'aspect-[4/5]'     // Standard height
+    };
+    return heights[height] || heights.standard;
+  };
+
   
   /**
    * Navigate to the dedicated portfolio page for a given item.
@@ -272,45 +306,82 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
               ))}
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {paginatedPortfolio.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`fade-in-up stagger-${(index % 6) + 1} group`}
-                >
-                  <button
-                    onClick={() => openDetail(item)}
-                    className="bg-white hover-lift overflow-hidden border border-black/10 relative w-full text-left"
-                    aria-label={`View details for ${item.title}`}
-                  >
-                    <div className="w-full aspect-[4/5] bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden border-b border-black/5 block">
-                      {/* Display first image or a placeholder */}
-                      {item.image_urls && item.image_urls.length > 0 ? (
-                        <div className="relative w-full h-full">
-                          <img
-                            src={item.image_urls[0]}
-                            alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
+            <div className="relative">
+              {/* Musical Staff Background */}
+              <div className="absolute inset-0 pointer-events-none opacity-30">
+                <div className="h-full flex flex-col justify-center space-y-8">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-full h-px bg-gray-300"></div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Masonry Grid */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+                {paginatedPortfolio.map((item, index) => {
+                  const cardHeight = getCardHeight(item, index);
+                  const heightClass = getCardHeightClass(cardHeight);
+                  
+                  return (
+                    <div
+                      key={item.id}
+                      className={`fade-in-up stagger-${(index % 6) + 1} group`}
+                    >
+                      <button
+                        onClick={() => openDetail(item)}
+                        className="bg-white hover-lift overflow-hidden border border-black/10 relative w-full text-left transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                        aria-label={`View details for ${item.title}`}
+                        style={{
+                          transformOrigin: 'center center',
+                        }}
+                      >
+                        {/* Theatrical Spotlight Overlay */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                          <div 
+                            className="absolute inset-0"
+                            style={{
+                              background: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.3) 40%, rgba(0,0,0,0.1) 100%)'
+                            }}
+                          ></div>
                         </div>
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="text-4xl mb-2 text-gray-400">♪</div>
-                            <div className="text-xs text-gray-400 tracking-wider">
-                              {Array.isArray(item.project_type) ? item.project_type.map(getProjectTypeLabel).join(', ') : getProjectTypeLabel(item.project_type)}
+                        
+                        <div className={`w-full ${heightClass} bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden border-b border-black/5 block`}>
+                          {/* Display first image or a placeholder */}
+                          {item.image_urls && item.image_urls.length > 0 ? (
+                            <div className="relative w-full h-full">
+                              <img
+                                src={item.image_urls[0]}
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                              />
                             </div>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="text-center">
+                                {/* Use the half note SVG instead of generic musical note */}
+                                <div className="mb-3 flex justify-center">
+                                  <svg 
+                                    className="w-8 h-6 text-gray-400" 
+                                    viewBox="0 0 28.61 23.47" 
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path d="M28.61,8.26c0,9.04-11.13,15.21-18.87,15.21-4.96,0-9.74-3.3-9.74-8.26C0,6.26,11.12,0,18.87,0c5.57,0,9.74,3.22,9.74,8.26Z" fill="currentColor"/>
+                                  </svg>
+                                </div>
+                                <div className="text-xs text-gray-400 tracking-wider">
+                                  {Array.isArray(item.project_type) ? item.project_type.map(getProjectTypeLabel).join(', ') : getProjectTypeLabel(item.project_type)}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          <div className="absolute top-4 right-4">
+                            {item.year && (
+                              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-medium">
+                                {item.year}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      )}
-                      <div className="absolute top-4 right-4">
-                        {item.completion_year && (
-                          <div className="bg-white/90 backdrop-blur-sm px-3 py-1 text-xs">
-                            {item.completion_year}
-                          </div>
-                        )}
-                      </div>
-                    </div>
 
                     <div className="p-6">
                       <h3 className="text-xl font-bold mb-3">
@@ -361,7 +432,9 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
                     </div>
                   </button>
                 </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           )}
 
