@@ -19,6 +19,19 @@ Add these **two new variables** to your Vercel dashboard:
 
 **Note**: Your `GITHUB_TOKEN` is already configured ✅
 
+## 🔧 Optional: Migrate Existing Content URLs
+
+If you have existing content with old content_file paths, run this migration:
+
+```bash
+# Update existing content_file URLs to use raw GitHub URLs
+node scripts/migrate-content-file-urls.js
+```
+
+This converts paths like:
+- **Before**: `"/content-data/content/portfolio/portfolio_123.html"`
+- **After**: `"https://raw.githubusercontent.com/zscorenotes/zscore-content/main/content/portfolio/portfolio_123.html"`
+
 ## 🚀 Deploy Now
 
 ```bash
@@ -52,6 +65,7 @@ Content Repository (zscore-content)
 
 - **Content Loading**: Fetches from `zscore-content` repository via GitHub API
 - **Images**: Served directly from `zscore-content/images/` via raw GitHub URLs
+- **HTML Content**: Loaded directly from raw GitHub URLs (e.g., `https://raw.githubusercontent.com/zscorenotes/zscore-content/main/content/...`)
 - **Admin Panel**: Creates/edits content in `zscore-content` repository
 - **No Local Files**: Everything comes from the cloud content repository
 

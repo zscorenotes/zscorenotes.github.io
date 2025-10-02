@@ -46,9 +46,12 @@ async function saveHTMLFileLocallyDirect(contentType, itemId, htmlContent) {
   
   console.log(`✅ HTML content saved locally: ${filePath}`);
   
+  // For local development, use local path
+  const content_file = `/content-data/content/${contentType}/${filename}`;
+  
   return {
     success: true,
-    content_file: `/content/${contentType}/${filename}`,
+    content_file: content_file,
   };
 }
 
@@ -209,10 +212,12 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
     
     console.log(`✅ HTML content saved successfully: ${path}`);
 
-    // Return the path to the HTML file
+    // Return the URL to the HTML file - use raw GitHub URL for production
+    const content_file = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/content/${contentType}/${filename}`;
+    
     return {
       success: true,
-      content_file: `/content/${contentType}/${filename}`,
+      content_file: content_file,
       sha: result.content.sha,
     };
   } catch (error) {
@@ -232,15 +237,33 @@ export async function loadHTMLContent(contentFilePath) {
       return '';
     }
     
-    // We're on server side - check environment
+    // Check if contentFilePath is a raw GitHub URL (from production) or local path (from development)
+    const isGitHubURL = contentFilePath.startsWith('https://raw.githubusercontent.com/');
     const isDevelopment = process.env.NODE_ENV === 'development';
     
-    if (isDevelopment) {
+    if (isDevelopment && !isGitHubURL) {
       console.log('📁 Loading from local file system (development mode)');
       return await loadHTMLFileLocallyDirect(contentFilePath);
     }
     
-    // For production, use GitHub API
+    // For production or GitHub URLs, fetch from GitHub
+    if (isGitHubURL) {
+      // Direct fetch from raw GitHub URL
+      console.log('🌐 Loading from raw GitHub URL:', contentFilePath);
+      const response = await fetch(contentFilePath);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.warn('HTML content file not found at URL:', contentFilePath);
+          return '';
+        }
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      
+      return await response.text();
+    }
+    
+    // Fallback: Use GitHub API for older local-style paths in production
     const token = getGitHubToken();
     if (!token) {
       console.error('❌ No GitHub token found in production environment');
