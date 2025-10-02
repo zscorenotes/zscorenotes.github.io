@@ -3,10 +3,11 @@
  * Stores content as JSON files in your GitHub repository
  */
 
-const GITHUB_REPO = 'zscorenotes.github.io'; // Your repo name
-const GITHUB_OWNER = 'zscorenotes'; // Your GitHub username/org
+// Content repository configuration - can be overridden with environment variables
+const GITHUB_REPO = process.env.CONTENT_GITHUB_REPO || 'zscore-content'; // Content repo name
+const GITHUB_OWNER = process.env.CONTENT_GITHUB_OWNER || 'zscorenotes'; // GitHub username/org
 const CONTENT_BRANCH = 'main'; // Branch to store content
-const CONTENT_DIR = 'content-data'; // Directory for content files
+const CONTENT_DIR = ''; // Content files are in root of content repository
 
 /**
  * Get GitHub token from environment variables
@@ -26,7 +27,7 @@ export async function readContentFile(filename) {
       return null;
     }
 
-    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_DIR}/${filename}`;
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_DIR ? CONTENT_DIR + '/' : ''}${filename}`;
     
     const response = await fetch(url, {
       headers: {
@@ -67,7 +68,7 @@ export async function writeContentFile(filename, data, sha = null) {
       throw new Error('GitHub token required for writing content');
     }
 
-    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_DIR}/${filename}`;
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_DIR ? CONTENT_DIR + '/' : ''}${filename}`;
     
     const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
     

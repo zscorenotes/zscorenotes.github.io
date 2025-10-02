@@ -2,8 +2,9 @@
  * GitHub Image Storage - Free alternative to Vercel Blob for images
  */
 
-const GITHUB_REPO = 'zscorenotes.github.io';
-const GITHUB_OWNER = 'zscorenotes';
+// Content repository configuration - can be overridden with environment variables
+const GITHUB_REPO = process.env.CONTENT_GITHUB_REPO || 'zscore-content';
+const GITHUB_OWNER = process.env.CONTENT_GITHUB_OWNER || 'zscorenotes';
 const CONTENT_BRANCH = 'main';
 
 /**
@@ -42,7 +43,7 @@ export async function uploadImage(file, folder = 'images') {
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2);
     const filename = `${timestamp}-${randomId}.${extension}`;
-    const path = `public/${folder}/${filename}`;
+    const path = `${folder}/${filename}`;
 
     // Convert file to base64 (required by GitHub API)
     const arrayBuffer = await file.arrayBuffer();
@@ -89,8 +90,8 @@ export async function uploadImage(file, folder = 'images') {
 
     const result = await response.json();
     
-    // Use raw GitHub URL for direct file access (more reliable than GitHub Pages)
-    const publicUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/public/${folder}/${filename}`;
+    // Use raw GitHub URL for direct file access from content repository
+    const publicUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/${folder}/${filename}`;
 
     return {
       success: true,
@@ -148,7 +149,7 @@ export async function listFiles(folder = 'images') {
       return [];
     }
 
-    const path = `public/${folder}`;
+    const path = `${folder}`;
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
     
     const response = await fetch(url, {
@@ -173,7 +174,7 @@ export async function listFiles(folder = 'images') {
     return files
       .filter(item => item.type === 'file' && item.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i))
       .map(file => ({
-        url: `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/public/${folder}/${file.name}`,
+        url: `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${CONTENT_BRANCH}/${folder}/${file.name}`,
         pathname: file.name,
         size: file.size,
         uploadedAt: new Date().toISOString(), // GitHub doesn't provide upload time in this API

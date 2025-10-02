@@ -350,19 +350,19 @@ async function deleteImageFromGitHub(imageUrl) {
       return;
     }
 
-    // Extract filename from URL (e.g., https://zscorenotes.github.io/images/filename.jpg)
+    // Extract filename from URL (e.g., https://raw.githubusercontent.com/zscorenotes/zscore-content/main/images/filename.jpg)
     const urlParts = imageUrl.split('/');
     const filename = urlParts.pop();
-    const folder = urlParts.pop();
+    const folder = urlParts.pop(); // Should be 'images'
     
-    if (!filename || !folder) {
+    if (!filename || folder !== 'images') {
       console.warn('Invalid image URL format:', imageUrl);
       return;
     }
 
-    const path = `public/${folder}/${filename}`;
-    const GITHUB_REPO = 'zscorenotes.github.io';
-    const GITHUB_OWNER = 'zscorenotes';
+    const path = `images/${filename}`;
+    const GITHUB_REPO = process.env.CONTENT_GITHUB_REPO || 'zscore-content';
+    const GITHUB_OWNER = process.env.CONTENT_GITHUB_OWNER || 'zscorenotes';
 
     // First, get the file to get its SHA (required for deletion)
     const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;

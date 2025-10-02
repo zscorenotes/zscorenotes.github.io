@@ -14,8 +14,9 @@ if (typeof window === 'undefined') {
   path = require('path');
 }
 
-const GITHUB_REPO = 'zscorenotes.github.io';
-const GITHUB_OWNER = 'zscorenotes';
+// Content repository configuration - can be overridden with environment variables
+const GITHUB_REPO = process.env.CONTENT_GITHUB_REPO || 'zscore-content';
+const GITHUB_OWNER = process.env.CONTENT_GITHUB_OWNER || 'zscorenotes';
 const CONTENT_BRANCH = 'main';
 
 /**
@@ -47,7 +48,7 @@ async function saveHTMLFileLocallyDirect(contentType, itemId, htmlContent) {
   
   return {
     success: true,
-    content_file: `/content-data/content/${contentType}/${filename}`,
+    content_file: `/content/${contentType}/${filename}`,
   };
 }
 
@@ -137,7 +138,7 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
 
     // Create filename for HTML content
     const filename = `${itemId}.html`;
-    const path = `content-data/content/${contentType}/${filename}`;
+    const path = `content/${contentType}/${filename}`;
 
     // Get current file SHA if it exists (required for updates)
     let currentSha = null;
@@ -211,7 +212,7 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
     // Return the path to the HTML file
     return {
       success: true,
-      content_file: `/content-data/content/${contentType}/${filename}`,
+      content_file: `/content/${contentType}/${filename}`,
       sha: result.content.sha,
     };
   } catch (error) {
