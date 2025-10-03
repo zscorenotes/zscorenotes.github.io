@@ -445,7 +445,20 @@ export async function getContentWithHTML(contentType, itemId) {
       
       // If item has a content_file, load the HTML content
       if (item.content_file) {
+        console.log('🔍 Loading HTML content for item:', {
+          itemId,
+          contentType,
+          content_file: item.content_file
+        });
+        
         const htmlContent = await loadHTMLContent(item.content_file);
+        
+        console.log('📄 HTML content loaded:', {
+          itemId,
+          contentLength: htmlContent?.length || 0,
+          hasContent: !!htmlContent
+        });
+        
         return {
           ...item,
           content: htmlContent

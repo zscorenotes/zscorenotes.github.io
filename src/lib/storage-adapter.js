@@ -16,6 +16,18 @@ function shouldUseLocalStorage() {
   // 2. Explicitly in development mode
   const hasGitHubToken = !!process.env.GITHUB_TOKEN;
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const contentRepo = process.env.CONTENT_GITHUB_REPO;
+  const contentOwner = process.env.CONTENT_GITHUB_OWNER;
+  
+  // Debug logging for production issues
+  console.log('🔍 Storage Adapter Debug:', {
+    NODE_ENV: process.env.NODE_ENV,
+    isDevelopment,
+    hasGitHubToken,
+    CONTENT_GITHUB_REPO: contentRepo,
+    CONTENT_GITHUB_OWNER: contentOwner,
+    VERCEL_ENV: process.env.VERCEL_ENV
+  });
   
   // In development, prefer local storage even if GitHub token exists
   if (isDevelopment) {
@@ -26,6 +38,14 @@ function shouldUseLocalStorage() {
   // In production, use GitHub if token is available
   if (!hasGitHubToken) {
     console.log('📁 Using local file storage (no GitHub token)');
+    console.error('❌ GITHUB_TOKEN not found in environment variables');
+    return true;
+  }
+  
+  // Check if content repository variables are set
+  if (!contentRepo || !contentOwner) {
+    console.log('📁 Using local file storage (missing content repo config)');
+    console.error('❌ CONTENT_GITHUB_REPO or CONTENT_GITHUB_OWNER not set');
     return true;
   }
   

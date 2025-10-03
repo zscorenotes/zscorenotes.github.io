@@ -23,11 +23,19 @@ export async function readContentFile(filename) {
   try {
     const token = getGitHubToken();
     if (!token) {
-      console.warn('No GitHub token found, using empty content');
+      console.error('❌ No GitHub token found for content loading');
       return null;
     }
 
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${CONTENT_DIR ? CONTENT_DIR + '/' : ''}${filename}`;
+    
+    console.log('🔍 GitHub API Request:', {
+      url,
+      repo: GITHUB_REPO,
+      owner: GITHUB_OWNER,
+      filename,
+      hasToken: !!token
+    });
     
     const response = await fetch(url, {
       headers: {
@@ -37,12 +45,19 @@ export async function readContentFile(filename) {
     });
 
     if (response.status === 404) {
-      // File doesn't exist yet
+      console.warn(`📄 File not found: ${filename} in ${GITHUB_OWNER}/${GITHUB_REPO}`);
       return null;
     }
 
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ GitHub API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        error: errorText
+      });
+      throw new Error(`GitHub API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();

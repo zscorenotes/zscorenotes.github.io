@@ -231,6 +231,8 @@ export async function saveHTMLContent(contentType, itemId, htmlContent) {
  */
 export async function loadHTMLContent(contentFilePath) {
   try {
+    console.log('🔍 Loading HTML content:', contentFilePath);
+    
     // Check if we're on client side - if so, return empty
     if (typeof window !== 'undefined') {
       console.warn('⚠️ Cannot load HTML content: Running on client side');
@@ -252,15 +254,31 @@ export async function loadHTMLContent(contentFilePath) {
       console.log('🌐 Loading from raw GitHub URL:', contentFilePath);
       const response = await fetch(contentFilePath);
       
+      console.log('📡 Raw GitHub fetch response:', {
+        url: contentFilePath,
+        status: response.status,
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+      
       if (!response.ok) {
         if (response.status === 404) {
           console.warn('HTML content file not found at URL:', contentFilePath);
           return '';
         }
-        throw new Error(`HTTP error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ Raw GitHub fetch error:', errorText);
+        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
       }
       
-      return await response.text();
+      const htmlContent = await response.text();
+      console.log('✅ Successfully loaded HTML content:', {
+        url: contentFilePath,
+        contentLength: htmlContent.length,
+        preview: htmlContent.substring(0, 100) + '...'
+      });
+      
+      return htmlContent;
     }
     
     // Fallback: Use GitHub API for older local-style paths in production
