@@ -126,7 +126,7 @@ export default function ModernContact() {
       </section>
     );
   }
-
+ 
   // Otherwise, show the contact form.
   return (
     <section id="contact" ref={sectionRef} className="py-20 md:py-32 relative overflow-hidden bg-black text-white">
