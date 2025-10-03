@@ -250,9 +250,13 @@ export async function loadHTMLContent(contentFilePath) {
     
     // For production or GitHub URLs, fetch from GitHub
     if (isGitHubURL) {
+      // Add cache busting for fresh content (GitHub raw files cache for 5 minutes)
+      const cacheBuster = `?v=${Date.now()}`;
+      const urlWithCacheBuster = `${contentFilePath}${cacheBuster}`;
+      
       // Direct fetch from raw GitHub URL
-      console.log('🌐 Loading from raw GitHub URL:', contentFilePath);
-      const response = await fetch(contentFilePath);
+      console.log('🌐 Loading from raw GitHub URL (with cache buster):', urlWithCacheBuster);
+      const response = await fetch(urlWithCacheBuster);
       
       console.log('📡 Raw GitHub fetch response:', {
         url: contentFilePath,
