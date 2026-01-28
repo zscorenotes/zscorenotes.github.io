@@ -34,18 +34,16 @@ export default function ModernHero() {
     <section id="home" ref={heroRef} className="relative min-h-screen flex items-center bg-black text-white overflow-hidden">
       <div className="max-w-7xl w-full mx-auto px-6 md:px-12 py-20">
         <div className="fade-in-left stagger-1">
-          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black leading-tight tracking-tighter">
-            Music<br />
-            Engraving for<br />
-            Composers<br />
-            <span className="font-light italic">&</span> Publishers
+          <h1 className="text-xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black leading-tight tracking-tighter">
+           Editorial engraving for contemporary music at publication level
           </h1>
         </div>
         
         <div className="fade-in-left stagger-2 mt-12 max-w-3xl">
           <p className="text-xl md:text-2xl font-light leading-relaxed text-gray-300">
-            ZSCORE is a composer-led studio specializing in score engraving, 
-            audio programming, and software engineering for contemporary music and performance.
+            Engraving<br></br>
+            Editorial Control<br></br>
+            Notation Systems<br></br>
           </p>
         </div>
         
@@ -57,12 +55,12 @@ export default function ModernHero() {
             START PROJECT
           </button>
           
-          <button 
-            onClick={() => document.getElementById('portfolio').scrollIntoView({behavior: 'smooth'})}
-            className="border border-white px-10 py-4 hover:bg-white hover:text-black transition-all duration-300 tracking-wider"
+          <a
+            href="/portfolio"
+            className="border border-white px-10 py-4 hover:bg-white hover:text-black transition-all duration-300 tracking-wider inline-block"
           >
-            VIEW WORK
-          </button>
+            selected work
+          </a>
         </div>
       </div>
     </section>

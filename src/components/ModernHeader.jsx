@@ -23,10 +23,10 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
 
   const sections = [
     { id: "home", label: "Home" },
-    { id: "services", label: "Services" },
-    { id: "portfolio", label: "Portfolio" },
-    { id: "feed", label: "Feed" },
-    { id: "about", label: "About" },
+    // { id: "services", label: "Services" },
+    // { id: "portfolio", label: "Portfolio" },
+    // { id: "feed", label: "Feed" },
+    // { id: "about", label: "About" },
     { id: "contact", label: "Contact" }
   ];
 
@@ -151,9 +151,9 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
         </div>
         
         <div className="fade-in-up stagger-2 relative z-20">
-          <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-[0.3em] mb-8">
+          {/* <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-[0.3em] mb-8">
             THE ART OF MUSIC NOTATION
-          </h2>
+          </h2> */}
         </div>
         
         <div className="fade-in-up stagger-3 flex items-center mb-16 relative z-20">
@@ -163,20 +163,17 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
         
         {/* Scroll Down Indicator */}
         <div className="fade-in-up stagger-4 absolute bottom-20 inset-x-0 flex justify-center z-20">
-          <div className="flex flex-col items-center space-y-4">
-            <span className="text-sm tracking-wider">SCROLL TO EXPLORE</span>
-            <svg 
-              className="w-6 h-16 animate-pulse" 
-              viewBox="0 0 10.18 30.02" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect x="2.48" y=".38" width=".62" height="25.11" fill="currentColor"/>
-              <g>
-                <path d="M5.95,25.28l-2.98,4.74-2.98-4.74h5.95Z" fill="currentColor"/>
-                <path d="M10.18,5L2.77,2.46v2.88h-.29V0h.41l7.29,2.46v2.54Z" fill="currentColor"/>
-              </g>
-            </svg>
-          </div>
+          <svg
+            className="w-6 h-16 animate-pulse"
+            viewBox="0 0 10.18 30.02"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="2.48" y=".38" width=".62" height="25.11" fill="currentColor"/>
+            <g>
+              <path d="M5.95,25.28l-2.98,4.74-2.98-4.74h5.95Z" fill="currentColor"/>
+              <path d="M10.18,5L2.77,2.46v2.88h-.29V0h.41l7.29,2.46v2.54Z" fill="currentColor"/>
+            </g>
+          </svg>
         </div>
       </header>
 

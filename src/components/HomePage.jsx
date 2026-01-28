@@ -42,10 +42,10 @@ export default function HomePage({ initialContent, initialCategories }) {
   // Defines the sections of the single-page application for navigation and observation
   const sections = [
     { id: "home", label: "Home" },
-    { id: "services", label: "Services" },
-    { id: "portfolio", label: "Portfolio" },
-    { id: "feed", label: "Feed" },
-    { id: "about", label: "About" },
+    // { id: "services", label: "Services" },
+    // { id: "portfolio", label: "Portfolio" },
+    // { id: "feed", label: "Feed" },
+    // { id: "about", label: "About" },
     { id: "contact", label: "Contact" }
   ];
 
@@ -352,15 +352,17 @@ export default function HomePage({ initialContent, initialCategories }) {
 
       {/* All subsequent content sections of the page */}
       <div className="relative z-10">
+        {/* Hidden sections - uncomment to restore
         <ModernServices key={`services-${contentRefreshKey}`} initialServices={initialContent?.services} initialCategories={initialCategories} />
         <ModernPortfolio key={`portfolio-${contentRefreshKey}`} initialPortfolio={initialContent?.portfolio} initialCategories={initialCategories} />
         <ModernNews key={`news-${contentRefreshKey}`} initialNews={initialContent?.news} initialCategories={initialCategories} />
         <ModernAbout key={`about-${contentRefreshKey}`} />
+        */}
         <ModernContact key={`contact-${contentRefreshKey}`} />
       </div>
       
       {/* Footer section at the bottom of the page */}
-      <footer className="py-16 border-t border-black/10 text-center relative">
+      <footer className="py-16 border-t border-black/10 text-center relative z-50 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="mb-8">
             <h3 className="text-2xl font-black mb-2">
@@ -371,7 +373,7 @@ export default function HomePage({ initialContent, initialCategories }) {
           </div>
           
           <div className="flex justify-center space-x-8 text-sm text-gray-600 font-sans">
-            <span>&copy; 2025 ZSCORE.studio</span>
+            <span>&copy; 2026 ZSCORE.studio</span>
             <span>Professional Music Engraving</span>
             <span>Built with ♡ by a Composer</span>
           </div>

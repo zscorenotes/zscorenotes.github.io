@@ -129,7 +129,7 @@ export default function ModernContact() {
  
   // Otherwise, show the contact form.
   return (
-    <section id="contact" ref={sectionRef} className="py-20 md:py-32 relative overflow-hidden bg-black text-white">
+    <section id="contact" ref={sectionRef} className="min-h-screen flex flex-col justify-center relative overflow-hidden bg-black text-white">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -138,19 +138,11 @@ export default function ModernContact() {
               Start Your Project
             </h2>
           </div>
-          <div className="fade-in-up stagger-2">
-            <p className="text-xl font-light text-gray-300 max-w-3xl mx-auto">
-              Ready to bring your piece to life? Let's discuss your project requirements.
-            </p>
-            <p className="pt-4 text-l font-light text-gray-400 max-w-3xl mx-auto">
-              Manuscript prepration → Engraving → Proofreading → Quality Checks → Post productions → Delivery
-            </p>
-          </div>
         </div>
 
         {/* Direct Contact Info */}
-        <div className="mb-16 fade-in-up stagger-3">
-          <div className="border border-gray-700 p-8 text-center">
+        <div className="fade-in-up stagger-2">
+          <div className="border border-gray-700 p-8 text-center max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold mb-4">Direct Contact</h3>
             <p className="text-gray-400 mb-6 max-w-lg mx-auto">
               For any inquiries, detailed discussions, or to send files directly, please reach out via email.
@@ -163,9 +155,9 @@ export default function ModernContact() {
             </div>
           </div>
         </div>
-        
-        <div className="grid lg:grid-cols-12 gap-12">
-          {/* Inquiry Form */}
+
+        {/* Hidden sections - uncomment to restore
+        <div className="grid lg:grid-cols-12 gap-12 mt-16">
           <div className="lg:col-span-8">
             <div className="fade-in-left stagger-4 p-8 border border-gray-700">
                <h3 className="text-2xl font-bold mb-6">Or, Send an Inquiry</h3>
@@ -286,8 +278,7 @@ export default function ModernContact() {
               </form>
             </div>
           </div>
-          
-          {/* Project Process Steps */}
+
           <div className="lg:col-span-4">
             <div className="fade-in-right stagger-5 space-y-8">
               <div className="border border-gray-700 p-8">
@@ -314,6 +305,15 @@ export default function ModernContact() {
             </div>
           </div>
         </div>
+        */}
+      </div>
+
+      {/* Trusted By - positioned at bottom of section */}
+      <div className="absolute bottom-8 left-0 right-0 text-center fade-in-up stagger-3 px-6">
+        <p className="text-xs text-gray-600 uppercase tracking-widest mb-2 font-mono">Trusted by</p>
+        <p className="text-xs text-gray-600 font-mono">
+          SWR Symphonieorchester ● WDR Sinfonieorchester ● Ostrava Center for New Music ● Ensemble Mosaik ● Mozarteum Universität
+        </p>
       </div>
     </section>
   );
