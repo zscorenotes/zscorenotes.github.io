@@ -343,7 +343,7 @@ export default function HomePage({ initialContent, initialCategories }) {
         
         {/* The first content section after the header */}
         <ModernHero key={`hero-${contentRefreshKey}`} />
-      </div>
+      </div>  
       
       {/* This is an invisible, tall div that provides the scrollable height 
           needed to drive the SvgScrollAnimation. The animation plays as the
