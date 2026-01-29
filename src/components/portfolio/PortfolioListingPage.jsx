@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
+import Footer from '@/components/shared/Footer';
 
 /**
  * Standalone Portfolio Listing Page
@@ -198,37 +199,12 @@ export default function PortfolioListingPage({ initialPortfolio = [], initialCat
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight mb-8">
             Portfolio
           </h1>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <p className="text-lg md:text-xl font-light text-gray-300 max-w-xl">
-              A curated collection of professional music engraving, orchestration, and audio programming projects.
-            </p>
-            <p className="text-3xl md:text-4xl font-bold text-gray-500 font-mono">
-              {filteredPortfolio.length} <span className="text-lg font-normal">projects</span>
-            </p>
-          </div>
+          <p className="text-lg md:text-xl font-light text-gray-300 max-w-xl">
+            A curated collection of music engraving.
+          </p>
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="sticky top-20 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200/50 py-4">
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap gap-3">
-            {filters.map((filter) => (
-              <button
-                key={filter.id}
-                onClick={() => handleFilterChange(filter.id)}
-                className={`px-5 py-2 text-sm tracking-wider transition-all duration-300 ${
-                  activeFilter === filter.id
-                    ? "bg-black text-white"
-                    : "border border-gray-300 hover:border-black hover:bg-black hover:text-white"
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Portfolio Grid */}
       <section className="py-16 md:py-24">
@@ -296,26 +272,8 @@ export default function PortfolioListingPage({ initialPortfolio = [], initialCat
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 bg-white border-t border-gray-200/50">
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-            <div>
-              <h3 className="text-2xl font-black mb-2">
-                <span className="font-normal">ZSCORE</span>
-                <span className="font-extralight">.studio</span>
-              </h3>
-              <p className="text-gray-500 text-sm">
-                The Art of Music Notation
-              </p>
-            </div>
-
-            <div className="text-sm text-gray-400">
-              <p>&copy; 2025 ZSCORE.studio</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Shared Footer */}
+      <Footer />
     </div>
   );
 }

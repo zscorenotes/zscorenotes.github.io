@@ -1,35 +1,45 @@
-'use client';
+/**
+ * News Listing Page
+ * Displays all news articles with filtering
+ */
 
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-import NewsDetail from '../../components/news/NewsDetail';
+import { getAllContent } from '@/lib/content-manager-clean';
+import NewsListingPage from '@/components/news/NewsListingPage';
 
-function NewsContent() {
-  const searchParams = useSearchParams();
-  const newsId = searchParams.get('id');
-  
-  if (!newsId) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">News Article Not Found</h1>
-          <p className="text-gray-600">Please select a news article to view.</p>
-        </div>
-      </div>
-    );
+/**
+ * Generate metadata for SEO
+ */
+export const metadata = {
+  title: 'Feed | ZSCORE.studio',
+  description: 'Latest developments in music technology, project updates, and industry insights from ZSCORE.studio.',
+  openGraph: {
+    title: 'Feed | ZSCORE.studio',
+    description: 'Latest developments in music technology, project updates, and industry insights.',
+    type: 'website',
+  },
+};
+
+/**
+ * News Listing Page Component
+ */
+export default async function NewsPage() {
+  let news = [];
+  let categories = null;
+
+  try {
+    const allContent = await getAllContent();
+    news = allContent.news || [];
+    categories = allContent.categories || null;
+
+    // Sort by publication_date descending
+    news = news.sort((a, b) => {
+      const dateA = new Date(a.publication_date || a.created_at || 0);
+      const dateB = new Date(b.publication_date || b.created_at || 0);
+      return dateB - dateA;
+    });
+  } catch (error) {
+    console.error('Error loading news:', error);
   }
-  
-  return (
-    <div className="min-h-screen bg-white">
-      <NewsDetail newsId={newsId} />
-    </div>
-  );
-}
 
-export default function NewsPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
-      <NewsContent />
-    </Suspense>
-  );
+  return <NewsListingPage initialNews={news} initialCategories={categories} />;
 }

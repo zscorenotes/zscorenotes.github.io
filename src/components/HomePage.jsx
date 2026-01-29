@@ -15,6 +15,7 @@ import MetaManager from './seo/MetaManager';
 import AdminPanel from './AdminPanel';
 import { Toaster } from "./ui/toaster";
 import { Settings, Eye, Edit } from "lucide-react";
+import Footer from './shared/Footer';
 
 /**
  * The main landing page for the ZSCORE application.
@@ -362,23 +363,7 @@ export default function HomePage({ initialContent, initialCategories }) {
       </div>
       
       {/* Footer section at the bottom of the page */}
-      <footer className="py-16 border-t border-black/10 text-center relative z-50 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-8">
-            <h3 className="text-2xl font-black mb-2">
-              <span className="font-normal">ZSCORE</span>
-              <span className="font-extralight">.studio</span>
-            </h3>
-            <p className="text-gray-600 font-sans">The Art of Music Notation</p>
-          </div>
-          
-          <div className="flex justify-center space-x-8 text-sm text-gray-600 font-sans">
-            <span>&copy; 2026 ZSCORE.studio</span>
-            <span>Professional Music Engraving</span>
-            <span>Built with ♡ by composers</span>
-          </div>
-        </div>
-      </footer>
+      <Footer className="relative z-50" />
       
       <Toaster />
     </div>
