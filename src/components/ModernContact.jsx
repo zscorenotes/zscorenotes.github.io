@@ -312,7 +312,7 @@ export default function ModernContact() {
       <div className="absolute bottom-8 left-0 right-0 text-center fade-in-up stagger-3 px-6">
         <p className="text-xs text-gray-600 uppercase tracking-widest mb-2 font-mono">Trusted by</p>
         <p className="text-xs text-gray-600 font-mono">
-          SWR Symphonieorchester ● WDR Sinfonieorchester ● Ostrava Center for New Music ● Ensemble Mosaik ● Mozarteum Universität
+          SWR Symphonieorchester ● WDR Sinfonieorchester ● Basel Sinfonietta ● Ostrava Center for New Music ● Ensemble Mosaik ● Mozarteum Universität
         </p>
       </div>
     </section>
