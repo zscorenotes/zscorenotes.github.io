@@ -54,20 +54,20 @@ export async function GET() {
     <priority>0.6</priority>
   </url>
   
-  <!-- News/Feed pages -->
+  <!-- Projects pages -->
   <url>
-    <loc>${baseUrl}/news</loc>
+    <loc>${baseUrl}/projects</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
-  ${(allContent.news || []).map(newsItem => {
+  ${(allContent.projects || []).map(newsItem => {
     const slug = newsItem.slug || newsItem.id || newsItem.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'news-item';
     const lastmod = newsItem.updated_at || newsItem.created_at || new Date().toISOString();
     
     return `  <url>
-    <loc>${baseUrl}/news/${slug}</loc>
+    <loc>${baseUrl}/projects/${slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

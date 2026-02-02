@@ -105,7 +105,7 @@ async function writeLocalContent(filename, data) {
 export async function getAllContent() {
   if (shouldUseLocalStorage()) {
     // Load from local files
-    const contentTypes = ['news', 'services', 'portfolio', 'about', 'settings', 'categories'];
+    const contentTypes = ['projects', 'services', 'portfolio', 'about', 'settings', 'categories'];
     const content = {};
     
     for (const contentType of contentTypes) {
@@ -116,13 +116,13 @@ export async function getAllContent() {
         content[contentType] = data;
       } else {
         // Provide empty defaults
-        if (['news', 'services', 'portfolio'].includes(contentType)) {
+        if (['projects', 'services', 'portfolio'].includes(contentType)) {
           content[contentType] = [];
         } else if (contentType === 'categories') {
           content[contentType] = {
             services: [],
             portfolio: [],
-            news: [],
+            projects: [],
             updated_at: new Date().toISOString()
           };
         } else {

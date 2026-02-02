@@ -356,7 +356,7 @@ export default function HomePage({ initialContent, initialCategories }) {
         {/* Hidden sections - uncomment to restore
         <ModernServices key={`services-${contentRefreshKey}`} initialServices={initialContent?.services} initialCategories={initialCategories} />
         <ModernPortfolio key={`portfolio-${contentRefreshKey}`} initialPortfolio={initialContent?.portfolio} initialCategories={initialCategories} />
-        <ModernNews key={`news-${contentRefreshKey}`} initialNews={initialContent?.news} initialCategories={initialCategories} />
+        <ModernNews key={`news-${contentRefreshKey}`} initialNews={initialContent?.projects} initialCategories={initialCategories} />
         <ModernAbout key={`about-${contentRefreshKey}`} />
         */}
         <ModernContact key={`contact-${contentRefreshKey}`} />

@@ -47,7 +47,7 @@ function ModernNews({ initialNews = [], initialCategories = null }) {
     
     const handleContentUpdate = (event) => {
       const { contentType } = event.detail;
-      if (contentType === 'news') {
+      if (contentType === 'projects') {
         console.log('News content updated, reloading...');
         loadNews();
       }
@@ -84,10 +84,10 @@ function ModernNews({ initialNews = [], initialCategories = null }) {
 
       // Load dynamic categories from site settings
       const siteSettings = contentData.settings || {};
-      if (siteSettings.categories?.news_categories) {
+      if (siteSettings.categories?.projects_categories) {
         const dynamicCategories = [
           { id: "all", label: "All Updates" },
-          ...siteSettings.categories.news_categories
+          ...siteSettings.categories.projects_categories
         ];
         setCategories(dynamicCategories);
       }
@@ -166,7 +166,7 @@ function ModernNews({ initialNews = [], initialCategories = null }) {
   };
 
   const getCategoryColor = (category) => {
-    return getCategoryColorSSR(category, 'news', initialCategories);
+    return getCategoryColorSSR(category, 'projects', initialCategories);
   };
 
   return (

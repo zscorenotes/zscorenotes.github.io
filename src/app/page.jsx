@@ -46,7 +46,7 @@ export default async function Page() {
     );
     
     // Sort news by publication_date descending (newest first)
-    const sortedNews = (allContent.news || []).sort((a, b) => {
+    const sortedNews = (allContent.projects || []).sort((a, b) => {
       const dateA = new Date(a.publication_date || a.created_at || 0);
       const dateB = new Date(b.publication_date || b.created_at || 0);
       return dateB - dateA; // Newest first
@@ -55,7 +55,7 @@ export default async function Page() {
     initialContent = {
       services: servicesWithHTML,
       portfolio: portfolioWithHTML, 
-      news: sortedNews,
+      projects: sortedNews,
       about: allContent.about || {},
       settings: allContent.settings || {}
     };

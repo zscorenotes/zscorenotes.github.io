@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { format } from "date-fns";
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
-import { 
-  BackToFeedButton, 
-  BackToBreadcrumb, 
-  ImageGallery, 
-  ClickableImage, 
-  TitleUpdater 
-} from './NewsDetailClient';
+import Footer from '@/components/shared/Footer';
+import {
+  BackToFeedButton,
+  BackToBreadcrumb,
+  ImageGallery,
+  ClickableImage,
+  TitleUpdater
+} from './ProjectDetailClient';
 
 /**
  * Server-side News Detail Component
@@ -19,7 +20,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
   }
 
   const getCategoryColor = (category) => {
-    return getCategoryColorSSR(category, 'news', null);
+    return getCategoryColorSSR(category, 'projects', null);
   };
 
   return (
@@ -90,11 +91,6 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                   <span className={`px-3 py-1 text-xs font-medium tracking-wider uppercase ${getCategoryColor(newsItem.category)}`}>
                     {newsItem.category.replace('_', ' ')}
                   </span>
-                  {newsItem.featured && (
-                    <span className="px-3 py-1 bg-black text-white text-xs font-medium tracking-wider uppercase">
-                      Featured
-                    </span>
-                  )}
                 </div>
 
                 {/* Publication Date */}
@@ -175,7 +171,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                 {/* Article Meta */}
                 <div className="bg-gray-50 p-6 mb-8">
                   <h3 className="font-bold text-sm tracking-wider uppercase text-gray-900 mb-4">
-                    Article Information
+                    Project Information
                   </h3>
                   <dl className="space-y-3">
                     <div>
@@ -195,7 +191,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                         <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</dt>
                         <dd className="flex flex-wrap gap-1 mt-2">
                           {newsItem.tags.slice(0, 5).map((tag, index) => (
-                            <span 
+                            <span
                               key={index}
                               className="inline-block px-2 py-1 text-xs bg-white text-gray-700 border border-gray-200"
                             >
@@ -203,6 +199,30 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                             </span>
                           ))}
                         </dd>
+                      </div>
+                    )}
+                    {newsItem.field_visibility?.composer && newsItem.composer && (
+                      <div>
+                        <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Composer</dt>
+                        <dd className="text-sm text-gray-900 font-medium">{newsItem.composer}</dd>
+                      </div>
+                    )}
+                    {newsItem.field_visibility?.client && newsItem.client && (
+                      <div>
+                        <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Client</dt>
+                        <dd className="text-sm text-gray-900 font-medium">{newsItem.client}</dd>
+                      </div>
+                    )}
+                    {newsItem.field_visibility?.instrumentation && newsItem.instrumentation && (
+                      <div>
+                        <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Instrumentation</dt>
+                        <dd className="text-sm text-gray-900 font-medium">{newsItem.instrumentation}</dd>
+                      </div>
+                    )}
+                    {newsItem.field_visibility?.publisher && newsItem.publisher && (
+                      <div>
+                        <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Publisher</dt>
+                        <dd className="text-sm text-gray-900 font-medium">{newsItem.publisher}</dd>
                       </div>
                     )}
                   </dl>
@@ -232,13 +252,13 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                 {relatedPosts.length > 0 && (
                   <div>
                     <h3 className="font-bold text-sm tracking-wider uppercase text-gray-900 mb-4">
-                      Related Articles
+                      Related Projects
                     </h3>
                     <div className="space-y-4">
                       {relatedPosts.map((post, index) => (
                         <Link 
                           key={index}
-                          href={`/news/${post.slug || post.id}`}
+                          href={`/projects/${post.slug || post.id}`}
                           className="block group"
                         >
                           <div className="flex gap-3">
@@ -267,6 +287,8 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
             </div>
           </div>
         </main>
+
+        <Footer />
       </div>
     </ImageGallery>
   );

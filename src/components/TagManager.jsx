@@ -75,12 +75,12 @@ export default function TagManager({ onClose, sectionType }) {
         { id: 'music_production', name: 'Music Production', displayName: 'Music Production', color: 'bg-pink-100 text-pink-800', type: 'portfolio' },
         { id: 'audio_editing', name: 'Audio Editing', displayName: 'Audio Editing', color: 'bg-teal-100 text-teal-800', type: 'portfolio' },
       ];
-    } else if (type === 'news') {
+    } else if (type === 'projects') {
       return [
-        { id: 'announcement', name: 'announcement', displayName: 'Announcement', color: 'bg-blue-100 text-blue-800', type: 'news' },
-        { id: 'project_update', name: 'project_update', displayName: 'Project Update', color: 'bg-green-100 text-green-800', type: 'news' },
-        { id: 'technology', name: 'technology', displayName: 'Technology', color: 'bg-purple-100 text-purple-800', type: 'news' },
-        { id: 'industry_news', name: 'industry_news', displayName: 'Industry News', color: 'bg-orange-100 text-orange-800', type: 'news' },
+        { id: 'announcement', name: 'announcement', displayName: 'Announcement', color: 'bg-blue-100 text-blue-800', type: 'projects' },
+        { id: 'project_update', name: 'project_update', displayName: 'Project Update', color: 'bg-green-100 text-green-800', type: 'projects' },
+        { id: 'technology', name: 'technology', displayName: 'Technology', color: 'bg-purple-100 text-purple-800', type: 'projects' },
+        { id: 'industry_news', name: 'industry_news', displayName: 'Industry News', color: 'bg-orange-100 text-orange-800', type: 'projects' },
       ];
     }
     return [];
@@ -140,14 +140,14 @@ export default function TagManager({ onClose, sectionType }) {
   const getSectionTitle = () => {
     if (sectionType === 'services') return 'Service Categories';
     if (sectionType === 'portfolio') return 'Portfolio Project Types';
-    if (sectionType === 'news') return 'News Categories';
+    if (sectionType === 'projects') return 'Project Categories';
     return 'Tags';
   };
 
   const getFieldLabel = () => {
     if (sectionType === 'services') return 'Category';
     if (sectionType === 'portfolio') return 'Project Type';
-    if (sectionType === 'news') return 'Category';
+    if (sectionType === 'projects') return 'Category';
     return 'Tag';
   };
 

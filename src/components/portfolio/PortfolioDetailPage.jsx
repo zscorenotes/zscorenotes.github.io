@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import * as ContentManager from '@/lib/content-manager-clean';
-import ReactMarkdown from 'react-markdown';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, ChevronLeft, ChevronRight, X, Calendar, User, Layers, Music } from 'lucide-react';
-import { format } from "date-fns";
-import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
+import { ArrowLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Footer from '@/components/shared/Footer';
 
 /**
  * A reusable Lightbox component for displaying images in a full-screen overlay.
@@ -109,11 +107,11 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
   });
   const [showInlineGallery, setShowInlineGallery] = useState(false);
 
-  // Handler to navigate back to portfolio section
+  // Handler to navigate back to portfolio listing
   const handleBackToPortfolio = useCallback((e) => {
     e.preventDefault();
-    window.location.href = '/#portfolio';
-  }, []);
+    router.push('/portfolio');
+  }, [router]);
 
   // Memoize loadPortfolioItem to prevent it from being recreated on every render
   const loadPortfolioItem = useCallback(async () => {
@@ -174,14 +172,6 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
     };
   }, [portfolioItem]);
 
-  const getCategoryColor = (category) => {
-    return getCategoryColorSSR(category, 'portfolio', null);
-  };
-
-  const getProjectTypeColor = (projectType) => {
-    return getCategoryColorSSR(projectType, 'portfolio', null);
-  };
-
   const openLightbox = useCallback((startIndex = 0) => {
     if (!portfolioItem) return;
 
@@ -226,17 +216,14 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
     setLightboxState({ isOpen: false, images: [], startIndex: 0 });
   };
 
-  // Get related projects (same project type, excluding current, limit to 3)
-  const relatedProjects = allPortfolio
+  // Get other portfolio items (excluding current)
+  const otherItems = allPortfolio
     .filter(item => {
-      const isCurrentItem = portfolioSlug 
+      const isCurrentItem = portfolioSlug
         ? (item.slug === portfolioSlug || item.id === portfolioSlug)
         : item.id === portfolioId;
-      return !isCurrentItem && item.project_type?.some(type => 
-        portfolioItem?.project_type?.includes(type)
-      );
-    })
-    .slice(0, 3);
+      return !isCurrentItem;
+    });
 
   if (isLoading) {
     return (
@@ -321,79 +308,14 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
             
             {/* Left: Project Information */}
             <div className="lg:col-span-5 order-1 lg:order-1">
-              {/* Year & Project Types - Top */}
-              <div className="flex flex-wrap items-center gap-4 mb-8">
-                {portfolioItem.year && (
-                  <span className="text-2xl font-bold text-gray-400">
-                    {portfolioItem.year}
-                  </span>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  {portfolioItem.project_type?.map((type, index) => (
-                    <span 
-                      key={index}
-                      className={`px-3 py-1 text-xs font-bold tracking-widest uppercase border ${getProjectTypeColor(type)}`}
-                    >
-                      {type.replace('_', ' ')}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Title - Positioned Differently */}
+              {/* Title */}
               <h1 className="text-5xl lg:text-7xl xl:text-8xl font-black mb-8 leading-none tracking-tighter">
                 <span className="block bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
                   {portfolioItem.title}
                 </span>
               </h1>
 
-              {/* Key Details in Cards */}
-              <div className="grid grid-cols-1 gap-4 mb-8">
-                {portfolioItem.composer && (
-                  <div className="bg-white/80 backdrop-blur-sm p-4 border border-gray-200/50 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 flex items-center justify-center">
-                        {/* Simple filled half note - no animation for contrast with services */}
-                        <svg 
-                          className="w-5 h-4 text-gray-600" 
-                          viewBox="0 0 28.61 23.47" 
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M28.61,8.26c0,9.04-11.13,15.21-18.87,15.21-4.96,0-9.74-3.3-9.74-8.26C0,6.26,11.12,0,18.87,0c5.57,0,9.74,3.22,9.74,8.26Z" fill="currentColor"/>
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Composer</span>
-                        <span className="text-lg font-medium text-gray-900">{portfolioItem.composer}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {portfolioItem.client && (
-                  <div className="bg-white/80 backdrop-blur-sm p-4 border border-gray-200/50 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <User size={18} className="text-gray-600" />
-                      <div>
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Client</span>
-                        <span className="text-lg font-medium text-gray-900">{portfolioItem.client}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {portfolioItem.instrumentation && (
-                  <div className="bg-white/80 backdrop-blur-sm p-4 border border-gray-200/50 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <Layers size={18} className="text-gray-600" />
-                      <div>
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Instrumentation</span>
-                        <span className="text-lg font-medium text-gray-900">{portfolioItem.instrumentation}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Description Last */}
+              {/* Description */}
               {portfolioItem.description && (
                 <p className="text-xl text-gray-700 leading-relaxed font-light border-l-4 border-black pl-6">
                   {portfolioItem.description}
@@ -594,88 +516,39 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
             </div>
           </div>
 
-          {/* Artistic Sidebar */}
+          {/* Sidebar */}
           <div className="lg:col-span-4">
             <div className="sticky top-32">
-              {/* Project Meta - More Artistic */}
-              <div className="bg-gradient-to-br from-gray-50 to-white p-8 mb-10 border border-gray-200/50 shadow-sm">
-                <h3 className="font-black text-lg tracking-wider uppercase text-gray-900 mb-6">
-                  Project Details
-                </h3>
-                <dl className="space-y-6">
-                  <div>
-                    <dt className="text-sm font-bold text-gray-500 uppercase tracking-wider">Year</dt>
-                    <dd className="text-lg text-gray-900 font-medium">
-                      {portfolioItem.year}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-bold text-gray-500 uppercase tracking-wider">Category</dt>
-                    <dd className="text-lg text-gray-900 font-medium">
-                      {portfolioItem.category?.replace('_', ' ')}
-                    </dd>
-                  </div>
-                  {portfolioItem.project_type && portfolioItem.project_type.length > 0 && (
-                    <div>
-                      <dt className="text-sm font-bold text-gray-500 uppercase tracking-wider">Project Types</dt>
-                      <dd className="flex flex-wrap gap-2 mt-3">
-                        {portfolioItem.project_type.map((type, index) => (
-                          <span 
-                            key={index}
-                            className={`inline-block px-3 py-2 text-sm border font-medium ${getProjectTypeColor(type)}`}
-                          >
-                            {type.replace('_', ' ')}
-                          </span>
-                        ))}
-                      </dd>
-                    </div>
-                  )}
-                  {portfolioItem.technologies && portfolioItem.technologies.length > 0 && (
-                    <div>
-                      <dt className="text-sm font-bold text-gray-500 uppercase tracking-wider">Technologies</dt>
-                      <dd className="flex flex-wrap gap-2 mt-3">
-                        {portfolioItem.technologies.map((tech, index) => (
-                          <span 
-                            key={index}
-                            className="inline-block px-3 py-2 text-sm bg-gray-200 text-gray-800 border border-gray-300"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              </div>
-
-              {/* Related Projects */}
-              {relatedProjects.length > 0 && (
+              {/* Other Portfolio Categories */}
+              {otherItems.length > 0 && (
                 <div>
                   <h3 className="font-black text-lg tracking-wider uppercase text-gray-900 mb-6">
-                    Related Projects
+                    Explore More
                   </h3>
                   <div className="space-y-6">
-                    {relatedProjects.map((project, index) => (
-                      <Link 
+                    {otherItems.map((item, index) => (
+                      <Link
                         key={index}
-                        href={`/portfolio/${project.slug || project.id}`}
+                        href={`/portfolio/${item.slug || item.id}`}
                         className="block group"
                       >
                         <div className="flex gap-4">
-                          {project.image_urls && project.image_urls[0] && (
-                            <img 
-                              src={project.image_urls[0]} 
-                              alt={project.title}
+                          {item.image_urls && item.image_urls[0] && (
+                            <img
+                              src={item.image_urls[0]}
+                              alt={item.title}
                               className="w-20 h-20 object-cover flex-shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-md"
                             />
                           )}
                           <div className="flex-1 min-w-0">
                             <h4 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-black transition-colors">
-                              {project.title}
+                              {item.title}
                             </h4>
-                            <p className="text-sm text-gray-500 mt-2">
-                              {project.year} • {project.client}
-                            </p>
+                            {item.description && (
+                              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                                {item.description}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </Link>
@@ -687,6 +560,8 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
           </div>
         </div>
       </main>
+
+      <Footer />
 
       {/* Lightbox */}
       {lightboxState.isOpen && (

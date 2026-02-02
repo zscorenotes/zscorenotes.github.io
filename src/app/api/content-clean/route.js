@@ -5,7 +5,7 @@ import * as ContentManager from '@/lib/content-manager-clean';
  * Clean Content API - Simple, consistent data handling
  */
 
-const CONTENT_FILES = ['news', 'services', 'portfolio', 'about', 'settings', 'categories'];
+const CONTENT_FILES = ['projects', 'services', 'portfolio', 'about', 'settings', 'categories'];
 
 /**
  * GET - Fetch all content

@@ -35,13 +35,13 @@ export default function ModernHero() {
       <div className="max-w-7xl w-full mx-auto px-6 md:px-12 py-20">
         <div className="fade-in-left stagger-1">
           <h1 className="text-xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black leading-tight tracking-tighter">
-           Editorial engraving for contemporary music at publication level
+           Publisher-ready music materials
           </h1>
         </div>
-        
+
         <div className="fade-in-left stagger-2 mt-12 max-w-3xl">
           <ul className="space-y-4 text-xl md:text-2xl font-light text-gray-300">
-            {['Engraving', 'Editorial Control', 'Notation Systems'].map((item, i) => (
+            {['Editorial preparation', 'Performance materials', 'Publication delivery'].map((item, i) => (
               <li key={i} className="flex items-center gap-4 group">
                 <div className="relative w-6 h-6 flex items-center justify-center flex-shrink-0">
                   {/* Whole note (open) - default */}

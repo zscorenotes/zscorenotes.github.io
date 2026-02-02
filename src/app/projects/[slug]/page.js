@@ -1,129 +1,109 @@
 /**
- * Individual News Article Page
+ * Individual Project Page
  * Loads and displays full HTML content for SEO
  */
 
 import { getAllContent } from '@/lib/content-manager-clean';
-import NewsDetail from '../../../components/news/NewsDetail';
+import ProjectDetail from '../../../components/projects/ProjectDetail';
 
-/**
- * Generate static params for all news articles
- */
 export async function generateStaticParams() {
   try {
     const allContent = await getAllContent();
-    const news = allContent.news || [];
-    
+    const news = allContent.projects || [];
     return news.map((item) => ({
       slug: item.slug || item.id,
     }));
   } catch (error) {
-    console.error('Error generating static params for news:', error);
+    console.error('Error generating static params for projects:', error);
     return [];
   }
 }
 
-/**
- * Generate metadata for SEO
- */
 export async function generateMetadata({ params }) {
   try {
     const { slug } = await params;
     const allContent = await getAllContent();
-    const news = allContent.news || [];
-    const article = news.find(item => (item.slug || item.id) === slug);
-    
-    if (!article) {
-      return {
-        title: 'Article Not Found',
-      };
+    const news = allContent.projects || [];
+    const project = news.find(item => (item.slug || item.id) === slug);
+
+    if (!project) {
+      return { title: 'Project Not Found' };
     }
-    
+
     return {
-      title: article.title,
-      description: article.excerpt,
+      title: `${project.title} | ZSCORE.studio`,
+      description: project.excerpt,
       openGraph: {
-        title: article.title,
-        description: article.excerpt,
-        type: 'article',
-        publishedTime: article.publication_date || article.created_at,
-        images: article.image_urls || [],
+        title: project.title,
+        description: project.excerpt,
+        type: 'website',
+        images: project.image_urls || [],
       },
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
-    return {
-      title: 'Article',
-    };
+    return { title: 'Project' };
   }
 }
 
-/**
- * News Article Page Component
- */
-export default async function NewsArticlePage({ params }) {
+export default async function ProjectPage({ params }) {
   const { slug } = await params;
-  
+
   try {
-    // Fetch all content server-side
     const allContent = await getAllContent();
-    const allNews = allContent.news || [];
-    
-    // Find the specific news item by slug or ID
+    const allNews = allContent.projects || [];
+
     let newsItem = allNews.find(item => item.slug === slug);
     if (!newsItem) {
       newsItem = allNews.find(item => item.id === slug);
     }
-    
-    // If still not found, show 404
+
     if (!newsItem) {
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center p-6">
           <div>
-            <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
-            <p className="text-gray-600 mb-6">The requested article could not be found.</p>
+            <h1 className="text-2xl font-bold mb-4">Project Not Found</h1>
+            <p className="text-gray-600 mb-6">The requested project could not be found.</p>
             <a
-              href="/#feed"
+              href="/projects"
               className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 hover:bg-gray-800 transition-colors"
             >
-              Back to Feed
+              Back to Projects
             </a>
           </div>
         </div>
       );
     }
-    
-    // Load the item with HTML content for display
+
     const { getContentWithHTML } = await import('@/lib/content-manager-clean');
-    const newsItemWithHTML = await getContentWithHTML('news', newsItem.id);
-    
-    // Get related posts (same category, excluding current post, limit to 3)
+    const newsItemWithHTML = await getContentWithHTML('projects', newsItem.id);
+
     const relatedPosts = allNews
       .filter(item => {
         const isCurrentItem = item.slug === slug || item.id === slug;
         return !isCurrentItem && item.category === newsItem.category;
       })
       .slice(0, 3);
-    
+
     return (
-      <NewsDetail 
+      <ProjectDetail
         newsItem={newsItemWithHTML}
         allNews={allNews}
         relatedPosts={relatedPosts}
       />
     );
   } catch (error) {
-    console.error('Error loading news article:', error);
+    console.error('Error loading project:', error);
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center text-center p-6">
         <div>
-          <h1 className="text-2xl font-bold mb-4">Error Loading Article</h1>
-          <p className="text-gray-600 mb-6">There was an error loading the article. Please try again.</p>
+          <h1 className="text-2xl font-bold mb-4">Error Loading Project</h1>
+          <p className="text-gray-600 mb-6">There was an error loading the project. Please try again.</p>
           <a
-            href="/#feed"
+            href="/projects"
             className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 hover:bg-gray-800 transition-colors"
           >
-            Back to Feed
+            Back to Projects
           </a>
         </div>
       </div>

@@ -50,7 +50,7 @@
       "description": "Custom services category"
     }
   ],
-  "news": [
+  "projects": [
     {
       "id": "announcement",
       "label": "Announcement",
@@ -155,7 +155,7 @@
     }
   ],
   "updated_at": "2025-09-28T10:25:40.636Z",
-  "news_tags": [
+  "projects_tags": [
     {
       "id": "announcement",
       "label": "Announcement",

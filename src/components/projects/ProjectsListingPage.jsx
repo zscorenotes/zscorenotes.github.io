@@ -3,29 +3,28 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { ChevronLeft, ChevronRight, ArrowLeft, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react";
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 import Footer from '@/components/shared/Footer';
 
 /**
- * Standalone News Listing Page
- * Keeps the same timeline design as ModernNews but with a page header
+ * Standalone Projects Listing Page
+ * Timeline design showcasing recent projects
  */
 export default function NewsListingPage({ initialNews = [], initialCategories = null }) {
-  const [news] = useState(initialNews);
+  const [projects] = useState(initialNews);
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isScrolled, setIsScrolled] = useState(false);
   const itemsPerPage = 6;
 
-  // Dynamic categories from settings
-  const [categories, setCategories] = useState(() => {
-    const base = [{ id: "all", label: "All Updates" }];
-    if (initialCategories?.categories?.news_categories) {
-      return [...base, ...initialCategories.categories.news_categories];
-    }
-    return base;
-  });
+  const categories = [
+    { id: "all", label: "All Projects" },
+    { id: "score_engraving", label: "Engraving" },
+    { id: "orchestration", label: "Orchestration" },
+    { id: "audio_programming", label: "Audio" },
+    { id: "consultation", label: "Consultation" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,12 +34,12 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const filteredNews = activeCategory === "all"
-    ? news
-    : news.filter(item => item.category === activeCategory);
+  const filteredProjects = activeCategory === "all"
+    ? projects
+    : projects.filter(item => item.category === activeCategory);
 
-  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
-  const paginatedNews = filteredNews.slice(
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+  const paginatedProjects = filteredProjects.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -58,7 +57,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
   };
 
   const getCategoryColor = (category) => {
-    return getCategoryColorSSR(category, 'news', initialCategories);
+    return getCategoryColorSSR(category, 'projects', initialCategories);
   };
 
   return (
@@ -73,19 +72,25 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
           <div className="flex items-center justify-between h-20">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors font-medium group"
+              className={`flex items-center gap-2 text-sm font-medium group transition-colors ${
+                isScrolled ? "text-gray-600 hover:text-black" : "text-white/70 hover:text-white"
+              }`}
             >
               <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
               <span className="hidden sm:inline">Back to Home</span>
             </Link>
 
-            <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 font-black text-xl hover:text-gray-600 transition-colors">
+            <Link href="/" className={`absolute left-1/2 transform -translate-x-1/2 font-black text-xl transition-colors ${
+              isScrolled ? "text-black hover:text-gray-600" : "text-white hover:text-white/70"
+            }`}>
               ZSCORE<span className="font-extralight">.studio</span>
             </Link>
 
             <Link
               href="/#contact"
-              className="text-sm text-gray-600 hover:text-black transition-colors font-medium"
+              className={`text-sm font-medium transition-colors ${
+                isScrolled ? "text-gray-600 hover:text-black" : "text-white/70 hover:text-white"
+              }`}
             >
               Contact
             </Link>
@@ -97,44 +102,18 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
       <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-black text-white">
         <div className="w-[90%] max-w-7xl mx-auto px-6">
           <p className="text-sm font-medium tracking-widest uppercase mb-6 text-gray-400">
-            Latest Updates
+            Recent Work
           </p>
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight mb-8">
-            Feed
+            Projects
           </h1>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <p className="text-lg md:text-xl font-light text-gray-300 max-w-xl">
-              Latest developments in music technology, project updates, and industry insights.
-            </p>
-            <p className="text-3xl md:text-4xl font-bold text-gray-500 font-mono">
-              {filteredNews.length} <span className="text-lg font-normal">articles</span>
-            </p>
-          </div>
+          <p className="text-lg md:text-xl font-light text-gray-300 max-w-xl">
+            A museum of our recent projects
+          </p>
         </div>
       </section>
 
-      {/* Category Filters */}
-      <section className="sticky top-20 z-40 bg-white/90 backdrop-blur-md border-b border-gray-200/50 py-4">
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
-          <div className="flex flex-wrap gap-3">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryChange(category.id)}
-                className={`px-5 py-2 text-sm tracking-wider transition-all duration-300 ${
-                  activeCategory === category.id
-                    ? "bg-black text-white"
-                    : "border border-gray-300 hover:border-black hover:bg-black hover:text-white"
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* News Timeline */}
+      {/* Projects Timeline */}
       <section className="py-16 md:py-24">
         <div className="w-[90%] max-w-7xl mx-auto px-6">
           <div className="relative">
@@ -142,7 +121,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
             <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-200"></div>
 
             <div className="space-y-12">
-              {paginatedNews.map((item, index) => (
+              {paginatedProjects.map((item) => (
                 <article
                   key={item.id}
                   className="relative flex items-start space-x-8 group"
@@ -165,9 +144,9 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                     </svg>
                   </div>
 
-                  {/* News Item Card */}
+                  {/* Project Card */}
                   <Link
-                    href={`/news/${item.slug || item.id}`}
+                    href={`/projects/${item.slug || item.id}`}
                     className="flex-1 bg-white border border-black/5 text-left w-full focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block md:flex overflow-hidden group transition-all duration-500 hover:shadow-xl hover:-translate-y-1"
                   >
                     {/* Mobile: Thumbnail Above */}
@@ -182,21 +161,14 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                     )}
 
                     <div className="flex-1 p-8">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-4">
-                          <span className={`px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(item.category)}`}>
-                            {item.category?.replace('_', ' ')}
-                          </span>
-                          {item.publication_date && (
-                            <time className="text-sm text-gray-500" dateTime={item.publication_date}>
-                              {format(new Date(item.publication_date), 'MMM d, yyyy')}
-                            </time>
-                          )}
-                        </div>
-                        {item.featured && (
-                          <div className="px-2 py-1 bg-black text-white text-xs tracking-wider">
-                            FEATURED
-                          </div>
+                      <div className="flex items-center space-x-4 mb-4">
+                        <span className={`px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(item.category)}`}>
+                          {item.category?.replace('_', ' ')}
+                        </span>
+                        {item.publication_date && (
+                          <time className="text-sm text-gray-500" dateTime={item.publication_date}>
+                            {format(new Date(item.publication_date), 'MMM d, yyyy')}
+                          </time>
                         )}
                       </div>
                       <h3 className="text-2xl font-bold mb-4">
@@ -205,24 +177,9 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                       <p className="text-gray-600 leading-relaxed mb-4">
                         {item.excerpt || ""}
                       </p>
-                      {item.tags && item.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {item.tags.slice(0, 3).map((tag, tagIndex) => (
-                            <span
-                              key={tagIndex}
-                              className="px-2 py-1 bg-gray-100 text-gray-600 text-xs"
-                            >
-                              #{tag}
-                            </span>
-                          ))}
-                          {item.tags.length > 3 && (
-                            <span className="text-xs text-gray-400">+{item.tags.length - 3} more</span>
-                          )}
-                        </div>
-                      )}
                       <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
-                        <span>Read full article</span>
-                        <ExternalLink size={14} />
+                        <span>View project</span>
+                        <ArrowRight size={14} />
                       </div>
                     </div>
 
@@ -243,7 +200,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
           </div>
 
           {/* Empty State */}
-          {filteredNews.length === 0 && (
+          {filteredProjects.length === 0 && (
             <div className="text-center py-24">
               <div className="mb-6">
                 <svg
@@ -254,7 +211,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                   <path d="M28.61,8.26c0,9.04-11.13,15.21-18.87,15.21-4.96,0-9.74-3.3-9.74-8.26C0,6.26,11.12,0,18.87,0c5.57,0,9.74,3.22,9.74,8.26Z" fill="currentColor"/>
                 </svg>
               </div>
-              <p className="text-xl font-medium text-gray-600">No articles found</p>
+              <p className="text-xl font-medium text-gray-600">No projects found</p>
               <p className="text-gray-400 mt-2">Try selecting a different category</p>
             </div>
           )}

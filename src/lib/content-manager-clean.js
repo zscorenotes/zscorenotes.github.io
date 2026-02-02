@@ -12,7 +12,7 @@ import {
 } from './html-content-manager.js';
 
 const CONTENT_TYPES = {
-  news: { key: 'news', isArray: true },
+  projects: { key: 'projects', isArray: true },
   services: { key: 'services', isArray: true },
   portfolio: { key: 'portfolio', isArray: true },
   about: { key: 'about', isArray: false },
@@ -498,7 +498,7 @@ export async function migrateAllContentToHTML() {
     const allContent = await getAllContent();
     let hasChanges = false;
     
-    for (const contentType of ['news', 'services', 'portfolio']) {
+    for (const contentType of ['projects', 'services', 'portfolio']) {
       const items = allContent[contentType] || [];
       
       if (items.length > 0) {
@@ -522,7 +522,7 @@ export async function migrateAllContentToHTML() {
     
     // Save the updated content if there were changes
     if (hasChanges) {
-      for (const contentType of ['news', 'services', 'portfolio']) {
+      for (const contentType of ['projects', 'services', 'portfolio']) {
         await saveContent(contentType, allContent[contentType]);
       }
       console.log('Migration completed successfully!');
@@ -542,15 +542,15 @@ export async function migrateAllContentToHTML() {
  */
 function getEmptyContent() {
   return {
-    news: [],
+    projects: [],
     services: [],
     portfolio: [],
     about: { updated_at: new Date().toISOString() },
     settings: { updated_at: new Date().toISOString() },
-    categories: { 
+    categories: {
       services: [],
       portfolio: [],
-      news: [],
+      projects: [],
       updated_at: new Date().toISOString() 
     }
   };

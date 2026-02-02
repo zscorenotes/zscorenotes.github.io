@@ -1,9 +1,9 @@
-import newsData from './NewsItem.json';
+import projectData from './NewsItem.json';
 
 /**
- * NewsItem entity class for handling news data
+ * ProjectItem entity class for handling project data
  */
-export class NewsItem {
+export class ProjectItem {
   constructor(data) {
     this.id = data.id;
     this.created_date = data.created_date;
@@ -24,24 +24,22 @@ export class NewsItem {
   }
 
   /**
-   * Fetches all news items and optionally sorts them
+   * Fetches all project items and optionally sorts them
    * @param {string} sortBy - Sort criteria (e.g., '-publication_date' for descending)
-   * @returns {Promise<NewsItem[]>} Array of NewsItem instances
+   * @returns {Promise<ProjectItem[]>} Array of ProjectItem instances
    */
   static async list(sortBy = null) {
     try {
-      // Convert to NewsItem instances
-      let newsItems = newsData.map(item => new NewsItem(item));
-      
-      // Apply sorting if specified
+      let items = projectData.map(item => new ProjectItem(item));
+
       if (sortBy) {
         const isDescending = sortBy.startsWith('-');
         const field = isDescending ? sortBy.substring(1) : sortBy;
-        
-        newsItems.sort((a, b) => {
+
+        items.sort((a, b) => {
           const aValue = new Date(a[field]);
           const bValue = new Date(b[field]);
-          
+
           if (isDescending) {
             return bValue - aValue;
           } else {
@@ -49,18 +47,18 @@ export class NewsItem {
           }
         });
       }
-      
-      return newsItems;
+
+      return items;
     } catch (error) {
-      console.error('Error loading news items:', error);
+      console.error('Error loading project items:', error);
       return [];
     }
   }
 
   /**
-   * Finds a news item by ID
-   * @param {string} id - The news item ID
-   * @returns {Promise<NewsItem|null>} The news item or null if not found
+   * Finds a project item by ID
+   * @param {string} id - The project item ID
+   * @returns {Promise<ProjectItem|null>} The project item or null if not found
    */
   static async findById(id) {
     const allItems = await this.list();

@@ -94,16 +94,16 @@ export function Lightbox({ images, startIndex, onClose }) {
 export function BackToFeedButton() {
   const handleBackToFeed = useCallback((e) => {
     e.preventDefault();
-    window.location.href = '/#feed';
+    window.location.href = '/projects';
   }, []);
 
   return (
-    <button 
+    <button
       onClick={handleBackToFeed}
       className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors font-medium"
     >
       <ArrowLeft size={16} />
-      <span className="hidden sm:inline">Back to Feed</span>
+      <span className="hidden sm:inline">Back to Projects</span>
       <span className="sm:hidden">Back</span>
     </button>
   );
@@ -113,14 +113,14 @@ export function BackToFeedButton() {
  * Client component for breadcrumb navigation
  */
 export function BackToBreadcrumb() {
-  const handleBackToFeed = useCallback((e) => {
+  const handleBack = useCallback((e) => {
     e.preventDefault();
-    window.location.href = '/#feed';
+    window.location.href = '/projects';
   }, []);
 
   return (
-    <button onClick={handleBackToFeed} className="hover:text-black transition-colors">
-      Feed
+    <button onClick={handleBack} className="hover:text-black transition-colors">
+      Projects
     </button>
   );
 }

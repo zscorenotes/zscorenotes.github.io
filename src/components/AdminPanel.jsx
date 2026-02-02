@@ -8,7 +8,7 @@ import { getStoredInquiries, updateInquiryStatus, deleteInquiry } from '@/api.js
 import ImageUpload from './ImageUpload';
 import DragDropList from './DragDropList';
 import InlineCategorySelector from './InlineCategorySelector';
-import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, Shield, Sparkles, Mail, Clock, CheckCircle, Archive } from 'lucide-react';
+import { Save, FileText, Settings, User, Briefcase, Phone, Edit, Plus, Trash2, Eye, EyeOff, Shield, Sparkles, Mail, Clock, CheckCircle, Archive } from 'lucide-react';
 
 /**
  * Main Admin Panel for Content Management
@@ -28,7 +28,7 @@ export default function AdminPanel() {
   // Content sections configuration with enhanced features
   const sections = [
     { key: 'inquiries', label: 'Inquiries', icon: Mail, color: 'bg-red-500', description: 'Manage contact form submissions' },
-    { key: 'news', label: 'Feed', icon: FileText, color: 'bg-blue-500', description: 'Manage feed articles and updates' },
+    { key: 'projects', label: 'Projects', icon: FileText, color: 'bg-blue-500', description: 'Manage project entries' },
     { key: 'services', label: 'Services', icon: Briefcase, color: 'bg-green-500', description: 'Edit service offerings' },
     { key: 'portfolio', label: 'Portfolio', icon: Edit, color: 'bg-purple-500', description: 'Showcase project work' },
     { key: 'about', label: 'About', icon: User, color: 'bg-orange-500', description: 'Personal information' },
@@ -271,7 +271,7 @@ export default function AdminPanel() {
 
   const getDefaultFieldsForSection = (section) => {
     switch (section) {
-      case 'news':
+      case 'projects':
         return {
           category: 'announcement',
           excerpt: '',
@@ -279,7 +279,17 @@ export default function AdminPanel() {
           tags: [],
           featured: false,
           publication_date: new Date().toISOString().split('T')[0],
-          image_urls: []
+          image_urls: [],
+          composer: '',
+          client: '',
+          instrumentation: '',
+          publisher: '',
+          field_visibility: {
+            composer: false,
+            client: false,
+            instrumentation: false,
+            publisher: false
+          }
         };
       case 'services':
         return {
@@ -294,10 +304,6 @@ export default function AdminPanel() {
         return {
           description: '',
           content: '',
-          technologies: [],
-          year: new Date().getFullYear(),
-          category: 'project',
-          client: '',
           image_urls: [],
           content_blocks: []
         };
@@ -572,14 +578,16 @@ export default function AdminPanel() {
                 {items.length} item{items.length !== 1 ? 's' : ''} total
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleAddNew}
-              className="flex items-center gap-2 bg-black text-white px-4 py-2 text-sm rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
-            >
-              <Plus size={16} />
-              Add New
-            </button>
+            {activeSection !== 'portfolio' && (
+              <button
+                type="button"
+                onClick={handleAddNew}
+                className="flex items-center gap-2 bg-black text-white px-4 py-2 text-sm rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
+              >
+                <Plus size={16} />
+                Add New
+              </button>
+            )}
           </div>
         </div>
         
@@ -626,16 +634,18 @@ export default function AdminPanel() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleItemDelete(item);
-                      }}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                      title="Delete item"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {activeSection !== 'portfolio' && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleItemDelete(item);
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Delete item"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                     {selectedItem?.id === item.id && (
                       <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     )}
@@ -1023,14 +1033,14 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
               </div>
 
               {/* Section-specific basic fields */}
-              {section === 'news' && (
+              {section === 'projects' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white p-6 rounded-lg shadow-sm border">
                     <label className="block text-sm font-bold text-gray-700 mb-3">Category</label>
                     <InlineCategorySelector
                       value={item.category || ''}
                       onChange={(value) => handleFieldChange('category', value)}
-                      section="news"
+                      section="projects"
                       placeholder="Select or create category..."
                     />
                   </div>
@@ -1050,11 +1060,11 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
               {/* Excerpt/Description */}
               <div className="bg-white p-6 rounded-lg shadow-sm border">
                 <label className="block text-sm font-bold text-gray-700 mb-3">
-                  {section === 'news' ? 'Excerpt' : 'Description'}
+                  {section === 'projects' ? 'Excerpt' : 'Description'}
                 </label>
                 <textarea
                   value={item.excerpt || item.description || ''}
-                  onChange={(e) => handleFieldChange(section === 'news' ? 'excerpt' : 'description', e.target.value)}
+                  onChange={(e) => handleFieldChange(section === 'projects' ? 'excerpt' : 'description', e.target.value)}
                   className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 resize-none"
                   placeholder="Write a compelling summary..."
                 />
@@ -1064,7 +1074,7 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
               </div>
 
               {/* Images for Feed */}
-              {section === 'news' && (
+              {section === 'projects' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <label className="block text-sm font-bold text-gray-700 mb-3">
                     Featured Images
@@ -1209,7 +1219,7 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
 
 
               {/* Feature toggle */}
-              {section === 'news' && (
+              {section === 'projects' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
                   <label className="flex items-center space-x-3">
                     <input
@@ -1254,99 +1264,68 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
 
           {activeTab === 'advanced' && (
             <div className="space-y-6">
-              {/* Tags/Technologies */}
-              {(section === 'news' || section === 'portfolio') && (
+              {/* Tags */}
+              {section === 'projects' && (
                 <div className="bg-white p-6 rounded-lg shadow-sm border">
-                  <label className="block text-sm font-bold text-gray-700 mb-3">
-                    {section === 'news' ? 'Tags' : 'Technologies'}
-                  </label>
+                  <label className="block text-sm font-bold text-gray-700 mb-3">Tags</label>
                   <InlineCategorySelector
-                    value={item.tags || item.technologies || []}
-                    onChange={(value) => handleFieldChange(section === 'news' ? 'tags' : 'technologies', value)}
-                    section={section === 'news' ? 'news_tags' : 'portfolio_technologies'}
-                    placeholder={`Select or create ${section === 'news' ? 'tags' : 'technologies'}...`}
+                    value={item.tags || []}
+                    onChange={(value) => handleFieldChange('tags', value)}
+                    section="projects_tags"
+                    placeholder="Select or create tags..."
                     allowMultiple={true}
                   />
                 </div>
               )}
 
-              {/* Portfolio-specific fields */}
-              {section === 'portfolio' && (
-                <div className="space-y-6">
-                  {/* First row: Project Type, Client, Year */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Project Type</label>
-                      <InlineCategorySelector
-                        value={item.project_type || ''}
-                        onChange={(value) => handleFieldChange('project_type', value)}
-                        section="portfolio"
-                        placeholder="Select or create project type..."
-                        allowMultiple={true}
-                      />
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Client</label>
-                      <input
-                        type="text"
-                        value={item.client || ''}
-                        onChange={(e) => handleFieldChange('client', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Client or company name..."
-                      />
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Completion Year</label>
-                      <input
-                        type="number"
-                        value={item.completion_year || item.year || new Date().getFullYear()}
-                        onChange={(e) => handleFieldChange('completion_year', parseInt(e.target.value))}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        min="2000"
-                        max={new Date().getFullYear() + 5}
-                      />
-                    </div>
+              {/* Projects-specific fields with visibility toggles */}
+              {section === 'projects' && (
+                <div className="bg-white p-6 rounded-lg shadow-sm border">
+                  <div className="flex items-center justify-between mb-4">
+                    <label className="block text-sm font-bold text-gray-700">
+                      Project Details
+                    </label>
+                    <p className="text-xs text-gray-500">Toggle eye icon to control public visibility</p>
                   </div>
-
-                  {/* Second row: Composer, Publisher, Instrumentation */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Composer</label>
-                      <input
-                        type="text"
-                        value={item.composer || ''}
-                        onChange={(e) => handleFieldChange('composer', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter composer name..."
-                      />
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Publisher</label>
-                      <input
-                        type="text"
-                        value={item.publisher || ''}
-                        onChange={(e) => handleFieldChange('publisher', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Enter publisher name..."
-                      />
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-lg shadow-sm border">
-                      <label className="block text-sm font-bold text-gray-700 mb-3">Instrumentation</label>
-                      <input
-                        type="text"
-                        value={item.instrumentation || ''}
-                        onChange={(e) => handleFieldChange('instrumentation', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g., Orchestra, String Quartet, Piano Solo..."
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { key: 'composer', label: 'Composer', placeholder: 'Enter composer name...' },
+                      { key: 'client', label: 'Client', placeholder: 'Client or organization...' },
+                      { key: 'instrumentation', label: 'Instrumentation', placeholder: 'e.g., Orchestra, String Quartet...' },
+                      { key: 'publisher', label: 'Publisher', placeholder: 'Enter publisher name...' },
+                    ].map(({ key, label, placeholder }) => (
+                      <div key={key}>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-medium text-gray-600 uppercase tracking-wider">{label}</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const vis = { ...(item.field_visibility || {}), [key]: !(item.field_visibility?.[key]) };
+                              handleFieldChange('field_visibility', vis);
+                            }}
+                            className={`p-1 rounded transition-colors ${
+                              item.field_visibility?.[key]
+                                ? 'text-green-600 hover:text-green-700'
+                                : 'text-gray-400 hover:text-gray-500'
+                            }`}
+                            title={item.field_visibility?.[key] ? 'Visible publicly' : 'Hidden from public'}
+                          >
+                            {item.field_visibility?.[key] ? <Eye size={16} /> : <EyeOff size={16} />}
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={item[key] || ''}
+                          onChange={(e) => handleFieldChange(key, e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          placeholder={placeholder}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
+
 
               {/* Service-specific fields */}
               {section === 'services' && (

@@ -130,7 +130,7 @@ const fileMetadata = new Map();
  * Get all content using GitHub storage
  */
 export async function getAllContentFromGitHub() {
-  const contentTypes = ['news', 'services', 'portfolio', 'about', 'settings', 'categories'];
+  const contentTypes = ['projects', 'services', 'portfolio', 'about', 'settings', 'categories'];
   const content = {};
 
   for (const contentType of contentTypes) {
@@ -142,7 +142,7 @@ export async function getAllContentFromGitHub() {
       fileMetadata.set(filename, result.sha);
     } else {
       // Provide empty defaults
-      if (['news', 'services', 'portfolio'].includes(contentType)) {
+      if (['projects', 'services', 'portfolio'].includes(contentType)) {
         content[contentType] = [];
       } else if (contentType === 'categories') {
         content[contentType] = {
