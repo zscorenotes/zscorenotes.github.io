@@ -75,7 +75,7 @@ export default function ImpressumPage() {
                 <p>Parham Behzad</p>
                 <p>Erzherzog-Euler-Straße 19</p>
                 <p>5020 Salzburg</p>
-                <p>Austria</p>
+                <p>Österreich</p>
               </div>
             </div>
 
@@ -92,7 +92,7 @@ export default function ImpressumPage() {
                 <p>Parham Behzad</p>
                 <p>Erzherzog-Euler-Straße 19</p>
                 <p>5020 Salzburg</p>
-                <p>Austria</p>
+                <p>Österreich</p>
               </div>
             </div>
 

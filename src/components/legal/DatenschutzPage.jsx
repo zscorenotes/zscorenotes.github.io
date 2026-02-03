@@ -82,7 +82,7 @@ export default function DatenschutzPage() {
                 <p>Parham Behzad</p>
                 <p>Erzherzog-Euler-Straße 19</p>
                 <p>5020 Salzburg</p>
-                <p>Austria</p>
+                <p>Österreich</p>
                 <p>E-Mail: info@zscore.studio</p>
               </div>
             </div>
