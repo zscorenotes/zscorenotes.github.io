@@ -97,7 +97,7 @@ export default function ModernContact() {
               className="text-xs text-gray-500 hover:text-black font-mono mt-2 transition-colors"
             >
               more →
-            </button>
+            </button> 
           )} */}
         </div>
       </section>
