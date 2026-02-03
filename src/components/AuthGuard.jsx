@@ -261,7 +261,6 @@ export default function AuthGuard({ children, onAuthenticated }) {
 
         {/* Security Footer */}
         <div className="mt-6 text-center text-xs text-gray-400">
-          <p>Protected by server-side authentication</p>
           <p>Session timeout: 1 hour</p>
         </div>
       </div>

@@ -67,6 +67,13 @@ export async function POST(request) {
 
     const validUsername = process.env.ADMIN_USERNAME || 'zscore_admin';
 
+    console.log('Login attempt:', {
+      usernameMatch: username === validUsername,
+      hasSecretKey: !!process.env.ADMIN_SECRET_KEY,
+      hasPasswordHash: !!process.env.ADMIN_PASSWORD_HASH,
+      passwordHashLength: process.env.ADMIN_PASSWORD_HASH?.length,
+    });
+
     if (username !== validUsername || !verifyPassword(password)) {
       recordFailedAttempt(ip);
       const remaining = MAX_ATTEMPTS - (loginAttempts.get(ip)?.count || 0);

@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 
 const SECRET_KEY = process.env.ADMIN_SECRET_KEY || '';
 const SESSION_DURATION = 3600000; // 1 hour
@@ -7,7 +7,7 @@ const SESSION_DURATION = 3600000; // 1 hour
  * Hash a password using HMAC-SHA256
  */
 export function hashPassword(password) {
-  return crypto.createHmac('sha256', SECRET_KEY).update(password).digest('hex');
+  return createHmac('sha256', SECRET_KEY).update(password).digest('hex');
 }
 
 /**
@@ -18,7 +18,7 @@ export function verifyPassword(password) {
   const inputHash = hashPassword(password);
   // Timing-safe comparison to prevent timing attacks
   if (storedHash.length !== inputHash.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(storedHash), Buffer.from(inputHash));
+  return timingSafeEqual(Buffer.from(storedHash), Buffer.from(inputHash));
 }
 
 /**
@@ -31,7 +31,7 @@ export function createSessionToken() {
     exp: Date.now() + SESSION_DURATION,
   };
   const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const signature = crypto.createHmac('sha256', SECRET_KEY).update(data).digest('base64url');
+  const signature = createHmac('sha256', SECRET_KEY).update(data).digest('base64url');
   return `${data}.${signature}`;
 }
 
@@ -48,9 +48,9 @@ export function verifySessionToken(token) {
   const [data, signature] = parts;
 
   // Verify signature
-  const expectedSignature = crypto.createHmac('sha256', SECRET_KEY).update(data).digest('base64url');
+  const expectedSignature = createHmac('sha256', SECRET_KEY).update(data).digest('base64url');
   if (signature.length !== expectedSignature.length) return null;
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
+  if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
 
   // Decode and check expiry
   try {
