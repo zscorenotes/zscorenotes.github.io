@@ -15,13 +15,14 @@ export default function ModernContact() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("animate-in");
-            setTimeout(() => setShowContent(true), 300);
-            setTimeout(() => setShowTrusted(true), 3500);
+            const isMobile = window.innerWidth < 768;
+            setTimeout(() => setShowContent(true), isMobile ? 100 : 300);
+            setTimeout(() => setShowTrusted(true), isMobile ? 1500 : 3500);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: typeof window !== 'undefined' && window.innerWidth < 768 ? 0.2 : 0.6 }
     );
 
     if (element) {
@@ -48,6 +49,11 @@ export default function ModernContact() {
         }
         .slow-reveal {
           animation: slowReveal 5s linear forwards;
+        }
+        @media (max-width: 767px) {
+          .slow-reveal {
+            animation: slowReveal 2s linear forwards;
+          }
         }
       `}</style>
 
