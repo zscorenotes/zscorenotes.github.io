@@ -29,7 +29,7 @@ export default function PortfolioListingPage({ initialPortfolio = [] }) {
       {/* Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm" : "bg-transparent"
+          isScrolled ? "bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm" : "bg-transparent border-b border-transparent"
         }`}
       >
         <div className="w-[90%] max-w-7xl mx-auto px-6">
@@ -113,7 +113,7 @@ export default function PortfolioListingPage({ initialPortfolio = [] }) {
 
                     {/* Content */}
                     <div className="p-8">
-                      <h2 className="text-2xl font-black mb-3 leading-tight tracking-tight group-hover:text-gray-600 transition-colors">
+                      <h2 className="text-2xl font-extrabold mb-3 leading-tight tracking-tight group-hover:text-gray-600 transition-colors" style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}>
                         {item.title}
                       </h2>
                       {item.description && (

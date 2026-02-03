@@ -181,8 +181,8 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
       <nav 
         className={`fixed top-0 left-0 right-0 w-full transition-all duration-500 ${
           isScrolled 
-            ? "bg-white border-b border-black/10 shadow-lg" 
-            : "bg-transparent"
+            ? "bg-white border-b border-black/10 shadow-lg"
+            : "bg-transparent border-b border-transparent"
         }`}
         style={{ zIndex: 9999 }}
       >
