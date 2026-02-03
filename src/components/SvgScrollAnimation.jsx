@@ -50,7 +50,7 @@ export default function SvgScrollAnimation({ scrollProgress, isVisible }) {
       // A short timeout allows the browser to render the SVG before we query its elements.
       const timeoutId = setTimeout(() => {
         const elementsToAnimate = svgContainerRef.current.querySelectorAll(
-          'g path, g rect, g circle, g ellipse, g line, g polyline, g polygon, image'
+          'g path, g rect, g circle, g ellipse, g line, g polyline, g polygon, g use, image'
         );
         
         if (elementsToAnimate.length === 0) {
@@ -74,24 +74,58 @@ export default function SvgScrollAnimation({ scrollProgress, isVisible }) {
     }
   }, [svgContent]); // Re-run if svgContent changes
 
-  // 3. Animate the SVG elements based on the scrollProgress prop.
-  // This effect runs on every scroll update.
-  useEffect(() => {
-    if (!isReady || !isVisible) return;
+  // 3. Smoothly animate SVG elements toward the target scrollProgress.
+  // Uses a rAF loop with lerp to smooth out discrete mouse wheel jumps.
+  const targetProgressRef = useRef(0);
+  const currentProgressRef = useRef(0);
+  const rafIdRef = useRef(null);
 
-    requestAnimationFrame(() => {
+  // Update target when scrollProgress changes
+  useEffect(() => {
+    targetProgressRef.current = scrollProgress || 0;
+  }, [scrollProgress]);
+
+  // Animation loop: lerp current toward target each frame
+  useEffect(() => {
+    if (!isReady || !isVisible) {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      return;
+    }
+
+    const lerpFactor = 0.15; // Lower = smoother/slower interpolation
+
+    const animate = () => {
+      const target = targetProgressRef.current;
+      const current = currentProgressRef.current;
+      const diff = target - current;
+
+      // Snap if close enough to avoid infinite loop
+      if (Math.abs(diff) < 0.0005) {
+        currentProgressRef.current = target;
+      } else {
+        currentProgressRef.current += diff * lerpFactor;
+      }
+
+      const progress = currentProgressRef.current;
+
+      // Ease-out cubic: elements decelerate as they settle into position
+      const eased = 1 - Math.pow(1 - progress, 3);
+
       animationDataRef.current.forEach(data => {
-        const { element, originalTransform, startXOffset, startYOffset } = data;
-        const progress = scrollProgress || 0;
-        
-        // As progress goes from 0 to 1, the offset goes from its starting value to 0.
-        const currentY = startYOffset * (1 - progress);
-        
-        // Apply the new transform to the element
-        element.setAttribute('transform', `${originalTransform} translate(0, ${currentY})`);
+        const { element, originalTransform, startYOffset } = data;
+        const currentY = startYOffset * (1 - eased);
+        element.setAttribute('transform', `translate(0, ${currentY}) ${originalTransform}`);
       });
-    });
-  }, [scrollProgress, isReady, isVisible]); // Re-run when scroll or visibility changes
+
+      rafIdRef.current = requestAnimationFrame(animate);
+    };
+
+    rafIdRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+    };
+  }, [isReady, isVisible]);
 
   // 4. Calculate a responsive transform for the main SVG container to fit different screen sizes.
   useEffect(() => {

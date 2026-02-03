@@ -349,7 +349,7 @@ export default function HomePage({ initialContent, initialCategories }) {
       {/* This is an invisible, tall div that provides the scrollable height 
           needed to drive the SvgScrollAnimation. The animation plays as the
           user scrolls through this element. */}
-      <div ref={animationTriggerRef} className="h-[250vh]" />
+      <div ref={animationTriggerRef} className="h-[400vh]" />
 
       {/* All subsequent content sections of the page */}
       <div className="relative z-10">

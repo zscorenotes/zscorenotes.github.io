@@ -1,53 +1,53 @@
 {
   "services": [
     {
-      "id": "engraving",
-      "label": "ENGRAVING",
-      "displayName": "Score Engraving",
+      "id": "full_score",
+      "label": "FULL SCORE",
+      "displayName": "Full Score",
       "color": "blue",
-      "description": "Professional music score engraving and notation services"
+      "description": "Complete full scores for contemporary works"
+    },
+    {
+      "id": "performance_materials",
+      "label": "PERFORMANCE MATERIALS",
+      "displayName": "Performance Materials",
+      "color": "green",
+      "description": "Individual and ensemble parts for rehearsal and performance"
     },
     {
       "id": "editorial",
       "label": "EDITORIAL",
-      "displayName": "Editorial Services",
+      "displayName": "Editorial Preparation",
       "color": "green",
-      "description": "Proofreading, editing, and manuscript preparation"
+      "description": "Editorial decisions, consistency checks, and material alignment"
     },
     {
-      "id": "orchestration",
-      "label": "ORCHESTRATION",
-      "displayName": "Orchestration",
+      "id": "structuring",
+      "label": "STRUCTURING",
+      "displayName": "Score Structuring",
       "color": "purple",
-      "description": "Orchestration, arrangement, and piano reduction services"
+      "description": "Orchestration layouts, piano reductions, and structural formats"
     },
     {
       "id": "design",
       "label": "DESIGN",
       "displayName": "Design & Typography",
       "color": "orange",
-      "description": "Custom typesetting and graphic design for musical publications"
+      "description": "Custom typesetting and typographic design for publications"
     },
     {
       "id": "printing",
       "label": "PRINTING",
       "displayName": "Printing & Distribution",
       "color": "teal",
-      "description": "Professional printing and distribution services"
+      "description": "Physical and digital editions for circulation"
     },
     {
       "id": "automations",
       "label": "AUTOMATIONS",
       "displayName": "Workflow Automation",
       "color": "cyan",
-      "description": "Custom automation tools and workflow optimization"
-    },
-    {
-      "id": "sample",
-      "label": "SAMPLE",
-      "displayName": "SAMPLE",
-      "color": "gray",
-      "description": "Custom services category"
+      "description": "Custom scripts and automated production pipelines"
     }
   ],
   "projects": [

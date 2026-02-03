@@ -6,6 +6,7 @@ export default function ModernContact() {
   const sectionRef = useRef(null);
   const [showContent, setShowContent] = useState(false);
   const [showTrusted, setShowTrusted] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     const element = sectionRef.current;
@@ -86,6 +87,18 @@ export default function ModernContact() {
           <p className="text-xs text-gray-600 font-mono">
             SWR Symphonieorchester ● WDR Sinfonieorchester ● Basel Sinfonietta ● Ostrava Center for New Music ● Ensemble Mosaik ● Universität Mozarteum Salzburg
           </p>
+          {/* {showMore ? (
+            <p className="text-xs text-gray-600 font-mono mt-2 animate-fade-in">
+              Sarah Nemtsov ● Laure M. Hiendl ● Volker Heyn ● Amen Feizabadi ● Vid Ozbolt
+            </p>
+          ) : (
+            <button
+              onClick={() => setShowMore(true)}
+              className="text-xs text-gray-500 hover:text-black font-mono mt-2 transition-colors"
+            >
+              more →
+            </button>
+          )} */}
         </div>
       </section>
     </>

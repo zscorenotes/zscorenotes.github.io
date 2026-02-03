@@ -4,11 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 
 /**
- * High-security authentication component for admin panel access
- * Features: Rate limiting, session management, secure password handling
+ * Authentication guard for admin panel access.
+ * Validates credentials via server-side API endpoint.
+ * Session is managed via httpOnly cookie (set by the server).
  */
 export default function AuthGuard({ children, onAuthenticated }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
@@ -17,16 +19,14 @@ export default function AuthGuard({ children, onAuthenticated }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Security constants
-  const MAX_ATTEMPTS = 3;
-  const LOCKOUT_DURATION = 300000; // 5 minutes
-  const SESSION_DURATION = 3600000; // 1 hour
+  const MAX_ATTEMPTS = 5;
 
+  // Check for existing session on mount
   useEffect(() => {
     checkExistingSession();
-    checkLockoutStatus();
   }, []);
 
+  // Lockout countdown timer
   useEffect(() => {
     let timer;
     if (isLocked && lockoutTime > 0) {
@@ -44,77 +44,24 @@ export default function AuthGuard({ children, onAuthenticated }) {
     return () => clearInterval(timer);
   }, [isLocked, lockoutTime]);
 
-  const checkExistingSession = () => {
+  const checkExistingSession = async () => {
     try {
-      const session = localStorage.getItem('zscore_admin_session');
-      if (session) {
-        const { timestamp, hash } = JSON.parse(session);
-        const now = Date.now();
-        
-        // Check if session is still valid
-        if (now - timestamp < SESSION_DURATION) {
-          // Verify session integrity
-          if (verifySessionHash(timestamp, hash)) {
-            setIsAuthenticated(true);
-            onAuthenticated?.(true);
-          } else {
-            clearSession();
-          }
-        } else {
-          clearSession();
-        }
+      const res = await fetch('/api/auth/session');
+      const data = await res.json();
+      if (data.authenticated) {
+        setIsAuthenticated(true);
+        onAuthenticated?.(true);
       }
-    } catch (error) {
-      console.error('Session check failed:', error);
-      clearSession();
+    } catch (err) {
+      console.error('Session check failed:', err);
+    } finally {
+      setIsCheckingSession(false);
     }
-  };
-
-  const checkLockoutStatus = () => {
-    try {
-      const lockout = localStorage.getItem('zscore_admin_lockout');
-      if (lockout) {
-        const { timestamp, attempts } = JSON.parse(lockout);
-        const now = Date.now();
-        
-        if (now - timestamp < LOCKOUT_DURATION) {
-          setIsLocked(true);
-          setLockoutTime(LOCKOUT_DURATION - (now - timestamp));
-          setLoginAttempts(attempts);
-        } else {
-          localStorage.removeItem('zscore_admin_lockout');
-        }
-      }
-    } catch (error) {
-      console.error('Lockout check failed:', error);
-    }
-  };
-
-  const verifySessionHash = (timestamp, hash) => {
-    // Simple hash verification (in production, use more robust method)
-    const expectedHash = btoa(`${timestamp}_zscore_admin_${navigator.userAgent.slice(0, 10)}`);
-    return hash === expectedHash;
-  };
-
-  const createSession = () => {
-    const timestamp = Date.now();
-    const hash = btoa(`${timestamp}_zscore_admin_${navigator.userAgent.slice(0, 10)}`);
-    
-    localStorage.setItem('zscore_admin_session', JSON.stringify({
-      timestamp,
-      hash
-    }));
-  };
-
-  const clearSession = () => {
-    localStorage.removeItem('zscore_admin_session');
-    setIsAuthenticated(false);
-    onAuthenticated?.(false);
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     if (isLocked) {
       setError(`Account locked. Try again in ${Math.ceil(lockoutTime / 1000)} seconds.`);
       return;
@@ -124,91 +71,45 @@ export default function AuthGuard({ children, onAuthenticated }) {
     setError('');
 
     try {
-      // Simulate secure authentication check
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In production, this would be a secure API call
-      const isValid = await validateCredentials(credentials);
-      
-      if (isValid) {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         setIsAuthenticated(true);
         setLoginAttempts(0);
-        createSession();
-        localStorage.removeItem('zscore_admin_lockout');
         onAuthenticated?.(true);
-        
-        // Clear credentials from memory
         setCredentials({ username: '', password: '' });
+      } else if (res.status === 429) {
+        setIsLocked(true);
+        setLockoutTime((data.retryAfter || 300) * 1000);
+        setError('Too many failed attempts. Account locked.');
       } else {
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
-        
-        if (newAttempts >= MAX_ATTEMPTS) {
-          setIsLocked(true);
-          setLockoutTime(LOCKOUT_DURATION);
-          localStorage.setItem('zscore_admin_lockout', JSON.stringify({
-            timestamp: Date.now(),
-            attempts: newAttempts
-          }));
-          setError(`Too many failed attempts. Account locked for 5 minutes.`);
-        } else {
-          setError(`Invalid credentials. ${MAX_ATTEMPTS - newAttempts} attempts remaining.`);
-        }
+        const remaining = data.remaining ?? (MAX_ATTEMPTS - newAttempts);
+        setError(`Invalid credentials. ${Math.max(0, remaining)} attempts remaining.`);
       }
-    } catch (error) {
+    } catch (err) {
       setError('Authentication service unavailable. Please try again later.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const validateCredentials = async ({ username, password }) => {
-    // High-security validation with multiple factors
-    const validUsername = process.env.NEXT_PUBLIC_ADMIN_USERNAME || 'zscore_admin';
-    const validPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'ZScore2025Admin!';
-    
-    // Additional security checks
-    const isValidTime = checkValidLoginTime();
-    const isValidBrowser = checkBrowserFingerprint();
-    
-    return username === validUsername && password === validPassword && isValidTime && isValidBrowser;
-  };
-
-  const checkValidLoginTime = () => {
-    // Allow login only during business hours (optional security layer)
-    const hour = new Date().getHours();
-    return true; // For demo, allow 24/7. In production, you might restrict to business hours
-  };
-
-  const checkBrowserFingerprint = () => {
-    // Basic browser fingerprinting for additional security
-    if (typeof window === 'undefined') return true;
-    
-    const fingerprint = {
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      platform: navigator.platform,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    };
-    
-    // Store first-time fingerprint, validate on subsequent logins
-    const storedFingerprint = localStorage.getItem('zscore_admin_fingerprint');
-    if (!storedFingerprint) {
-      localStorage.setItem('zscore_admin_fingerprint', JSON.stringify(fingerprint));
-      return true;
-    }
-    
+  const handleLogout = async () => {
     try {
-      const stored = JSON.parse(storedFingerprint);
-      return stored.userAgent === fingerprint.userAgent && stored.platform === fingerprint.platform;
-    } catch {
-      return false;
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
     }
-  };
-
-  const handleLogout = () => {
-    clearSession();
+    setIsAuthenticated(false);
     setCredentials({ username: '', password: '' });
+    onAuthenticated?.(false);
   };
 
   const formatTime = (ms) => {
@@ -216,6 +117,15 @@ export default function AuthGuard({ children, onAuthenticated }) {
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
+
+  // Show loading spinner while checking session to avoid flash
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin w-6 h-6 border-2 border-black border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     return (
@@ -351,8 +261,8 @@ export default function AuthGuard({ children, onAuthenticated }) {
 
         {/* Security Footer */}
         <div className="mt-6 text-center text-xs text-gray-400">
-          <p>Protected by advanced security protocols</p>
-          <p>Session timeout: 1 hour • Max attempts: {MAX_ATTEMPTS}</p>
+          <p>Protected by server-side authentication</p>
+          <p>Session timeout: 1 hour</p>
         </div>
       </div>
     </div>

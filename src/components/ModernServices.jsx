@@ -1,29 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from "react";
-import ServiceDetail from "./services/ServiceDetail";
 import * as ContentManager from '@/lib/content-manager-clean';
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
 
 export default function ModernServices({ initialServices = [], initialCategories = null }) {
   const [services, setServices] = useState(initialServices);
   const [isLoading, setIsLoading] = useState(initialServices.length === 0);
-  const [selectedService, setSelectedService] = useState(null);
   const sectionRef = useRef(null);
   const serviceItemRefs = useRef([]);
-
-  // Generate a URL-safe slug from service (utility function)
-  const generateSlug = (service) => {
-    if (!service) {
-      console.warn('generateSlug called with invalid service:', service);
-      return 'service';
-    }
-    // Use existing stable ID from database
-    const slug = service.id || service.slug || service.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'service';
-    console.log('Generated slug:', slug, 'from service:', service.id || service.title);
-    return String(slug); // Ensure it's always a string
-  };
-
 
   useEffect(() => {
     // Only load services if we don't have initial data
@@ -50,30 +35,12 @@ export default function ModernServices({ initialServices = [], initialCategories
       setServices(prevServices => [...prevServices]);
     };
 
-    // Listen for individual service opening events
-    const handleOpenService = (event) => {
-      const { service } = event.detail;
-      console.log('🎯 ModernServices received open-service event:', service?.title || service?.id);
-      console.log('📋 Available services:', services?.length || 'none');
-      setSelectedService(service);
-      console.log('✅ Service modal should now be open with:', service?.title);
-      
-      // Update URL to preserve the hash
-      if (service) {
-        const slug = generateSlug(service);
-        console.log('🔗 Updating URL to:', `#services/${slug}`);
-        window.history.replaceState(null, null, `#services/${slug}`);
-      }
-    };
-
     window.addEventListener('zscore-content-updated', handleContentUpdate);
     window.addEventListener('zscore-categories-loaded', handleCategoriesLoaded);
-    window.addEventListener('zscore-open-service', handleOpenService);
-    
+
     return () => {
       window.removeEventListener('zscore-content-updated', handleContentUpdate);
       window.removeEventListener('zscore-categories-loaded', handleCategoriesLoaded);
-      window.removeEventListener('zscore-open-service', handleOpenService);
     };
   }, []);
 
@@ -170,54 +137,16 @@ export default function ModernServices({ initialServices = [], initialCategories
   }, []);
 
 
-  /**
-   * Opens the detail modal for a given service.
-   * @param {object} service The service object to display.
-   */
-  const openServiceDetail = async (service) => {
-    try {
-      const serviceWithHTML = await ContentManager.getContentWithHTML('services', service.id);
-      setSelectedService(serviceWithHTML);
-      
-      // Update URL with service hash
-      const slug = generateSlug(service);
-      window.history.pushState(null, null, `#services/${slug}`);
-    } catch (error) {
-      console.error('Error loading service content:', error);
-      setSelectedService(service); // Fallback to metadata-only
-      
-      // Update URL with service hash (fallback)
-      const slug = generateSlug(service);
-      window.history.pushState(null, null, `#services/${slug}`);
-    }
-  };
-
-  /**
-   * Closes the service detail modal.
-   */
-  const closeServiceDetail = () => {
-    setSelectedService(null);
-    // Reset URL to services section
-    window.history.pushState(null, null, '#services');
-  };
-
-  /**
-   * Gets the color class for a service category
-   */
-  const getCategoryColor = (category) => {
-    return getCategoryColorSync(category, 'services');
-  };
-
   return (
     <>
       <section id="services" ref={sectionRef} className="py-20 md:py-32 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6 md:px-12 mb-20">
           <div className="fade-in-up stagger-1">
             <h2 className="text-5xl md:text-7xl font-black mb-6">
-              Core Services
+              Materials
             </h2>
             <p className="text-xl font-light text-gray-600 max-w-3xl">
-              Comprehensive solutions for contemporary music notation, and engraving, combining deep musical knowledge with custom technical workflows.
+              Preparation of contemporary music materials for performance and publication.
             </p>
           </div>
         </div>
@@ -232,12 +161,10 @@ export default function ModernServices({ initialServices = [], initialCategories
         ) : (
           <div className="space-y-4">
             {services.map((service, index) => (
-              <button
-                key={service.id} 
+              <div
+                key={service.id}
                 ref={el => serviceItemRefs.current[index] = el}
-                onClick={() => openServiceDetail(service)}
-                className={`fade-in-up stagger-${(index % 4) + 1} border-y border-gray-300 group w-full text-left hover:bg-gray-50 transition-colors duration-300 focus:outline-none focus:bg-gray-50 relative overflow-hidden`}
-                aria-label={`Learn more about ${service.title}`}
+                className={`fade-in-up stagger-${(index % 4) + 1} border-y border-gray-300 group w-full text-left relative overflow-hidden`}
               >
                 <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-12 relative">
                   {/* Service Image - Positioned absolutely within the card container */}
@@ -293,22 +220,14 @@ export default function ModernServices({ initialServices = [], initialCategories
                       <p className="text-gray-700 leading-relaxed text-lg mb-4">
                         {service.description}
                       </p>
-                      <div className="text-sm text-gray-500">
-                        Click to learn more →
-                      </div>
                     </div>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
       </section>
-
-      {/* The detail modal, rendered conditionally when a service is selected */}
-      {selectedService && (
-        <ServiceDetail service={selectedService} onClose={closeServiceDetail} />
-      )}
     </>
   );
 }
