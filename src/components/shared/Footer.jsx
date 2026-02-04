@@ -18,7 +18,7 @@ export default function Footer({ className = "" }) {
               </h3>
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed">
-              The Art of Music Notation
+              Editorial Infrastructure for Contemporary Music
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export default function Footer({ className = "" }) {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           <span>&copy; {new Date().getFullYear()} ZSCORE.studio</span>
-          <span>Contemporary music materials &middot; editorial preparation</span>
+          <span>Contemporary music materials &middot; editorial infrastructure</span>
         </div>
       </div>
     </footer>
