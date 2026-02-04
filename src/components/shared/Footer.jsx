@@ -18,7 +18,7 @@ export default function Footer({ className = "" }) {
               </h3>
             </Link>
             <p className="text-sm text-gray-600 leading-relaxed">
-              Editorial Infrastructure for Contemporary Music
+              Structure Before Appearance
             </p>
           </div>
 
