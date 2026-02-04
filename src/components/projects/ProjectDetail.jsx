@@ -96,7 +96,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                 {/* Publication Date */}
                 {newsItem.publication_date && (
                   <p className="text-sm text-gray-600 mb-4 font-medium">
-                    {format(new Date(newsItem.publication_date), 'MMMM d, yyyy')}
+                    {format(new Date(newsItem.publication_date), 'yyyy')}
                   </p>
                 )}
 
@@ -177,7 +177,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                     <div>
                       <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Published</dt>
                       <dd className="text-sm text-gray-900 font-medium">
-                        {newsItem.publication_date && format(new Date(newsItem.publication_date), 'MMMM d, yyyy')}
+                        {newsItem.publication_date && format(new Date(newsItem.publication_date), 'yyyy')}
                       </dd>
                     </div>
                     <div>
@@ -274,7 +274,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                                 {post.title}
                               </h4>
                               <p className="text-xs text-gray-500 mt-1">
-                                {post.publication_date && format(new Date(post.publication_date), 'MMM d, yyyy')}
+                                {post.publication_date && format(new Date(post.publication_date), 'yyyy')}
                               </p>
                             </div>
                           </div>

@@ -167,7 +167,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                         </span>
                         {item.publication_date && (
                           <time className="text-sm text-gray-500" dateTime={item.publication_date}>
-                            {format(new Date(item.publication_date), 'MMM d, yyyy')}
+                            {format(new Date(item.publication_date), 'yyyy')}
                           </time>
                         )}
                       </div>
