@@ -1,14 +1,16 @@
 import '../index.css';
 
 export const metadata = {
-  title: 'ZSCORE.studio - Ultimate Music Engraver',
-  description: 'You need professional music engraving. ZSCORE provides precise, score solutions for composers, ensuring performance-ready parts and structural integrity.',
+  title: 'ZSCORE.studio - Editorial Infrastructure for Contemporary Music',
+  description: 'ZSCORE.studio operates the structural integrity of musical materials, from initial preparation to reliable parts, rehearsal, and publication.',
   icons: {
     icon: '/logo.svg?v=2',
     shortcut: '/logo.svg?v=2',
     apple: '/logo.svg?v=2',
   },
 };
+
+
 
 export default function RootLayout({ children }) {
   return (
