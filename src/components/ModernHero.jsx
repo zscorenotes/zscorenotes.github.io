@@ -34,7 +34,7 @@ export default function ModernHero() {
     <section id="home" ref={heroRef} className="relative min-h-screen flex items-center bg-black text-white overflow-hidden">
       <div className="max-w-7xl w-full mx-auto px-6 md:px-12 py-20">
         <div className="fade-in-left stagger-1">
-          <h1 className="text-xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black leading-tight tracking-tighter">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black leading-tight tracking-tighter">
            Publisher-ready music materials
           </h1>
         </div>
