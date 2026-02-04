@@ -145,7 +145,7 @@ export default function ModernHeader({ activeSection, onSectionChange }) {
 
         {/* Hero Content */}
         <div className="fade-in-up relative z-20">
-          <h1 className="text-[5.5rem] sm:text-[8rem] md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-black leading-none mb-0 glitch">
+          <h1 className="text-[7rem] sm:text-[8rem] md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-black leading-none mb-0 glitch">
             ZSCORE
           </h1>
         </div>
