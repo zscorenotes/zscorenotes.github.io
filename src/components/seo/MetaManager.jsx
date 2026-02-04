@@ -25,31 +25,12 @@ export default function MetaManager({ activeSection }) {
       description: defaultDescription,
       path: '#home',
     },
-    services: {
-      title: "Music Engraving & Score Production Services | ZSCORE Studio",
-      description: "Discover ZSCORE's comprehensive music services, including score engraving, orchestral parts preparation, audio programming, and detailed consultation for complex projects.",
-      path: '#services',
-    },
-    portfolio: {
-      title: "Portfolio | Music Engraving & Notation Projects by ZSCORE",
-      description: "Explore a curated collection of our most impactful score production projects for composers, publishers, and ensembles.",
-      path: '#portfolio',
-    },
-    news: {
-        title: "News & Updates | ZSCORE Music Technology",
-        description: "Stay updated with the latest news, project announcements, and insights into music notation technology and engraving from the ZSCORE team.",
-        path: '#feed',
-    },
-    about: {
-      title: "About ZSCORE | Composer-Led Engraving Studio",
-      description: "Learn about ZSCORE, our philosophy, and the expert team of composers and developers dedicated to the art of contemporary music notation.",
-      path: '#about',
-    },
     contact: {
-      title: "Contact ZSCORE | Start Your Music Notation Project",
-      description: "Reach out to the ZSCORE team to discuss your score. We're ready to bring your piece to life.",
+      title: 'Contact ZSCORE | Editorial Coordination',
+      description: 'Initiate editorial coordination for structurally stable musical materials and publication-ready delivery.',
       path: '#contact',
-    }
+    },
+
   };
 
   // This effect runs whenever the activeSection changes.
