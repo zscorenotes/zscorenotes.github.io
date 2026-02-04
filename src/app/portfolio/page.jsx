@@ -7,6 +7,9 @@ import { getAllContent } from '@/lib/content-manager-clean';
 import { loadHTMLContent } from '@/lib/html-content-manager';
 import PortfolioListingPage from '@/components/portfolio/PortfolioListingPage';
 
+// Force dynamic rendering so content updates are reflected immediately
+export const dynamic = 'force-dynamic';
+
 /**
  * Generate metadata for SEO
  */

@@ -42,6 +42,7 @@ export async function readContentFile(filename) {
         'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json',
       },
+      cache: 'no-store',
     });
 
     if (response.status === 404) {

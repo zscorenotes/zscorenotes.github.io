@@ -6,6 +6,9 @@
 import { getAllContent } from '@/lib/content-manager-clean';
 import ProjectsListingPage from '@/components/projects/ProjectsListingPage';
 
+// Force dynamic rendering so content updates are reflected immediately
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Projects | ZSCORE.studio',
   description: 'A museum of recent engravings, orchestrations, and collaborations from ZSCORE.studio.',

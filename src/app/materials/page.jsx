@@ -6,6 +6,9 @@
 import { getAllContent } from '@/lib/content-manager-clean';
 import MaterialsListingPage from '@/components/materials/MaterialsListingPage';
 
+// Force dynamic rendering so content updates are reflected immediately
+export const dynamic = 'force-dynamic';
+
 /**
  * Generate metadata for SEO
  */
