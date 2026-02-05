@@ -99,44 +99,44 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-black text-white">
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-widest uppercase mb-6 text-gray-400">
+      <section className="pt-28 pb-12 md:pt-36 md:pb-16 bg-black text-white">
+        <div className="w-[95%] max-w-screen-2xl mx-auto px-6">
+          <p className="text-xs font-medium tracking-widest uppercase mb-4 text-gray-400">
             Recent Work
           </p>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight mb-8">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.9] tracking-tight mb-4">
             Projects
           </h1>
-          <p className="text-lg md:text-xl font-light text-gray-300 max-w-xl">
+          <p className="text-base md:text-lg font-light text-gray-300 max-w-xl">
             A museum of our recent projects
           </p>
         </div>
       </section>
 
       {/* Projects Timeline */}
-      <section className="py-16 md:py-24">
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
+      <section className="py-10 md:py-16">
+        <div className="w-[95%] max-w-screen-2xl mx-auto px-6">
           <div className="relative">
             {/* Vertical timeline line */}
-            <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-200"></div>
+            <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200"></div>
 
-            <div className="space-y-12">
+            <div className="space-y-5">
               {paginatedProjects.map((item) => (
                 <article
                   key={item.id}
-                  className="relative flex items-start space-x-8 group"
+                  className="relative flex items-start space-x-6 group"
                 >
                   {/* Timeline Marker - note SVG */}
-                  <div className="relative z-10 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                  <div className="relative z-10 w-6 h-6 flex items-center justify-center flex-shrink-0">
                     <svg
-                      className="w-7 h-6 text-black/70 group-hover:text-black transition-all duration-300 opacity-100 group-hover:opacity-0"
+                      className="w-5 h-4 text-black/70 group-hover:text-black transition-all duration-300 opacity-100 group-hover:opacity-0"
                       viewBox="0 0 29.57 24.15"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path d="M19.25,0c6.57,0,10.32,3.32,10.32,8.57,0,10.32-13.47,15.57-18.98,15.57-6.3,0-10.59-3.24-10.59-8.57C0,7.7,9.62,0,19.25,0ZM22.31,3.94c-1.06,0-18.72,10.22-18.72,12.16,0,1.77,1.92,4.11,3.5,4.11,1.15,0,18.98-10.4,18.98-12.16,0-1.24-2.01-4.11-3.76-4.11Z" fill="currentColor"/>
                     </svg>
                     <svg
-                      className="absolute w-7 h-6 text-black transition-all duration-300 opacity-0 group-hover:opacity-100"
+                      className="absolute w-5 h-4 text-black transition-all duration-300 opacity-0 group-hover:opacity-100"
                       viewBox="0 0 28.61 23.47"
                       xmlns="http://www.w3.org/2000/svg"
                     >
@@ -151,7 +151,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                   >
                     {/* Mobile: Thumbnail Above */}
                     {item.image_urls && item.image_urls.length > 0 && (
-                      <div className="md:hidden w-full h-48 overflow-hidden">
+                      <div className="md:hidden w-full h-32 overflow-hidden">
                         <img
                           src={item.image_urls[0]}
                           alt={item.title}
@@ -160,32 +160,32 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                       </div>
                     )}
 
-                    <div className="flex-1 p-8">
-                      <div className="flex items-center space-x-4 mb-4">
-                        <span className={`px-3 py-1 text-xs tracking-wider uppercase rounded-full ${getCategoryColor(item.category)}`}>
+                    <div className="flex-1 px-5 py-4">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <span className={`px-2 py-0.5 text-[11px] tracking-wider uppercase rounded-full ${getCategoryColor(item.category)}`}>
                           {item.category?.replace('_', ' ')}
                         </span>
                         {item.publication_date && (
-                          <time className="text-sm text-gray-500" dateTime={item.publication_date}>
+                          <time className="text-xs text-gray-500" dateTime={item.publication_date}>
                             {format(new Date(item.publication_date), 'yyyy')}
                           </time>
                         )}
                       </div>
-                      <h3 className="text-2xl font-bold mb-4">
+                      <h3 className="text-base font-bold mb-1">
                         {item.title}
                       </h3>
-                      <p className="text-gray-600 leading-relaxed mb-4">
+                      <p className="text-xs text-gray-600 leading-relaxed line-clamp-2">
                         {item.excerpt || ""}
                       </p>
-                      <div className="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                      <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
                         <span>View project</span>
-                        <ArrowRight size={14} />
+                        <ArrowRight size={12} />
                       </div>
                     </div>
 
                     {/* Desktop: Image on Right */}
                     {item.image_urls && item.image_urls.length > 0 && (
-                      <div className="hidden md:block w-48 lg:w-64 flex-shrink-0">
+                      <div className="hidden md:block w-36 lg:w-44 flex-shrink-0">
                         <img
                           src={item.image_urls[0]}
                           alt={item.title}
