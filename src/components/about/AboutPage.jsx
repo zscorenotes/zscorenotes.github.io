@@ -27,7 +27,7 @@ export default function AboutPage() {
           isScrolled ? "bg-white/90 backdrop-blur-md border-b border-gray-200/50 shadow-sm" : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="w-[90%] max-w-7xl mx-auto px-6">
+        <div className="w-full px-6">
           <div className="flex items-center justify-between h-20">
             <Link
               href="/"
