@@ -42,9 +42,10 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
               <BackToFeedButton />
 
               {/* Center: Logo */}
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="absolute left-1/2 transform -translate-x-1/2 font-black text-lg hover:text-gray-600 transition-colors"
+                style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
               >
                 ZSCORE<span className="font-extralight">.studio</span>
               </Link>
