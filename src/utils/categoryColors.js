@@ -78,38 +78,7 @@ async function loadCategories() {
  * @returns {string} Tailwind CSS classes for the tag
  */
 export async function getCategoryColor(tagName, sectionType) {
-  // Special handling for # tags - always gray
-  if (tagName && tagName.startsWith('#')) {
-    return COLOR_CLASSES.gray;
-  }
-
-  try {
-    const categories = await loadCategories();
-    const sectionCategories = categories[sectionType] || [];
-    
-    // Find category by exact match on label, displayName, or id
-    const category = sectionCategories.find(cat => {
-      if (!cat) return false;
-      
-      const normalizedTag = tagName?.toLowerCase?.() || '';
-      return (
-        cat.label?.toLowerCase() === normalizedTag ||
-        cat.displayName?.toLowerCase() === normalizedTag ||
-        cat.id?.toLowerCase() === normalizedTag
-      );
-    });
-    
-    if (category && category.color && COLOR_CLASSES[category.color]) {
-      return COLOR_CLASSES[category.color];
-    }
-    
-    // Fallback to default colors based on section and tag name
-    return getDefaultCategoryColor(tagName, sectionType);
-    
-  } catch (error) {
-    console.error('Error getting category color:', error);
-    return getDefaultCategoryColor(tagName, sectionType);
-  }
+  return COLOR_CLASSES.gray;
 }
 
 /**
@@ -117,72 +86,7 @@ export async function getCategoryColor(tagName, sectionType) {
  * Loads categories synchronously if not cached, then returns color
  */
 export function getCategoryColorSync(tagName, sectionType) {
-  // Special handling for # tags - always gray
-  if (tagName && tagName.startsWith('#')) {
-    return COLOR_CLASSES.gray;
-  }
-
-  // Debug logging (development only)
-  const isDev = typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost'));
-  
-  if (isDev) {
-    console.log(`🎨 getCategoryColorSync: "${tagName}" in "${sectionType}"`);
-    console.log('🎨 Cache status:', !!categoriesCache);
-    if (categoriesCache) {
-      console.log(`🎨 Section categories:`, categoriesCache[sectionType]);
-    }
-  }
-
-  // If not cached and not already loading, trigger async load
-  if (!categoriesCache && !isLoadingCategories && typeof window !== 'undefined') {
-    isLoadingCategories = true;
-    loadCategories()
-      .then(() => {
-        isLoadingCategories = false;
-        // Trigger a re-render to pick up the new colors
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('zscore-categories-loaded'));
-        }
-      })
-      .catch(error => {
-        console.error('Error loading categories:', error);
-        isLoadingCategories = false;
-      });
-  }
-
-  // Use cached categories if available
-  if (categoriesCache) {
-    const sectionCategories = categoriesCache[sectionType] || [];
-    
-    const category = sectionCategories.find(cat => {
-      if (!cat) return false;
-      
-      const normalizedTag = tagName?.toLowerCase?.() || '';
-      const matches = (
-        cat.label?.toLowerCase() === normalizedTag ||
-        cat.displayName?.toLowerCase() === normalizedTag ||
-        cat.id?.toLowerCase() === normalizedTag
-      );
-      
-      if (isDev) {
-        console.log(`🎨 Checking category:`, cat, `matches: ${matches}`);
-      }
-      
-      return matches;
-    });
-    
-    if (category && category.color && COLOR_CLASSES[category.color]) {
-      const colorClass = COLOR_CLASSES[category.color];
-      if (isDev) console.log(`🎨 Found color for "${tagName}":`, colorClass);
-      return colorClass;
-    }
-  }
-  
-  // Fallback to defaults
-  const defaultColor = getDefaultCategoryColor(tagName, sectionType);
-  if (isDev) console.log(`🎨 Using default color for "${tagName}":`, defaultColor);
-  return defaultColor;
+  return COLOR_CLASSES.gray;
 }
 
 /**

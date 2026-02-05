@@ -29,34 +29,7 @@ const COLOR_CLASSES = {
  * @returns {string} Tailwind CSS classes
  */
 export function getCategoryColorSSR(tagName, sectionType, categories = null) {
-  // Special handling for # tags - always gray
-  if (tagName && tagName.startsWith('#')) {
-    return COLOR_CLASSES.gray;
-  }
-
-  if (!tagName) return COLOR_CLASSES.gray;
-
-  // If categories provided, look for exact match
-  if (categories && categories[sectionType]) {
-    const sectionCategories = categories[sectionType] || [];
-    const category = sectionCategories.find(cat => {
-      if (!cat) return false;
-      
-      const normalizedTag = tagName.toLowerCase();
-      return (
-        cat.label?.toLowerCase() === normalizedTag ||
-        cat.displayName?.toLowerCase() === normalizedTag ||
-        cat.id?.toLowerCase() === normalizedTag
-      );
-    });
-    
-    if (category && category.color && COLOR_CLASSES[category.color]) {
-      return COLOR_CLASSES[category.color];
-    }
-  }
-  
-  // Fallback to deterministic default colors
-  return getDefaultCategoryColorSSR(tagName, sectionType);
+  return COLOR_CLASSES.gray;
 }
 
 /**
