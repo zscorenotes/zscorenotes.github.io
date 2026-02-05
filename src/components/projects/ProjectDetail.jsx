@@ -175,7 +175,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                   </h3>
                   <dl className="space-y-3">
                     <div>
-                      <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Published</dt>
+                      <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Year</dt>
                       <dd className="text-sm text-gray-900 font-medium">
                         {newsItem.publication_date && format(new Date(newsItem.publication_date), 'yyyy')}
                       </dd>
