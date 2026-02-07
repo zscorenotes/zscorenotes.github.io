@@ -102,7 +102,7 @@ export default function NewsDetail({ newsItem, allNews = [], relatedPosts = [] }
                 )}
 
                 {/* Title */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black mb-6 leading-tight tracking-tight">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black mb-6 leading-tight tracking-tight" style={{ fontFamily: '"IBM Plex Sans", sans-serif' }}>
                   {newsItem.title}
                 </h1>
 
