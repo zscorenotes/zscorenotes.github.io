@@ -333,7 +333,7 @@ button:focus-visible {
   }
   
   /* Preserve sharp lines in thumbnails (music scores, engravings) */
-  img.object-cover {
+  img {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
   }

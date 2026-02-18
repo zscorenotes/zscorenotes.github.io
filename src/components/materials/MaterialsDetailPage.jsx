@@ -4,93 +4,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import * as ContentManager from '@/lib/content-manager-clean';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Footer from '@/components/shared/Footer';
 import { getCategoryColorSSR } from '@/utils/categoryColorsSSR';
-
-/**
- * Lightbox component for full-screen image viewing.
- */
-const Lightbox = ({ images, startIndex, onClose }) => {
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
-
-  const nextImage = useCallback((e) => {
-    e && e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  }, [images.length]);
-
-  const prevImage = useCallback((e) => {
-    e && e.stopPropagation();
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  }, [images.length]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextImage, prevImage, onClose]);
-
-  useEffect(() => {
-    setCurrentIndex(startIndex);
-  }, [startIndex]);
-
-  if (!images || images.length === 0) return null;
-  const currentImage = images[currentIndex];
-
-  return (
-    <div
-      className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-[210]"
-        aria-label="Close"
-      >
-        <X size={32} />
-      </button>
-
-      <div className="relative w-full max-w-6xl max-h-full flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <div className="relative flex-grow flex items-center justify-center">
-          <img
-            key={currentImage.src}
-            src={currentImage.src}
-            alt={currentImage.caption || `Image ${currentIndex + 1}`}
-            className="max-w-full max-h-[85vh] object-contain"
-          />
-        </div>
-        {currentImage.caption && (
-          <div className="text-center text-white p-4">
-            <p className="text-lg">{currentImage.caption}</p>
-          </div>
-        )}
-      </div>
-
-      {images.length > 1 && (
-        <>
-          <button
-            onClick={prevImage}
-            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white/20 p-3 rounded-full text-white hover:bg-white/40 transition-colors z-[210]"
-            aria-label="Previous"
-          >
-            <ChevronLeft size={32} />
-          </button>
-          <button
-            onClick={nextImage}
-            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white/20 p-3 rounded-full text-white hover:bg-white/40 transition-colors z-[210]"
-            aria-label="Next"
-          >
-            <ChevronRight size={32} />
-          </button>
-        </>
-      )}
-    </div>
-  );
-};
+import Lightbox from '@/components/shared/Lightbox';
 
 /**
  * Materials detail page for displaying individual service/material items.
