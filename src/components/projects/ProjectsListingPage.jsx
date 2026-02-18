@@ -151,12 +151,11 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                   >
                     {/* Mobile: Thumbnail Above */}
                     {item.image_urls && item.image_urls.length > 0 && (
-                      <div className="md:hidden w-full h-32 overflow-hidden">
+                      <div className="md:hidden w-full h-40 overflow-hidden">
                         <img
                           src={item.image_urls[0]}
                           alt={item.title}
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-
                         />
                       </div>
                     )}
@@ -191,7 +190,6 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                           src={item.image_urls[0]}
                           alt={item.title}
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-
                         />
                       </div>
                     )}
