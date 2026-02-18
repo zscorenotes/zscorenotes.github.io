@@ -185,7 +185,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
 
                     {/* Desktop: Image on Right */}
                     {item.image_urls && item.image_urls.length > 0 && (
-                      <div className="hidden md:block w-36 lg:w-44 flex-shrink-0">
+                      <div className="hidden md:block w-36 lg:w-44 h-32 flex-shrink-0 overflow-hidden">
                         <img
                           src={item.image_urls[0]}
                           alt={item.title}
