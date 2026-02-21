@@ -153,7 +153,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                     {item.image_urls && item.image_urls.length > 0 && (
                       <div className="md:hidden w-full h-40 overflow-hidden">
                         <img
-                          src={item.image_urls[0]}
+                          src={item.thumbnail_urls?.[0] || item.image_urls[0]}
                           alt={item.title}
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                         />
@@ -187,7 +187,7 @@ export default function NewsListingPage({ initialNews = [], initialCategories = 
                     {item.image_urls && item.image_urls.length > 0 && (
                       <div className="hidden md:block w-36 lg:w-44 h-32 flex-shrink-0 overflow-hidden">
                         <img
-                          src={item.image_urls[0]}
+                          src={item.thumbnail_urls?.[0] || item.image_urls[0]}
                           alt={item.title}
                           className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                         />

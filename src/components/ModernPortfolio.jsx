@@ -298,7 +298,7 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
             {item.image_urls && item.image_urls.length > 0 ? (
               <div className="relative w-full h-full">
                 <img
-                  src={item.image_urls[0]}
+                  src={item.thumbnail_urls?.[0] || item.image_urls[0]}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -410,7 +410,7 @@ export default function ModernPortfolio({ initialPortfolio = [], initialCategori
             {item.image_urls && item.image_urls.length > 0 ? (
               <div className="relative w-full h-full">
                 <img
-                  src={item.image_urls[0]}
+                  src={item.thumbnail_urls?.[0] || item.image_urls[0]}
                   alt={item.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />

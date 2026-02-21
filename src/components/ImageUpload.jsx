@@ -63,9 +63,9 @@ export default function ImageUpload({
 
       const data = await response.json();
       
-      // Call the callback with the new image URL
+      // Call the callback with the new image URL and optional thumbnail URL
       if (onImageUploaded) {
-        onImageUploaded(data.url);
+        onImageUploaded(data.url, data.thumbnail_url || null);
       }
 
     } catch (err) {

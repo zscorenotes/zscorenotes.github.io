@@ -94,7 +94,7 @@ export default function PortfolioListingPage({ initialPortfolio = [] }) {
                     <div className="aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
                       {item.image_urls && item.image_urls.length > 0 ? (
                         <img
-                          src={item.image_urls[0]}
+                          src={item.thumbnail_urls?.[0] || item.image_urls[0]}
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />

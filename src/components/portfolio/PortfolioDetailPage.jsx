@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Footer from '@/components/shared/Footer';
 import Lightbox from '@/components/shared/Lightbox';
+import InlineGallery from '@/components/shared/InlineGallery';
 
 /**
  * Dedicated page for displaying individual portfolio projects with artistic flair
@@ -22,7 +23,6 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
     images: [],
     startIndex: 0
   });
-  const [showInlineGallery, setShowInlineGallery] = useState(false);
 
   // Handler to navigate back to portfolio listing
   const handleBackToPortfolio = useCallback((e) => {
@@ -133,6 +133,36 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
     setLightboxState({ isOpen: false, images: [], startIndex: 0 });
   };
 
+  // Renders HTML content, replacing any <div data-gallery="..."> markers with InlineGallery
+  const renderHTMLWithGalleries = (html, galleryImages) => {
+    if (!html) return null;
+    const GALLERY_MARKER = 'data-gallery=';
+    if (!html.includes(GALLERY_MARKER)) {
+      return (
+        <div
+          dangerouslySetInnerHTML={{ __html: html }}
+          className="prose-content text-xl leading-relaxed text-gray-800"
+        />
+      );
+    }
+    // Split HTML on gallery marker divs
+    const parts = html.split(/(<div[^>]*data-gallery[^>]*>[\s\S]*?<\/div>)/gi);
+    return (
+      <>
+        {parts.map((part, i) => {
+          if (/data-gallery/i.test(part)) {
+            return galleryImages.length > 0
+              ? <InlineGallery key={`gallery-${i}`} images={galleryImages} className="my-12" />
+              : null;
+          }
+          return part.trim()
+            ? <div key={`html-${i}`} dangerouslySetInnerHTML={{ __html: part }} className="prose-content text-xl leading-relaxed text-gray-800" />
+            : null;
+        })}
+      </>
+    );
+  };
+
   // Get other portfolio items (excluding current)
   const otherItems = allPortfolio
     .filter(item => {
@@ -240,140 +270,15 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
               )}
             </div>
 
-            {/* Right: Image Gallery with Clear Indicators */}
-            {portfolioItem.image_urls && portfolioItem.image_urls.length > 0 && (
+            {/* Right: Inline Gallery (skips cover photo at index 0) */}
+            {portfolioItem.image_urls && portfolioItem.image_urls.length > 1 && (
               <div className="lg:col-span-7 order-2 lg:order-2">
-                <div className="relative">
-                  {/* Gallery Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-bold tracking-wider uppercase text-gray-900">
-                      Project Gallery
-                    </h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <span className="w-2 h-2 bg-black rounded-full animate-pulse"></span>
-                      <span>{portfolioItem.image_urls.length} image{portfolioItem.image_urls.length > 1 ? 's' : ''}</span>
-                      <span className="ml-2 px-2 py-1 bg-black text-white text-xs font-bold">
-                        CLICK TO EXPAND
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Image Grid with Better Indicators */}
-                  <div className="grid grid-cols-2 gap-4 h-[70vh]">
-                    {/* Main Image */}
-                    <button
-                      onClick={() => openLightbox(0)}
-                      className="relative col-span-2 row-span-2 group overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-lg hover:shadow-2xl transition-all duration-500"
-                    >
-                      <img
-                        src={portfolioItem.image_urls[0]}
-                        alt={portfolioItem.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      {/* Hover Overlay with Zoom Icon */}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                          </svg>
-                          <span className="font-bold text-sm">VIEW GALLERY</span>
-                        </div>
-                      </div>
-                      {/* Image Counter Badge */}
-                      <div className="absolute top-4 right-4 bg-black/80 text-white px-3 py-1 text-sm font-bold backdrop-blur-sm">
-                        1 of {portfolioItem.image_urls.length}
-                      </div>
-                    </button>
-
-                    {/* Thumbnail Grid - Show 2-4 more images */}
-                    {portfolioItem.image_urls.slice(1, 5).map((url, index) => (
-                      <button
-                        key={index + 1}
-                        onClick={() => openLightbox(index + 1)}
-                        className="relative group overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 shadow-md hover:shadow-xl transition-all duration-300"
-                      >
-                        <img
-                          src={url}
-                          alt={`${portfolioItem.title} - ${index + 2}`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        {/* More Images Indicator */}
-                        {portfolioItem.image_urls.length > 5 && index === 3 && (
-                          <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-white">
-                            <span className="text-3xl font-black">+{portfolioItem.image_urls.length - 5}</span>
-                            <span className="text-xs font-bold tracking-wider uppercase">More Images</span>
-                          </div>
-                        )}
-                        {/* Individual Image Counter */}
-                        <div className="absolute bottom-2 right-2 bg-white/90 text-black px-2 py-1 text-xs font-bold">
-                          {index + 2}
-                        </div>
-                        {/* Zoom Hint */}
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                            </svg>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Gallery Options */}
-                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-sm text-gray-600 italic">
-                      Click any image to open full gallery with navigation
-                    </p>
-                    
-                    {/* Alternative Viewing Options */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => openLightbox(0)}
-                        className="px-4 py-2 bg-black text-white text-xs font-bold tracking-wider uppercase hover:bg-gray-800 transition-colors"
-                      >
-                        Gallery View
-                      </button>
-                      
-                      {/* Inline Gallery Toggle */}
-                      <button
-                        onClick={() => setShowInlineGallery(!showInlineGallery)}
-                        className="px-4 py-2 border border-black text-black text-xs font-bold tracking-wider uppercase hover:bg-black hover:text-white transition-colors"
-                      >
-                        {showInlineGallery ? 'Hide' : 'Show'} All Images
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Inline Gallery - Alternative to Lightbox */}
-                  {showInlineGallery && portfolioItem.image_urls && portfolioItem.image_urls.length > 1 && (
-                    <div className="mt-8 space-y-6">
-                      <div className="border-t border-gray-200 pt-6">
-                        <h4 className="text-lg font-bold mb-4 tracking-wider uppercase">
-                          Complete Image Collection
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {portfolioItem.image_urls.map((url, index) => (
-                            <div key={index} className="group">
-                              <div className="relative overflow-hidden shadow-lg">
-                                <img
-                                  src={url}
-                                  alt={`${portfolioItem.title} - Image ${index + 1}`}
-                                  className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                                  <p className="text-white text-sm font-medium">
-                                    Image {index + 1} of {portfolioItem.image_urls.length}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <InlineGallery
+                  images={portfolioItem.image_urls.slice(1).map((url, i) => ({
+                    src: url,
+                    caption: `${portfolioItem.title} — Image ${i + 2}`,
+                  }))}
+                />
               </div>
             )}
           </div>
@@ -395,9 +300,9 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
                     return <p key={index} className="text-xl leading-relaxed mb-8 text-gray-800">{block.content}</p>;
                   } else if (block.type === 'markdown' && block.content) {
                     return (
-                      <div 
-                        key={index} 
-                        dangerouslySetInnerHTML={{ __html: block.content }} 
+                      <div
+                        key={index}
+                        dangerouslySetInnerHTML={{ __html: block.content }}
                         className="prose-content text-xl leading-relaxed mb-8 text-gray-800"
                       />
                     );
@@ -408,10 +313,10 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
                           onClick={() => openLightbox(0)}
                           className="block w-full group"
                         >
-                          <img 
-                            src={block.src} 
-                            alt={block.caption || `Content image ${index}`} 
-                            className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02] shadow-lg" 
+                          <img
+                            src={block.src}
+                            alt={block.caption || `Content image ${index}`}
+                            className="w-full h-auto transition-transform duration-300 group-hover:scale-[1.02] shadow-lg"
                           />
                         </button>
                         {block.caption && (
@@ -421,14 +326,28 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
                         )}
                       </figure>
                     );
+                  } else if (block.type === 'gallery') {
+                    // Inline gallery block — shows all images except cover
+                    const galleryImages = (portfolioItem.image_urls || []).slice(1).map((url, i) => ({
+                      src: url,
+                      caption: `${portfolioItem.title} — Image ${i + 2}`,
+                    }));
+                    return galleryImages.length > 0 ? (
+                      <div key={index} className="my-12">
+                        <InlineGallery images={galleryImages} />
+                      </div>
+                    ) : null;
                   }
                   return null;
                 })
               ) : portfolioItem.content ? (
-                <div 
-                  dangerouslySetInnerHTML={{ __html: portfolioItem.content }} 
-                  className="prose-content text-xl leading-relaxed text-gray-800"
-                />
+                renderHTMLWithGalleries(
+                  portfolioItem.content,
+                  (portfolioItem.image_urls || []).slice(1).map((url, i) => ({
+                    src: url,
+                    caption: `${portfolioItem.title} — Image ${i + 2}`,
+                  }))
+                )
               ) : null}
             </div>
           </div>

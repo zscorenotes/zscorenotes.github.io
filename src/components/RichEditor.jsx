@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, Code, Save, Undo, Redo, Type, Image, Link, List, Bold, Italic, Palette, Copy, FileText, Sparkles, Monitor, Split } from 'lucide-react';
+import { Eye, Code, Save, Undo, Redo, Type, Image, Link, List, Bold, Italic, Palette, Copy, FileText, Sparkles, Monitor, Split, LayoutGrid } from 'lucide-react';
 
 /**
  * Advanced Rich HTML Editor with live preview and presets
@@ -293,7 +293,8 @@ export default function RichEditor({
     { icon: Image, label: 'Image', code: '<img src="" alt="" class="w-full h-auto rounded-lg mb-6" />' },
     { icon: Link, label: 'Link', code: '<a href="#" class="text-blue-600 hover:text-blue-800 font-semibold"></a>' },
     { icon: List, label: 'List', code: '<ul class="space-y-2 mb-6"><li></li></ul>' },
-    { icon: Palette, label: 'Card', code: '<div class="bg-white p-6 rounded-lg shadow-sm border mb-6"></div>' }
+    { icon: Palette, label: 'Card', code: '<div class="bg-white p-6 rounded-lg shadow-sm border mb-6"></div>' },
+    { icon: LayoutGrid, label: 'Gallery', code: '<div data-gallery="all" style="background:#f3f4f6;border:2px dashed #9ca3af;padding:24px;text-align:center;color:#6b7280;margin:24px 0">📷 Inline Gallery — project images will appear here</div>' },
   ];
 
   return (

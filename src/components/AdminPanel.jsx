@@ -1101,7 +1101,10 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                         </div>
                         <ImageUpload
                           currentImage={url}
-                          onImageUploaded={(newUrl) => handleArrayFieldChange('image_urls', index, newUrl)}
+                          onImageUploaded={(newUrl, thumbUrl) => {
+                                    handleArrayFieldChange('image_urls', index, newUrl);
+                                    if (thumbUrl) handleArrayFieldChange('thumbnail_urls', index, thumbUrl);
+                                  }}
                           label=""
                         />
                       </div>
@@ -1147,7 +1150,10 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                         </div>
                         <ImageUpload
                           currentImage={url}
-                          onImageUploaded={(newUrl) => handleArrayFieldChange('image_urls', index, newUrl)}
+                          onImageUploaded={(newUrl, thumbUrl) => {
+                                    handleArrayFieldChange('image_urls', index, newUrl);
+                                    if (thumbUrl) handleArrayFieldChange('thumbnail_urls', index, thumbUrl);
+                                  }}
                           label=""
                         />
                         {index === 0 && (
@@ -1196,7 +1202,10 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                         </div>
                         <ImageUpload
                           currentImage={url}
-                          onImageUploaded={(newUrl) => handleArrayFieldChange('image_urls', index, newUrl)}
+                          onImageUploaded={(newUrl, thumbUrl) => {
+                                    handleArrayFieldChange('image_urls', index, newUrl);
+                                    if (thumbUrl) handleArrayFieldChange('thumbnail_urls', index, thumbUrl);
+                                  }}
                           label=""
                         />
                         {index === 0 && (
