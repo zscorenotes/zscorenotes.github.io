@@ -133,8 +133,27 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
     setLightboxState({ isOpen: false, images: [], startIndex: 0 });
   };
 
-  // Renders HTML content, replacing any <div data-gallery="..."> markers with InlineGallery
-  const renderHTMLWithGalleries = (html, galleryImages) => {
+  // Resolve which images to show for a given data-gallery value.
+  // "all"       → all images except the cover (index 0)
+  // "2,3,4"     → images at those 1-based positions (matching admin panel numbering)
+  const resolveGalleryImages = (galleryValue, allUrls, title) => {
+    const urls = allUrls || [];
+    if (!galleryValue || galleryValue === 'all') {
+      return urls.slice(1).map((url, i) => ({
+        src: url,
+        caption: `${title} — Image ${i + 2}`,
+      }));
+    }
+    return galleryValue
+      .split(',')
+      .map(s => parseInt(s.trim(), 10) - 1)   // 1-based → 0-based
+      .filter(i => i >= 0 && i < urls.length)
+      .map(i => ({ src: urls[i], caption: `${title} — Image ${i + 1}` }));
+  };
+
+  // Renders HTML content, replacing any <div data-gallery="..."> markers with InlineGallery.
+  // Syntax: data-gallery="all"  or  data-gallery="2,3,4"
+  const renderHTMLWithGalleries = (html, allUrls, title) => {
     if (!html) return null;
     const GALLERY_MARKER = 'data-gallery=';
     if (!html.includes(GALLERY_MARKER)) {
@@ -145,14 +164,15 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
         />
       );
     }
-    // Split HTML on gallery marker divs
     const parts = html.split(/(<div[^>]*data-gallery[^>]*>[\s\S]*?<\/div>)/gi);
     return (
       <>
         {parts.map((part, i) => {
           if (/data-gallery/i.test(part)) {
-            return galleryImages.length > 0
-              ? <InlineGallery key={`gallery-${i}`} images={galleryImages} className="my-12" />
+            const galleryValue = part.match(/data-gallery="([^"]+)"/i)?.[1] || 'all';
+            const images = resolveGalleryImages(galleryValue, allUrls, title);
+            return images.length > 0
+              ? <InlineGallery key={`gallery-${i}`} images={images} className="my-12" />
               : null;
           }
           return part.trim()
@@ -327,14 +347,15 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
                       </figure>
                     );
                   } else if (block.type === 'gallery') {
-                    // Inline gallery block — shows all images except cover
-                    const galleryImages = (portfolioItem.image_urls || []).slice(1).map((url, i) => ({
-                      src: url,
-                      caption: `${portfolioItem.title} — Image ${i + 2}`,
-                    }));
-                    return galleryImages.length > 0 ? (
+                    // block.indices = "2,3,4" or "all" (optional, defaults to "all")
+                    const images = resolveGalleryImages(
+                      block.indices || 'all',
+                      portfolioItem.image_urls || [],
+                      portfolioItem.title
+                    );
+                    return images.length > 0 ? (
                       <div key={index} className="my-12">
-                        <InlineGallery images={galleryImages} />
+                        <InlineGallery images={images} />
                       </div>
                     ) : null;
                   }
@@ -343,10 +364,8 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
               ) : portfolioItem.content ? (
                 renderHTMLWithGalleries(
                   portfolioItem.content,
-                  (portfolioItem.image_urls || []).slice(1).map((url, i) => ({
-                    src: url,
-                    caption: `${portfolioItem.title} — Image ${i + 2}`,
-                  }))
+                  portfolioItem.image_urls || [],
+                  portfolioItem.title
                 )
               ) : null}
             </div>

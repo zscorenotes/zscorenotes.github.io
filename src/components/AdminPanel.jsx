@@ -1181,7 +1181,7 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                     Project Images
                   </label>
                   <p className="text-xs text-gray-500 mb-4">
-                    Upload images to showcase your portfolio project. The first image will be used as the featured image in the grid.
+                    Upload images to showcase your portfolio project. <strong>Image 1</strong> is the cover photo (shown in the portfolio listing). <strong>Images 2+</strong> appear in the inline gallery on the project detail page.
                   </p>
                   
                   {/* Current Images */}
@@ -1209,7 +1209,10 @@ function EnhancedItemEditor({ item, section, onChange, onSave, saveStatus }) {
                           label=""
                         />
                         {index === 0 && (
-                          <p className="text-xs text-gray-500 mt-2">This image will appear on the portfolio grid with 4:5 aspect ratio.</p>
+                          <p className="text-xs text-gray-500 mt-2">Cover photo — shown in the portfolio listing. Not shown in the detail page gallery.</p>
+                        )}
+                        {index > 0 && (
+                          <p className="text-xs text-gray-500 mt-2">Gallery image — appears in the inline viewer on the project detail page.</p>
                         )}
                       </div>
                     ))}

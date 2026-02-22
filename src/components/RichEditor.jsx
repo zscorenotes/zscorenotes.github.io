@@ -294,7 +294,7 @@ export default function RichEditor({
     { icon: Link, label: 'Link', code: '<a href="#" class="text-blue-600 hover:text-blue-800 font-semibold"></a>' },
     { icon: List, label: 'List', code: '<ul class="space-y-2 mb-6"><li></li></ul>' },
     { icon: Palette, label: 'Card', code: '<div class="bg-white p-6 rounded-lg shadow-sm border mb-6"></div>' },
-    { icon: LayoutGrid, label: 'Gallery', code: '<div data-gallery="all" style="background:#f3f4f6;border:2px dashed #9ca3af;padding:24px;text-align:center;color:#6b7280;margin:24px 0">📷 Inline Gallery — project images will appear here</div>' },
+    { icon: LayoutGrid, label: 'Gallery', code: '<div data-gallery="all" style="background:#f3f4f6;border:2px dashed #9ca3af;padding:24px;text-align:center;color:#6b7280;margin:24px 0">📷 Inline Gallery — change "all" to e.g. "2,3,4" to show specific images</div>' },
   ];
 
   return (
