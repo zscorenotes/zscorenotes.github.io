@@ -90,7 +90,7 @@ export default function ImpressumPage() {
               <h2 className="text-xl font-bold mb-4">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
               <div className="space-y-2 text-lg text-gray-600">
                 <p>Parham Behzad</p>
-                <p>Erzherzog-Euler-Straße 19</p>
+                <p>Erzherzog-Eugen-Straße 19</p>
                 <p>5020 Salzburg</p>
                 <p>Österreich</p>
               </div>
