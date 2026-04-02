@@ -73,7 +73,7 @@ export default function ImpressumPage() {
               <div className="space-y-2 text-lg text-gray-600">
                 <p>ZSCORE.studio</p>
                 <p>Parham Behzad</p>
-                <p>Erzherzog-Euler-Straße 19</p>
+                <p>Erzherzog-Eugen-Straße 19</p>
                 <p>5020 Salzburg</p>
                 <p>Österreich</p>
               </div>
