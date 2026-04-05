@@ -1,19 +1,58 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import Lightbox from '@/components/shared/Lightbox';
 
 /**
- * Inline gallery viewer with prev/next navigation, thumbnail strip,
- * and an expand button that opens the shared fullscreen Lightbox.
+ * Configurable inline gallery viewer.
  *
- * @param {Array} images - Array of { src, caption } objects
- * @param {string} className - Optional extra class names
+ * @param {Array}  images           - Array of { src, caption } objects
+ * @param {string} className        - Optional extra class names
+ * @param {Object} settings         - Display settings (see DEFAULT_SETTINGS below)
  */
-export default function InlineGallery({ images = [], className = '' }) {
+
+const DEFAULT_SETTINGS = {
+  mode: 'manual',       // 'manual' | 'slideshow'
+  interval: 4,          // seconds between slides (slideshow only)
+  object_fit: 'contain',// 'contain' | 'cover' | 'scale-down'
+  aspect_ratio: 'auto', // 'auto' | '16/9' | '4/3' | '1/1' | '3/2'
+  max_height: '70vh',   // CSS value, used when aspect_ratio is 'auto'
+  frame: 'none',        // 'none' | 'shadow' | 'border' | 'polaroid'
+  border_radius: 'none',// 'none' | 'sm' | 'md' | 'lg'
+  background: 'light',  // 'light' | 'dark' | 'transparent'
+  show_thumbnails: true,
+  show_counter: true,
+  show_arrows: true,
+};
+
+const BG_CLASS = {
+  light: 'bg-gray-100',
+  dark: 'bg-gray-900',
+  transparent: 'bg-transparent',
+};
+
+const RADIUS_CLASS = {
+  none: '',
+  sm: 'rounded-sm',
+  md: 'rounded-md',
+  lg: 'rounded-xl',
+};
+
+const FRAME_CLASS = {
+  none: '',
+  shadow: 'shadow-lg',
+  border: 'border-2 border-gray-300',
+  polaroid: 'border-8 border-b-[40px] border-white shadow-xl',
+};
+
+export default function InlineGallery({ images = [], className = '', settings: settingsProp = {} }) {
+  const s = { ...DEFAULT_SETTINGS, ...settingsProp };
+  const isSlideshow = s.mode === 'slideshow';
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const intervalRef = useRef(null);
 
   const prev = useCallback(() => {
     setCurrentIndex(i => (i - 1 + images.length) % images.length);
@@ -22,6 +61,15 @@ export default function InlineGallery({ images = [], className = '' }) {
   const next = useCallback(() => {
     setCurrentIndex(i => (i + 1) % images.length);
   }, [images.length]);
+
+  // Slideshow auto-advance (pauses while lightbox is open)
+  useEffect(() => {
+    if (!isSlideshow || images.length <= 1 || lightboxOpen) return;
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex(i => (i + 1) % images.length);
+    }, s.interval * 1000);
+    return () => clearInterval(intervalRef.current);
+  }, [isSlideshow, s.interval, images.length, lightboxOpen]);
 
   // Keyboard navigation (only when lightbox is not open)
   useEffect(() => {
@@ -39,19 +87,51 @@ export default function InlineGallery({ images = [], className = '' }) {
   const safeIndex = Math.min(currentIndex, images.length - 1);
   const currentImage = images[safeIndex];
 
+  const containerStyle = s.aspect_ratio !== 'auto' ? { aspectRatio: s.aspect_ratio } : {};
+  const imgStyle = {
+    objectFit: s.object_fit,
+    ...(s.aspect_ratio === 'auto' ? { maxHeight: s.max_height } : {}),
+    ...(isSlideshow ? { cursor: 'pointer' } : {}),
+  };
+
+  const radiusClass = RADIUS_CLASS[s.border_radius] ?? '';
+  const bgClass = BG_CLASS[s.background] ?? BG_CLASS.light;
+  const frameClass = FRAME_CLASS[s.frame] ?? '';
+
   return (
     <div className={`select-none ${className}`}>
       {/* Main image area */}
-      <div className="relative bg-gray-100 overflow-hidden">
-        <img
-          key={currentImage.src}
-          src={currentImage.src}
-          alt={currentImage.caption || `Image ${safeIndex + 1}`}
-          className="w-full max-h-[70vh] object-contain"
-        />
+      <div
+        className={`relative overflow-hidden ${bgClass} ${radiusClass} ${frameClass}`}
+        style={containerStyle}
+      >
+        {/* Sliding strip — all images in a row, translated to show the current one */}
+        <div
+          className="flex h-full transition-transform duration-500 ease-in-out"
+          style={{
+            width: `${images.length * 100}%`,
+            transform: `translateX(-${safeIndex * (100 / images.length)}%)`,
+          }}
+        >
+          {images.map((img, i) => (
+            <div
+              key={i}
+              className="flex-shrink-0 h-full"
+              style={{ width: `${100 / images.length}%` }}
+            >
+              <img
+                src={img.src}
+                alt={img.caption || `Image ${i + 1}`}
+                className={`w-full ${s.aspect_ratio !== 'auto' ? 'h-full' : ''}`}
+                style={imgStyle}
+                onClick={isSlideshow ? () => setLightboxOpen(true) : undefined}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Prev button */}
-        {images.length > 1 && (
+        {s.show_arrows && images.length > 1 && (
           <button
             onClick={prev}
             className="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-200 text-black p-2 hover:bg-gray-300 transition-colors shadow"
@@ -62,7 +142,7 @@ export default function InlineGallery({ images = [], className = '' }) {
         )}
 
         {/* Next button */}
-        {images.length > 1 && (
+        {s.show_arrows && images.length > 1 && (
           <button
             onClick={next}
             className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-200 text-black p-2 hover:bg-gray-300 transition-colors shadow"
@@ -72,26 +152,46 @@ export default function InlineGallery({ images = [], className = '' }) {
           </button>
         )}
 
-        {/* Expand to fullscreen */}
-        <button
-          onClick={() => setLightboxOpen(true)}
-          className="absolute top-2 right-2 bg-gray-200 text-black p-2 hover:bg-gray-300 transition-colors shadow"
-          title="View fullscreen"
-          aria-label="Open fullscreen"
-        >
-          <Maximize2 size={16} />
-        </button>
+        {/* Expand to fullscreen (hidden in slideshow — the whole image is clickable instead) */}
+        {!isSlideshow && (
+          <button
+            onClick={() => setLightboxOpen(true)}
+            className="absolute top-2 right-2 bg-gray-200 text-black p-2 hover:bg-gray-300 transition-colors shadow"
+            title="View fullscreen"
+            aria-label="Open fullscreen"
+          >
+            <Maximize2 size={16} />
+          </button>
+        )}
 
         {/* Counter */}
-        {images.length > 1 && (
-          <div className="absolute bottom-2 left-2 bg-gray-200 text-black text-xs font-mono px-2 py-1">
+        {s.show_counter && images.length > 1 && (
+          <div className="absolute bottom-2 left-2 bg-gray-200/80 text-black text-xs font-mono px-2 py-1">
             {safeIndex + 1} / {images.length}
+          </div>
+        )}
+
+        {/* Slideshow progress dots */}
+        {isSlideshow && images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentIndex(i)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i === safeIndex
+                    ? 'bg-white scale-125 shadow'
+                    : 'bg-white/50 hover:bg-white/80'
+                }`}
+                aria-label={`Go to image ${i + 1}`}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Thumbnail strip */}
-      {images.length > 1 && (
+      {/* Thumbnail strip (manual mode only) */}
+      {s.show_thumbnails && !isSlideshow && images.length > 1 && (
         <div className="flex gap-1 p-2 bg-gray-50 overflow-x-auto">
           {images.map((img, i) => (
             <button

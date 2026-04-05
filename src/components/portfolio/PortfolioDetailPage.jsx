@@ -10,6 +10,26 @@ import Lightbox from '@/components/shared/Lightbox';
 import InlineGallery from '@/components/shared/InlineGallery';
 
 /**
+ * Global display settings for the hero gallery on portfolio detail pages.
+ * Adjust these to change the default appearance/behaviour for all portfolio items.
+ * Individual content-block galleries can override these via data-gallery-settings
+ * attributes in the HTML content (e.g. data-gallery-settings='{"mode":"slideshow"}').
+ */
+const HERO_GALLERY_SETTINGS = {
+  mode: 'slideshow',     // 'manual' | 'slideshow'
+  interval: 4,           // seconds per slide (slideshow only)
+  object_fit: 'cover',   // 'contain' | 'cover' | 'scale-down'
+  aspect_ratio: '16/9',  // 'auto' | '16/9' | '4/3' | '1/1' | '3/2'
+  max_height: '70vh',
+  frame: 'none',         // 'none' | 'shadow' | 'border' | 'polaroid'
+  border_radius: 'none', // 'none' | 'sm' | 'md' | 'lg'
+  background: 'light',   // 'light' | 'dark' | 'transparent'
+  show_thumbnails: false,
+  show_counter: true,
+  show_arrows: true,
+};
+
+/**
  * Dedicated page for displaying individual portfolio projects with artistic flair
  */
 export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
@@ -171,8 +191,17 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
           if (/data-gallery/i.test(part)) {
             const galleryValue = part.match(/data-gallery="([^"]+)"/i)?.[1] || 'all';
             const images = resolveGalleryImages(galleryValue, allUrls, title);
+            // Parse optional per-gallery settings from data-gallery-settings attribute
+            // Supports both single and double quotes around the JSON value
+            const rawSettings =
+              part.match(/data-gallery-settings='([^']+)'/i)?.[1] ||
+              part.match(/data-gallery-settings="([^"]+)"/i)?.[1];
+            let gallerySettings = {};
+            if (rawSettings) {
+              try { gallerySettings = JSON.parse(rawSettings); } catch { /* ignore invalid JSON */ }
+            }
             return images.length > 0
-              ? <InlineGallery key={`gallery-${i}`} images={images} className="my-12" />
+              ? <InlineGallery key={`gallery-${i}`} images={images} settings={gallerySettings} className="my-12" />
               : null;
           }
           return part.trim()
@@ -298,6 +327,7 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
                     src: url,
                     caption: `${portfolioItem.title} — Image ${i + 2}`,
                   }))}
+                  settings={HERO_GALLERY_SETTINGS}
                 />
               </div>
             )}
