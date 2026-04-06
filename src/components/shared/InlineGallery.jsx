@@ -83,7 +83,7 @@ export default function InlineGallery({ images = [], className = '', settings: s
       setCurrentIndex(i => (i + 1) % images.length);
     }, s.interval * 1000);
     return () => clearInterval(intervalRef.current);
-  }, [isSlideshow, s.interval, images.length, lightboxOpen]);
+  }, [isSlideshow, s.interval, images.length, lightboxOpen, currentIndex]);
 
   // Keyboard navigation (only when lightbox is not open)
   useEffect(() => {
