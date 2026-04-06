@@ -17,7 +17,8 @@ const DEFAULT_SETTINGS = {
   interval: 4,          // seconds between slides (slideshow only)
   object_fit: 'contain',// 'contain' | 'cover' | 'scale-down'
   aspect_ratio: 'auto', // 'auto' | '16/9' | '4/3' | '1/1' | '3/2'
-  max_height: '70vh',   // CSS value, used when aspect_ratio is 'auto'
+  max_height: '70vh',   // CSS value, used when aspect_ratio is 'auto' and fill_height is false
+  fill_height: false,   // stretch to fill the parent container's full height
   frame: 'none',        // 'none' | 'shadow' | 'border' | 'polaroid'
   border_radius: 'none',// 'none' | 'sm' | 'md' | 'lg'
   background: 'light',  // 'light' | 'dark' | 'transparent'
@@ -90,19 +91,20 @@ export default function InlineGallery({ images = [], className = '', settings: s
   const containerStyle = s.aspect_ratio !== 'auto' ? { aspectRatio: s.aspect_ratio } : {};
   const imgStyle = {
     objectFit: s.object_fit,
-    ...(s.aspect_ratio === 'auto' ? { maxHeight: s.max_height } : {}),
+    ...(s.aspect_ratio === 'auto' && !s.fill_height ? { maxHeight: s.max_height } : {}),
     ...(isSlideshow ? { cursor: 'pointer' } : {}),
   };
 
   const radiusClass = RADIUS_CLASS[s.border_radius] ?? '';
   const bgClass = BG_CLASS[s.background] ?? BG_CLASS.light;
   const frameClass = FRAME_CLASS[s.frame] ?? '';
+  const fillH = s.fill_height;
 
   return (
-    <div className={`select-none ${className}`}>
+    <div className={`select-none ${fillH ? 'h-full flex flex-col' : ''} ${className}`}>
       {/* Main image area */}
       <div
-        className={`relative overflow-hidden ${bgClass} ${radiusClass} ${frameClass}`}
+        className={`relative overflow-hidden ${bgClass} ${radiusClass} ${frameClass} ${fillH ? 'flex-1' : ''}`}
         style={containerStyle}
       >
         {/* Sliding strip — all images in a row, translated to show the current one */}
@@ -122,7 +124,7 @@ export default function InlineGallery({ images = [], className = '', settings: s
               <img
                 src={img.src}
                 alt={img.caption || `Image ${i + 1}`}
-                className={`w-full ${s.aspect_ratio !== 'auto' ? 'h-full' : ''}`}
+                className={`w-full ${s.aspect_ratio !== 'auto' || fillH ? 'h-full' : ''}`}
                 style={imgStyle}
                 onClick={isSlideshow ? () => setLightboxOpen(true) : undefined}
               />

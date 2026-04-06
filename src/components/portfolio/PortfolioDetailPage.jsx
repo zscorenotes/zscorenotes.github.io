@@ -19,8 +19,8 @@ const HERO_GALLERY_SETTINGS = {
   mode: 'slideshow',     // 'manual' | 'slideshow'
   interval: 4,           // seconds per slide (slideshow only)
   object_fit: 'cover',   // 'contain' | 'cover' | 'scale-down'
-  aspect_ratio: '16/9',  // 'auto' | '16/9' | '4/3' | '1/1' | '3/2'
-  max_height: '70vh',
+  aspect_ratio: 'auto',
+  fill_height: true,     // stretch to fill the parent container's height
   frame: 'none',         // 'none' | 'shadow' | 'border' | 'polaroid'
   border_radius: 'none', // 'none' | 'sm' | 'md' | 'lg'
   background: 'light',   // 'light' | 'dark' | 'transparent'
@@ -296,42 +296,37 @@ export default function PortfolioDetailPage({ portfolioId, portfolioSlug }) {
         </nav>
       </div>
 
-      {/* Portfolio Hero Section - Different Layout Order */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 min-h-screen flex items-center">
-        <div className="w-[85%] mx-auto px-6 py-20">
-          {/* Content First - Different from News */}
-          <div className="grid lg:grid-cols-12 gap-16 items-center">
-            
-            {/* Left: Project Information */}
-            <div className="lg:col-span-5 order-1 lg:order-1">
-              {/* Title */}
-              <h1 className="text-5xl lg:text-7xl xl:text-8xl font-black mb-8 leading-none tracking-tighter">
-                <span className="block bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
-                  {portfolioItem.title}
-                </span>
-              </h1>
+      {/* Portfolio Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 h-[calc(100vh-130px)] flex">
+        <div className="w-full flex flex-col lg:flex-row h-full">
 
-              {/* Description */}
-              {portfolioItem.description && (
-                <p className="text-xl text-gray-700 leading-relaxed font-light border-l-4 border-black pl-6">
-                  {portfolioItem.description}
-                </p>
-              )}
-            </div>
-
-            {/* Right: Inline Gallery (skips cover photo at index 0) */}
-            {portfolioItem.image_urls && portfolioItem.image_urls.length > 1 && (
-              <div className="lg:col-span-7 order-2 lg:order-2">
-                <InlineGallery
-                  images={portfolioItem.image_urls.slice(1).map((url, i) => ({
-                    src: url,
-                    caption: `${portfolioItem.title} — Image ${i + 2}`,
-                  }))}
-                  settings={HERO_GALLERY_SETTINGS}
-                />
-              </div>
+          {/* Left: Project Information — respects the site's standard left margin */}
+          <div className="flex-shrink-0 w-full lg:w-[45%] px-6 lg:pl-[7.5%] lg:pr-0 flex flex-col justify-center py-20">
+            <h1 className="text-5xl lg:text-7xl xl:text-8xl font-black mb-8 leading-none tracking-tighter">
+              <span className="block bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent">
+                {portfolioItem.title}
+              </span>
+            </h1>
+            {portfolioItem.description && (
+              <p className="text-xl text-gray-700 leading-relaxed font-light border-l-4 border-black pl-6">
+                {portfolioItem.description}
+              </p>
             )}
           </div>
+
+          {/* Right: Gallery — extends to the right edge of the viewport */}
+          {portfolioItem.image_urls && portfolioItem.image_urls.length > 1 && (
+            <div className="flex-1 min-w-0 w-full lg:w-auto h-full">
+              <InlineGallery
+                images={portfolioItem.image_urls.slice(1).map((url, i) => ({
+                  src: url,
+                  caption: `${portfolioItem.title} — Image ${i + 2}`,
+                }))}
+                settings={HERO_GALLERY_SETTINGS}
+              />
+            </div>
+          )}
+
         </div>
       </section>
 
