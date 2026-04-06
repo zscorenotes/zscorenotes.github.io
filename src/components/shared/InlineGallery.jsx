@@ -19,6 +19,10 @@ const DEFAULT_SETTINGS = {
   aspect_ratio: 'auto', // 'auto' | '16/9' | '4/3' | '1/1' | '3/2'
   max_height: '70vh',   // CSS value, used when aspect_ratio is 'auto' and fill_height is false
   fill_height: false,   // stretch to fill the parent container's full height
+  contrast_boost: 1.0,  // boost contrast to recover thin lines lost during downscaling
+                        // (try 1.3–1.6 for score/notation images, 1.0 = off)
+  ken_burns: false,     // slow zoom+pan effect during slide dwell time (best with cover)
+  ken_burns_scale: 1.12,// how far to zoom in (1.08 = subtle, 1.15 = dramatic)
   frame: 'none',        // 'none' | 'shadow' | 'border' | 'polaroid'
   border_radius: 'none',// 'none' | 'sm' | 'md' | 'lg'
   background: 'light',  // 'light' | 'dark' | 'transparent'
@@ -26,6 +30,15 @@ const DEFAULT_SETTINGS = {
   show_counter: true,
   show_arrows: true,
 };
+
+// Cycle through different zoom origins so consecutive slides pan in different directions
+const KB_ORIGINS = [
+  '20% 20%',  // top-left  → zooms toward bottom-right
+  '80% 20%',  // top-right → zooms toward bottom-left
+  '50% 80%',  // bottom-center → zooms upward
+  '80% 80%',  // bottom-right → zooms toward top-left
+  '20% 60%',  // left-center  → zooms toward right
+];
 
 const BG_CLASS = {
   light: 'bg-gray-100',
@@ -54,6 +67,9 @@ export default function InlineGallery({ images = [], className = '', settings: s
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const intervalRef = useRef(null);
+  // Tracks how many times each slide has been visited so the Ken Burns
+  // animation restarts fresh every time a slide comes into view.
+  const visitKeysRef = useRef({});
 
   const prev = useCallback(() => {
     setCurrentIndex(i => (i - 1 + images.length) % images.length);
@@ -62,6 +78,11 @@ export default function InlineGallery({ images = [], className = '', settings: s
   const next = useCallback(() => {
     setCurrentIndex(i => (i + 1) % images.length);
   }, [images.length]);
+
+  // Increment visit counter for the active slide so Ken Burns animation restarts
+  useEffect(() => {
+    visitKeysRef.current[currentIndex] = (visitKeysRef.current[currentIndex] || 0) + 1;
+  }, [currentIndex]);
 
   // Slideshow auto-advance (pauses while lightbox is open)
   useEffect(() => {
@@ -91,6 +112,7 @@ export default function InlineGallery({ images = [], className = '', settings: s
   const containerStyle = s.aspect_ratio !== 'auto' ? { aspectRatio: s.aspect_ratio } : {};
   const imgStyle = {
     objectFit: s.object_fit,
+    ...(s.contrast_boost !== 1.0 ? { filter: `contrast(${s.contrast_boost})` } : {}),
     ...(s.aspect_ratio === 'auto' && !s.fill_height ? { maxHeight: s.max_height } : {}),
     ...(isSlideshow ? { cursor: 'pointer' } : {}),
   };
@@ -102,6 +124,16 @@ export default function InlineGallery({ images = [], className = '', settings: s
 
   return (
     <div className={`select-none ${fillH ? 'h-full flex flex-col' : ''} ${className}`}>
+      {/* Ken Burns keyframes — injected once per render when enabled */}
+      {s.ken_burns && (
+        <style>{`
+          @keyframes kenBurns {
+            from { transform: scale(1); }
+            to   { transform: scale(${s.ken_burns_scale}); }
+          }
+        `}</style>
+      )}
+
       {/* Main image area */}
       <div
         className={`relative overflow-hidden ${bgClass} ${radiusClass} ${frameClass} ${fillH ? 'flex-1' : ''}`}
@@ -115,21 +147,30 @@ export default function InlineGallery({ images = [], className = '', settings: s
             transform: `translateX(-${safeIndex * (100 / images.length)}%)`,
           }}
         >
-          {images.map((img, i) => (
-            <div
-              key={i}
-              className="flex-shrink-0 h-full"
-              style={{ width: `${100 / images.length}%` }}
-            >
-              <img
-                src={img.src}
-                alt={img.caption || `Image ${i + 1}`}
-                className={`w-full ${s.aspect_ratio !== 'auto' || fillH ? 'h-full' : ''}`}
-                style={imgStyle}
-                onClick={isSlideshow ? () => setLightboxOpen(true) : undefined}
-              />
-            </div>
-          ))}
+          {images.map((img, i) => {
+            const isActive = i === safeIndex;
+            const kenBurnsStyle = s.ken_burns && isActive ? {
+              animation: `kenBurns ${s.interval}s ease-out forwards`,
+              transformOrigin: KB_ORIGINS[i % KB_ORIGINS.length],
+            } : {};
+            return (
+              <div
+                key={i}
+                className="flex-shrink-0 h-full"
+                style={{ width: `${100 / images.length}%` }}
+              >
+                <img
+                  // Key change on each visit forces the animation to restart from scratch
+                  key={isActive ? `kb-${i}-${visitKeysRef.current[i] || 0}` : i}
+                  src={img.src}
+                  alt={img.caption || `Image ${i + 1}`}
+                  className={`w-full ${s.aspect_ratio !== 'auto' || fillH ? 'h-full' : ''}`}
+                  style={{ ...imgStyle, ...kenBurnsStyle }}
+                  onClick={isSlideshow ? () => setLightboxOpen(true) : undefined}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Prev button */}

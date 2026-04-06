@@ -17,10 +17,13 @@ import InlineGallery from '@/components/shared/InlineGallery';
  */
 const HERO_GALLERY_SETTINGS = {
   mode: 'slideshow',     // 'manual' | 'slideshow'
-  interval: 8,           // seconds per slide (slideshow only)
+  interval: 21,          // seconds per slide (slideshow only)
   object_fit: 'cover',   // 'contain' | 'cover' | 'scale-down'
   aspect_ratio: 'auto',
   fill_height: true,     // stretch to fill the parent container's height
+  contrast_boost: 1.4,  // recovers thin stafflines/beams lost during CSS downscaling
+  ken_burns: true,      // slow zoom+pan during slide dwell
+  ken_burns_scale: 3.0, // 1.08 = subtle, 1.15 = dramatic
   frame: 'none',         // 'none' | 'shadow' | 'border' | 'polaroid'
   border_radius: 'none', // 'none' | 'sm' | 'md' | 'lg'
   background: 'light',   // 'light' | 'dark' | 'transparent'
