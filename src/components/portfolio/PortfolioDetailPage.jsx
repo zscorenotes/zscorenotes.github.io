@@ -17,7 +17,7 @@ import InlineGallery from '@/components/shared/InlineGallery';
  */
 const HERO_GALLERY_SETTINGS = {
   mode: 'slideshow',     // 'manual' | 'slideshow'
-  interval: 4,           // seconds per slide (slideshow only)
+  interval: 8,           // seconds per slide (slideshow only)
   object_fit: 'cover',   // 'contain' | 'cover' | 'scale-down'
   aspect_ratio: 'auto',
   fill_height: true,     // stretch to fill the parent container's height
