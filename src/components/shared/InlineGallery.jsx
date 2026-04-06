@@ -128,8 +128,8 @@ export default function InlineGallery({ images = [], className = '', settings: s
       {s.ken_burns && (
         <style>{`
           @keyframes kenBurns {
-            from { transform: scale(1); }
-            to   { transform: scale(${s.ken_burns_scale}); }
+            from { transform: scale(${s.ken_burns_scale}); }
+            to   { transform: scale(1); }
           }
         `}</style>
       )}
