@@ -31,14 +31,6 @@ const DEFAULT_SETTINGS = {
   show_arrows: true,
 };
 
-// Cycle through different zoom origins so consecutive slides pan in different directions
-const KB_ORIGINS = [
-  '20% 20%',  // top-left  → zooms toward bottom-right
-  '80% 20%',  // top-right → zooms toward bottom-left
-  '50% 80%',  // bottom-center → zooms upward
-  '80% 80%',  // bottom-right → zooms toward top-left
-  '20% 60%',  // left-center  → zooms toward right
-];
 
 const BG_CLASS = {
   light: 'bg-gray-100',
@@ -127,10 +119,11 @@ export default function InlineGallery({ images = [], className = '', settings: s
       {/* Ken Burns keyframes — injected once per render when enabled */}
       {s.ken_burns && (
         <style>{`
-          @keyframes kenBurns {
-            from { transform: scale(${s.ken_burns_scale}); }
-            to   { transform: scale(1); }
-          }
+          @keyframes kb0 { from { transform: scale(${s.ken_burns_scale}) translate(-5%, -4%); } to { transform: scale(${s.ken_burns_scale}) translate(5%, 3%); } }
+          @keyframes kb1 { from { transform: scale(${s.ken_burns_scale}) translate(6%, -3%); } to { transform: scale(${s.ken_burns_scale}) translate(-5%, 4%); } }
+          @keyframes kb2 { from { transform: scale(${s.ken_burns_scale}) translate(-4%, 5%); } to { transform: scale(${s.ken_burns_scale}) translate(4%, -5%); } }
+          @keyframes kb3 { from { transform: scale(${s.ken_burns_scale}) translate(0%, -6%); } to { transform: scale(${s.ken_burns_scale}) translate(0%, 5%); } }
+          @keyframes kb4 { from { transform: scale(${s.ken_burns_scale}) translate(-6%, 0%); } to { transform: scale(${s.ken_burns_scale}) translate(6%, 0%); } }
         `}</style>
       )}
 
@@ -150,8 +143,7 @@ export default function InlineGallery({ images = [], className = '', settings: s
           {images.map((img, i) => {
             const isActive = i === safeIndex;
             const kenBurnsStyle = s.ken_burns && isActive ? {
-              animation: `kenBurns ${s.interval}s ease-out forwards`,
-              transformOrigin: KB_ORIGINS[i % KB_ORIGINS.length],
+              animation: `kb${i % 5} ${s.interval}s ease-in-out forwards`,
             } : {};
             return (
               <div
