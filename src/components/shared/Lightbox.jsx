@@ -219,6 +219,7 @@ export default function Lightbox({ images, startIndex, onClose }) {
   return (
     <div
       className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[200] flex items-center justify-center"
+      style={{ willChange: 'transform', transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
       onClick={onClose}
     >
       {/* Close button */}

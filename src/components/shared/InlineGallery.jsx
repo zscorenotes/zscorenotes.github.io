@@ -119,11 +119,16 @@ export default function InlineGallery({ images = [], className = '', settings: s
       {/* Ken Burns keyframes — injected once per render when enabled */}
       {s.ken_burns && (
         <style>{`
-          @keyframes kb0 { from { transform: scale(${s.ken_burns_scale}) translate(-5%, -4%); } to { transform: scale(${s.ken_burns_scale}) translate(5%, 3%); } }
-          @keyframes kb1 { from { transform: scale(${s.ken_burns_scale}) translate(6%, -3%); } to { transform: scale(${s.ken_burns_scale}) translate(-5%, 4%); } }
-          @keyframes kb2 { from { transform: scale(${s.ken_burns_scale}) translate(-4%, 5%); } to { transform: scale(${s.ken_burns_scale}) translate(4%, -5%); } }
-          @keyframes kb3 { from { transform: scale(${s.ken_burns_scale}) translate(0%, -6%); } to { transform: scale(${s.ken_burns_scale}) translate(0%, 5%); } }
-          @keyframes kb4 { from { transform: scale(${s.ken_burns_scale}) translate(-6%, 0%); } to { transform: scale(${s.ken_burns_scale}) translate(6%, 0%); } }
+          @keyframes kb0 { from { transform: scale(${s.ken_burns_scale}) translate3d(-5%, -4%, 0); } to { transform: scale(${s.ken_burns_scale}) translate3d(5%, 3%, 0); } }
+          @keyframes kb1 { from { transform: scale(${s.ken_burns_scale}) translate3d(6%, -3%, 0); } to { transform: scale(${s.ken_burns_scale}) translate3d(-5%, 4%, 0); } }
+          @keyframes kb2 { from { transform: scale(${s.ken_burns_scale}) translate3d(-4%, 5%, 0); } to { transform: scale(${s.ken_burns_scale}) translate3d(4%, -5%, 0); } }
+          @keyframes kb3 { from { transform: scale(${s.ken_burns_scale}) translate3d(0%, -6%, 0); } to { transform: scale(${s.ken_burns_scale}) translate3d(0%, 5%, 0); } }
+          @keyframes kb4 { from { transform: scale(${s.ken_burns_scale}) translate3d(-6%, 0%, 0); } to { transform: scale(${s.ken_burns_scale}) translate3d(6%, 0%, 0); } }
+          @-webkit-keyframes kb0 { from { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(-5%, -4%, 0); } to { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(5%, 3%, 0); } }
+          @-webkit-keyframes kb1 { from { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(6%, -3%, 0); } to { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(-5%, 4%, 0); } }
+          @-webkit-keyframes kb2 { from { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(-4%, 5%, 0); } to { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(4%, -5%, 0); } }
+          @-webkit-keyframes kb3 { from { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(0%, -6%, 0); } to { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(0%, 5%, 0); } }
+          @-webkit-keyframes kb4 { from { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(-6%, 0%, 0); } to { -webkit-transform: scale(${s.ken_burns_scale}) translate3d(6%, 0%, 0); } }
         `}</style>
       )}
 
@@ -144,6 +149,10 @@ export default function InlineGallery({ images = [], className = '', settings: s
             const isActive = i === safeIndex;
             const kenBurnsStyle = s.ken_burns && isActive ? {
               animation: `kb${i % 5} ${s.interval}s ease-in-out forwards`,
+              WebkitAnimation: `kb${i % 5} ${s.interval}s ease-in-out forwards`,
+              willChange: 'transform',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
             } : {};
             return (
               <div
